@@ -1,0 +1,103 @@
+{% extends ('layout.html.twig') %}
+
+{% block pageTitle %}Contáctese con nosotros{% endblock pageTitle %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-co'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.min.css" />
+    {{ parent() }}
+{% endblock stylesheets %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block custom_javascript %}
+  <script src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock %}
+
+{% block metas %}
+    <meta name="description" content="Envíanos un mensaje con tus consultas y sugerencias. Si tiene un negocio o es profesional escríbanos y conozca como mejorar su presencia digital y sus ventas." />
+{% endblock metas %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block content %}
+
+    <div class="row u-box-cntr boxedlines">
+        
+        <div class="large-12 medium-12 small-12 columns contacto" style="text-align: center;">
+            <picture>
+                <source data-srcset="/img/contactus.webp" type="image/webp"/>
+                <source data-srcset="/img/contactus.jpg" type="image/jpg"/>
+                <img class="lazyload" data-src="/img/contactus.jpg"  
+                    alt="Contactese con nosotros" 
+                    src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                    style="background-color: transparent;margin: 50px 0px 30px 0px;">
+            </picture>
+        </div>
+
+        <div class="large-8 large-offset-2 medium-12 small-12 columns contacto letra-gris" style="margin-top:15px;">
+
+            <h1 class="titulo ancho-total" style="font-size: 23px;padding: 5px 0px;">CONTACTESE CON NOSOTROS</h1>
+            <div style="margin-top:15px;">
+                Sus comentarios son muy valiosos para nosotros. Dejenos saber como podemos ayudarlo y nos podremos en contacto con usted.
+            </div>
+            <div id="formulario" class="content">
+                <form method="POST" action="{{ path('contacto', {'hash': 'formulario'}) }}" id="contactForm" name="contactForm" novalidate="novalidate">
+                    <div class="row">
+                        <div class="large-6 medium-6 small-12 columns">
+                            <label>
+                                <input type="text" class="error" name="name" placeholder="Nombre" required="required" />
+                            </label>
+                            <div class="error"></div>
+                        </div>
+                        <div class="large-6 medium-6 small-12  columns">
+                            <label>
+                                <input type="email" class="error" name="email" placeholder="Email" required="required" />
+                            </label>
+                            <div class="error"></div>
+                        </div>
+                        <div class="large-12 medium-12 small-12 columns">
+                            <textarea class="error" name="message" placeholder="Mensaje..." required="required">{{ msg }}</textarea>
+                            <div class="error"></div>
+                            <input type="hidden" name="qform" value="Contacto">
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                      
+                      <button id="btnSend" type="submit" class="button gmbutton right">Enviar</button>
+                      <br><br>
+                      <div style="font-size: 11px;color: #AAA;margin-bottom: 40px;">
+                        Este sitio está protegido por reCAPTCHA y se aplica la
+                        <a href="https://policies.google.com/privacy" style="color: #AAA;text-decoration: underline;">Política de Privacidad</a> y
+                        <a href="https://policies.google.com/terms" style="color: #AAA;text-decoration: underline;">Términos y Condiciones</a> de Google.
+                      </div>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+
+    </div>
+
+
+    {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'co'} %}
+{% endblock deferredCss %}

@@ -1,0 +1,7 @@
+{% if constant('COUNTRY') == 'UY' %} 
+  {% include 'components/footer/footer_uy.html.twig' %}
+{% elseif constant('COUNTRY') == 'PY' %} 
+  {% include 'components/footer/footer_py.html.twig' %}
+{% else %}
+  {% include 'components/footer/footer_uy.html.twig' %}
+{% endif %}

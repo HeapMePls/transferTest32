@@ -1,0 +1,218 @@
+{% spaceless %}
+    
+{% import 'macros/paginator.html.twig' as macroPaginator %}
+
+
+<!doctype html>
+<html class="no-js" lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="minimum-scale=1, width=device-width, initial-scale=1" />
+        
+        <title>
+          {% block pageTitle %}{% if COUNTRY == 'uy' %}Guía 1122 - Guía del Uruguay, Comercios y servicios por zona{% endif %}{% if COUNTRY == 'py' %}BuscoInfo - Guía del Paraguay, Comercios y servicios por zona{% endif %}{% endblock pageTitle %}
+        </title>
+
+        {% include 'layout/'~COUNTRY~'/metas.html.twig' %}
+
+        
+        {% block metas %}
+          {% include 'layout/'~COUNTRY~'/metas2.html.twig' %}
+        {% endblock metas %}
+
+        {% block stylesheets %}
+            {% if constant('APPLICATION_ENV') == 'dev' %} 
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/foundation.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/style.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/style.mobile.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/style.tablet.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/jquery-ui.min.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/jquery-ui.structure.min.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/jquery-ui.theme.min.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/keen-slider.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/js/vendors/tarekautocomplete/autoComplete.css" />
+                <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+            {% elseif constant('APPLICATION_ENV') == 'dev_bi' %} 
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/bi/foundation.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/bi/style.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/bi/style.mobile.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/bi/style.tablet.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/jquery-ui.min.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/jquery-ui.structure.min.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/jquery-ui.theme.min.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/js/vendors/tarekautocomplete/autoComplete.css" />
+                <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+            {% else %}
+                <link rel="preload" href="{{ app.request.basepath }}/css/dist/fonts/fontawesome-webfont.woff2?v=4.7.0" as="font" crossorigin>
+            {% endif %}
+            {{ block('custom_stylesheets') }}
+        {% endblock stylesheets %} 
+        
+        {# ADMANAGER BLOCK - BEGIN #}
+        <link rel="preconnect" href="//securepubads.g.doubleclick.net" crossorigin>
+        <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+        <script>
+          window.googletag = window.googletag || {cmd: []};
+        </script>
+        <script>
+          {% block admConfigHead %}{% endblock admConfigHead %}
+        </script>
+        {# ADMANAGER BLOCK - END #}
+
+        {# FACEBOOK PIXEL UY - BEGIN #}
+        {% if COUNTRY == 'uy' %}
+          <script>
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '951329638982729');
+            fbq('track', 'PageView');
+          </script>
+          <noscript><img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=951329638982729&ev=PageView&noscript=1"
+          /></noscript>
+        {% endif %}
+        {# FACEBOOK PIXEL UY - END #}
+    </head>
+
+    <body>
+        <div id="fb-root"></div>
+        
+        {% block header %}
+        {% endblock header %}
+        
+        <div id="guia-container">
+            {% include 'components/alerts.html.twig' %}
+
+            {% block content %}
+
+            {% endblock content %}
+        </div>
+
+        {% block deferredCss %}
+        {% endblock deferredCss %}
+
+        {# JAVASCRIPT #2 (main JS App downloaded and initializer) #}
+        {% block javascripts %}
+            {# {% if constant('APPLICATION_ENV') == 'dev' or constant('APPLICATION_ENV') == 'dev_bi' %} 
+                <!-- VENDORS -->
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/modernizr/modernizr-2.8.3.js"></script>
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/jquery/2.2.4/jquery.min.js"></script>
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/jqueryui/1.12.1/jquery-ui.min.js"></script>
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/fastclick/1.0.6/fastclick.min.js"></script>
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/jquery-placeholder/2.0.8/jquery.placeholder.min.js"></script>
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/foundation/foundation.js"></script>
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/keen-slider/5.4.0/keen-slider.min.js"></script>
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/dayjs/dayjs.min.js"></script>
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/dayjs/relativeTime.min.js"></script>
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/dayjs/es.min.js"></script>
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/dayjs/utc.min.js"></script>
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/storage/js.storage.min.js"></script>
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/lazysizes/lazysizes.min.js"></script>
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/easyautocomplete/jquery.easy-autocomplete.min.js"></script>
+                <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/sticky/jquery.sticky.js"></script>
+
+                <!-- APP -->
+                <script src="{{ app.request.basepath }}/js/app/logger.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/config.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/router.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/components/galleryviewer.component.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/components/videoviewer.component.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/components/listadoRZ.component.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/components/header.component.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/components/maps.component.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/home.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/comercio.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/resultlist.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/uberto/store.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/uberto/storeSmall.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/uberto/storeBig.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/uberto/quoteRequest.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/uberto/quoteView.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/uberto/requestsList.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/uberto/orderView.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/uberto/orderCheckout.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/uberto/productOrderMenu.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/promos/promosHome.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/promos/promosAll.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/promos/promosFicha.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/promos/promosSponsor.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/subapps/cartelera.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/subapps/horoscopo.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/subapps/azar.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/reportarError.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/contact.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/login.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/favorites.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/reserve.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/controllers/gals.controller.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/services/worker.service.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/app.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/utils.js"></script>
+                <script src="{{ app.request.basepath }}/js/app/webpush.js"></script>
+            {% endif %}  #}
+            {{ block('custom_javascript') }}
+        {% endblock javascripts %}
+
+        {% block inlineJavascripts %}
+            {% if not IS_PRODUCTION %} 
+                {# LOAD JS DEV 1.0   #}
+                {# <script type="text/javascript">
+                    $(document).on('ready', function () {
+                        $(document).foundation();
+                        {% if app.dtToken is defined %}
+                            gmwa.init('{{app.dtToken}}', true, {{mapFramework}});
+                        {% else %}
+                            gmwa.init(undefined, true, {{mapFramework}});
+                        {% endif %}
+                    });
+                </script> #}
+
+            {% else %}
+                {# LOAD JS PROD 4.0 #}
+                {# <script type="text/javascript">
+                    function downloadJSAtOnload() {
+                        var element = document.createElement("script");
+                        element.src = '{{ app.request.basepath }}/js/dist/vendors{{ filesSignature }}.js';
+                        element.onload = function(){
+                            $(document).foundation();
+                            var element = document.createElement("script");
+                            element.src = '{{ app.request.basepath }}/js/dist/app{{ filesSignature }}.js';
+                            element.onload = function(){    
+                                {% if app.dtToken is defined %}
+                                    gmwa.init('{{app.dtToken}}', false, {{mapFramework}});
+                                {% else %}
+                                    gmwa.init(undefined, false, {{mapFramework}});
+                                {% endif %}
+                            };
+                            document.body.appendChild(element);
+                        }
+                        document.body.appendChild(element);
+                    }
+                    document.addEventListener("DOMContentLoaded", downloadJSAtOnload);
+                </script> #}
+            {% endif %}
+
+            {% include 'layout/'~COUNTRY~'/sd-website.html.twig' %}
+
+        {% endblock inlineJavascripts %}
+
+
+        {# JAVASCRIPT #3 (GTAG loader) Global site tag (gtag.js) - Google Analytics  #}
+        {% include 'layout/'~COUNTRY~'/gtag.html.twig' %}
+
+
+        {# JAVASCRIPT #4 (AdManager loader)
+           Trigger Ads render #}
+        {% block admConfigBody %}
+        {% endblock admConfigBody %}
+
+    </body>
+</html>
+
+{% endspaceless %}

@@ -1,0 +1,66 @@
+{% extends ('layout.html.twig') %}
+
+{% set isMobile = isMobile() %}
+
+{% set sasSpage = 'orderMenu' %}
+{% block sasSpage %}{{ sasSpage }}{% endblock sasSpage %}
+
+{% block custom_stylesheets %}
+    {# <link rel="stylesheet" href="{{ app.request.basepath }}/css/c-gm-oc{{ filesSignature }}.css" /> #}
+    {% if constant('APPLICATION_ENV') != 'dev' %} 
+      <style>
+          {{ source( '_inlinecss/c-gm-oc'~filesSignature~'.css') }}
+      </style>
+    {% endif %}
+    <link rel="stylesheet" href="{{ app.request.basepath }}/js/vendors/foundation-datepicker/foundation-datepicker.min.css" />
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %}Menu de Negocio | Guía Móvil 1122{% endblock pageTitle %}
+
+{% block metas %}
+    <meta name="ROBOTS" content="NOINDEX" />
+
+    {% if mapFramework == 1 %}
+      <link rel='stylesheet' href='https://unpkg.com/leaflet@1.3.1/dist/leaflet.css' />
+    {% endif %}
+{% endblock metas %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{mapJsSrc}}"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/foundation-datepicker/foundation-datepicker.min.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/foundation-datepicker/foundation-datepicker.es.js"></script>
+{% endblock javascripts %}
+
+{% block header %}
+  {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block content %}
+<div class="row" style="margin-top: 10px;padding-bottom: 30px;">
+  <div class="large-9 medium-9 small-9">
+    
+      {% if feed %}
+      <div class="brick">
+        {% for feedAux in feed.r.feed %}
+            {% include 'components/feedCard.html.twig' with {'feed': feedAux} %}
+        {% endfor %}     
+      </div>
+      {% endif %}
+    
+  </div>
+  <aside class="large-3 medium-3 small-3 columns">
+    <div class="large-12 medium-12 columns sin-bordes right ">
+      {% if not isMobile %}
+        <div class="banner-recuadro">
+          {# {{ sasTag(sasSpage, 'right') | raw }} #}
+          <div id="sas_27528" class="gmad-desktop"></div>
+        </div>
+        <div class="separador"></div>
+      {% endif %}
+    </div>
+  </aside>
+</div>
+{% include 'components/footer.html.twig' %}
+
+{% endblock content %}

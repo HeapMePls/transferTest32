@@ -1,0 +1,30 @@
+<div class=" widget-relacionados-nuevo u-box-cntr boxedlines">
+    <div class="titulo">
+        Algunos destacados de hoy
+    </div>
+    <div>
+      {% for id,destacado in destacados %}
+        {% if destacado.name != '' %}
+          <a title="{{ destacado.name }}" href="{{ path('comercio', {'id': id, 'comercioNombre': urlize(destacado.name)}) }}">
+            <div>
+              <div>
+                <h3>{{ destacado.name | upper }}</h3>
+                <p>{{ destacado.adr | truncate(27) }}</p>
+                <p>{{ destacado.znm }}</p>
+              </div>
+              {% if not destacado.ics is empty %}
+                <picture>
+                  <source data-srcset="{{destacado.ics | asWebp }}" type="image/webp"/>
+                  <source data-srcset="{{destacado.ics}}" type="image/png"/>
+                  <img class="lazyload" data-src="{{destacado.ics}}" width="45" height="45"
+                      alt="destacado.name"
+                      src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                </picture>
+              {% endif %}
+            </div>
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+</div>
+

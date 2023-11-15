@@ -1,0 +1,118 @@
+{% if v == 1 %}
+  {% if not IS_PRODUCTION  %} 
+    {# VENDORS #}
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/modernizr/modernizr-2.8.3.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/fastclick/1.0.6/fastclick.min.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/jquery-placeholder/2.0.8/jquery.placeholder.min.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/foundation/foundation.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/keen-slider/5.4.0/keen-slider.min.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/dayjs/dayjs.min.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/dayjs/relativeTime.min.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/dayjs/es.min.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/dayjs/utc.min.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/storage/js.storage.min.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/lazysizes/lazysizes.min.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/easyautocomplete/jquery.easy-autocomplete.min.js"></script>
+    <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/sticky/jquery.sticky.js"></script>
+
+    {# APP  #}
+    <script src="{{ app.request.basepath }}/js/app/logger.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/config.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/router.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/components/galleryviewer.component.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/components/videoviewer.component.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/components/listadoRZ.component.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/components/header.component.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/components/maps.component.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/home.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/comercio.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/resultlist.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/uberto/store.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/uberto/storeSmall.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/uberto/storeBig.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/uberto/quoteRequest.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/uberto/quoteView.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/uberto/requestsList.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/uberto/orderView.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/uberto/orderCheckout.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/uberto/productOrderMenu.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/promos/promosHome.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/promos/promosAll.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/promos/promosFicha.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/promos/promosSponsor.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/subapps/cartelera.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/subapps/horoscopo.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/subapps/azar.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/reportarError.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/contact.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/login.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/favorites.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/reserve.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/controllers/gals.controller.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/services/worker.service.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/app.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/utils.js"></script>
+    <script src="{{ app.request.basepath }}/js/app/webpush.js"></script>
+
+    <script type="text/javascript">
+      $(document).on('ready', function () {
+        $(document).foundation();
+        {% if app.dtToken is defined %}
+          gmwa.init('{{app.dtToken}}', true, {{mapFramework}});
+        {% else %}
+          gmwa.init(undefined, true, {{mapFramework}});
+        {% endif %}
+      });
+    </script>
+  {% else %}
+    <script type="text/javascript">
+      function downloadJSAtOnload() {
+        var element = document.createElement("script");
+        element.src = '{{ app.request.basepath }}/js/dist/vendors{{ filesSignature }}.js';
+        element.onload = function(){
+          $(document).foundation();
+          var element = document.createElement("script");
+          element.src = '{{ app.request.basepath }}/js/dist/app{{ filesSignature }}.js';
+          element.onload = function(){    
+            {% if app.dtToken is defined %}
+              gmwa.init('{{app.dtToken}}', false, {{mapFramework}});
+            {% else %}
+              gmwa.init(undefined, false, {{mapFramework}});
+            {% endif %}
+          };
+          document.body.appendChild(element);
+        }
+        document.body.appendChild(element);
+      }
+      document.addEventListener("DOMContentLoaded", downloadJSAtOnload);
+    </script>
+  {% endif %}
+{% else %}
+  <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function(){
+      {% if IS_PRODUCTION %} 
+        var element = document.createElement("script");
+        //element.src = '{{ app.request.basepath }}/js/dist/parts/{{partName}}-{{ filesSignature }}.js';
+        element.src = '{{ app.request.basepath }}/js/dist/parts/{{partName}}{{ filesSignature }}.js';
+        element.onload = function(){
+          {% if app.dtToken is defined %}
+            gmjs.init('{{app.dtToken}}', false, {{mapFramework}});
+          {% else %}
+            gmjs.init(undefined, false, {{mapFramework}});
+          {% endif %}
+          gmjs.controller.init();
+        }
+        document.body.appendChild(element);
+      {% else %}  
+        {% if app.dtToken is defined %}
+          gmjs.init('{{app.dtToken}}', true, {{mapFramework}});
+        {% else %}
+          gmjs.init(undefined, true, {{mapFramework}});
+        {% endif %}
+        gmjs.controller.init();
+      {% endif %}
+    });
+  </script>
+{% endif %}

@@ -1,0 +1,25 @@
+{
+    "require": {
+        "silex/silex": "1.2.*",
+        "twig/twig": ">=1.8.0,<2.0-dev",
+        "symfony/twig-bridge": "2.0,*",
+        "twig/extensions": "1.2.*@dev",
+        "monolog/monolog": "~1.4,>=1.4.1",
+        "mobiledetect/mobiledetectlib": "2.8.0",
+        "swiftmailer/swiftmailer": "@stable",
+        "fightbulc/moment": "*"
+    },
+    "require-dev": {
+        "anahkiasen/rocketeer": "~2.1"
+    },
+    "autoload": {
+        "psr-0": {
+            "EPD": "src/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "kylekatarnls/update-helper": true
+        }
+    }
+}

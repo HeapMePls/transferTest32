@@ -1,0 +1,162 @@
+{% extends ('layout.html.twig') %}
+
+{% block pageTitle %} Mis Pedidos | {{BRAND}}{% endblock pageTitle %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+      <style>
+          {{ source( '_inlinecss/'~BRANDCODE~'/c-pl'~filesSignature~'.css') }}
+      </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block metas %}
+    <meta name="ROBOTS" content="NOINDEX" />
+{% endblock metas %}
+
+{% block content %}
+  
+  <div class="row">
+    <div class="large-6 large-offset-1 medium-6 medium-offset-1 small-12 ">
+
+      {# IN PROGRESS #}
+      {% if data.reqs.inprogress | length > 0 %}
+        <div class="u-box-cntr boxedlines">
+          <div class="section-header section-header-left">Pedidos en curso</div>
+          <div class="large-12 medium-12 small-12 columns u-box-cntr">
+            {% for request in data.reqs.inprogress %}
+                {% include 'components/uberto/requestsListItem.html.twig' with {'request': request} %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {# ANSWERED #}
+      {% if data.reqs.answered | length > 0 %}
+        <div class="u-box-cntr boxedlines">
+          <div class="section-header section-header-left">Contestados</div>
+          <div class="large-12 medium-12 small-12 columns u-box-cntr">
+            {% for request in data.reqs.answered %}
+              {% include 'components/uberto/requestsListItem.html.twig' with {'request': request} %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {# WAITING #}
+      {% if data.reqs.waiting | length > 0 %}
+        <div class="u-box-cntr boxedlines">
+          <div class="section-header section-header-left">Aguardando respuesta</div>
+          <div class="large-12 medium-12 small-12 columns u-box-cntr">
+            {% for request in data.reqs.waiting %}
+              {% include 'components/uberto/requestsListItem.html.twig' with {'request': request} %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {# ACCEPTED #}
+      {% if data.reqs.accepted | length > 0 %}
+        <div class="u-box-cntr boxedlines">
+          <div class="section-header section-header-left">Aceptados</div>
+          <div class="large-12 medium-12 small-12 columns u-box-cntr">
+            {% for request in data.reqs.accepted %}
+              {% include 'components/uberto/requestsListItem.html.twig' with {'request': request} %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {# FINISHED #}
+      {% if data.reqs.finished | length > 0 %}
+        <div class="u-box-cntr boxedlines">
+          <div class="section-header section-header-left">Finalizados</div>
+          <div class="large-12 medium-12 small-12 columns u-box-cntr">
+            {% for request in data.reqs.finished %}
+              {% include 'components/uberto/requestsListItem.html.twig' with {'request': request} %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- MENSAJE DE REGISTRO -->
+      <div class="large-12 medium-12 small-12 columns" style="text-align:center;margin-bottom:15px">
+        <div style="font-size: 13px;margin: 20px;line-height: 15px;color: #666;">
+          <i class="fa fa-info-circle" aria-hidden="true"></i> Los pedidos y/o presupuestos y sus respuestas que realices se guardarán en este dispositivo. Al volver aquí usando este mismo dispositivo podrás ver el historial y estado de tus pedidos.
+        </div>
+        {#<div style="font-size: 13px;margin: 20px;line-height: 15px;color: #666;">
+          <i class="fa fa-info-circle" aria-hidden="true"></i> Los pedidos y/o presupuestos y respuestas se guardaran en este dispositivo. Si desea cambiarse en varios dispositivos o guardarlos en la nube para poder accederlos 
+          desde cualquier parte, puedes registrarte.
+        </div>
+        <div>
+          <div>
+            <button class="button">Iniciar sesion</button>
+          </div>
+          <div style="font-size: 13px;">
+            Si no tiene cuenta, <a href=""> registrese aqui</a>
+          </div>
+        </div>#}
+      </div>
+
+    </div>
+    <aside class="large-4 medium-4 small-12" style="padding-left: 10px;">
+      {% if data.stores | length > 0 %}
+        <div class="large-12 medium-12 small-12 columns u-box-cntr boxedlines widget-relacionados" >
+          <div class="titulo">Algunos negocios donde puedes pedir:</div>
+          <div class="margen">
+            <ul>
+              {% for store in data.stores %}
+                <li style="border-bottom: 1px solid #EEE;">
+                  {% if store.ics | length > 0 %}
+                    <img alt="{{store.nam}}" src="{{store.ics}}" style="width:45px;height:45px;position:absolute">
+                  {% endif %}
+                  <div style="{{ ( store.ics | length > 0 ) ? 'padding-left:50px' : '' }}">
+                    {% if store.typ == 1 %}
+                      <div><a href="{{ path('storeStart', {'nam':urlize(store.nam),'idr': store.idr, 'ids': store.ids}) }}" title=""><h2>{{store.nam}}</h2></a></div>
+                    {% elseif store.typ == 2 %}
+                      <div><a href="{{ path('uberto/quoteRequest', {'nam': urlize(store.nam), 'idr': store.idr, 'ids': store.ids}) }}"><h2>{{store.nam}}</h2></a></div>
+                    {% endif %}
+                    <div class="direccion">{{store.adr}} - {{store.znm}}</div>
+                    <div class="direccion">{{store.prd}}</div>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+      {#{% if data.products | length > 0 %}
+        <div class="large-12 medium-12 small-12 columns u-box-cntr">
+          <div class="titulo">Pide tambien:</div>
+          <div class="categoriasComercio">
+            <div><a href="#">RUBRO 1</a></div><div> - </div>
+            <div><a href="#">RUBRO 2</a></div><div> - </div>
+            <div><a href="#">RUBRO 3</a></div><div> - </div>
+            <div><a href="#">RUBRO 4</a></div><div> - </div>
+            <div><a href="#">RUBRO 5</a></div><div> - </div>
+          </div>
+        </div>
+      {% endif %}#}
+    </aside>
+  </div>
+
+  {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'pl'} %}
+{% endblock deferredCss %}

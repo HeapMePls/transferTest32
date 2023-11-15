@@ -1,0 +1,17 @@
+{% block body %}
+
+<div>
+  <h5>Zonas de cobertura de entregas</h5>
+</div>
+<div id="coverageMap" style="width: 100%;min-height: 400px;"></div>
+<div id="coverageZonesDesc" style="padding: 3px;font-size: 13px;"></div>
+
+<script>
+  window.coverageData = {{dataString | raw}}
+</script>
+
+<button class="close-button" data-close aria-label="Close modal" type="button">
+    <span aria-hidden="true">&times;</span>
+</button>
+
+{% endblock body %}

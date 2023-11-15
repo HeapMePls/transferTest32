@@ -1,0 +1,19 @@
+{% extends ('components/listadoZonasDefault.html.twig') %}
+
+{% block body %}
+    <div class="large-3 medium-3 small-12 columns zona sin-bordes">
+        <div class="callout panel zona {% if isMobile() %}list-collapsible{% endif %}">
+            <p>Zona{{ (tituloZona is defined and tituloZona!="0" and tituloZona!="" and isMobile()) ? ': ' ~ tituloZona|upper : '' }}</p>
+            <span class="icobajar">
+                <i class="fa fa-list"></i>
+            </span>          
+        </div>
+        <div class="listado-zona zona" style="display: {{ (isMobile()) ? 'none !important' : 'block' }}">
+            <div class="margen">
+            {% block elements %}
+                {{ parent() }}
+            {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock body %}

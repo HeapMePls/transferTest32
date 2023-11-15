@@ -1,0 +1,566 @@
+{% extends ('layout.html.twig') %}
+
+{% set isMobile = isMobile() %}
+{% block admConfigHead %} 
+    googletag.cmd.push(function() {
+        {% if isMobile %}
+        googletag.defineSlot('{{ADS_SLOT_MIDDLE}}', [[320, 100],[300, 100],[320, 50]], 'sas_28425').addService(googletag.pubads());
+        googletag.defineSlot('{{ADS_SLOT_BOTTOM}}', [[320, 100],[300, 100],[320, 50]], 'sas_28427').addService(googletag.pubads());
+        {% else %}
+        googletag.defineSlot('{{ADS_SLOT_TOP}}', [[300,250]], 'sas_27528').addService(googletag.pubads());
+        googletag.defineSlot('{{ADS_SLOT_MIDDLE}}', [[300,250]], 'sas_27838').addService(googletag.pubads());
+        {% endif %}
+        googletag.pubads().setTargeting('Channel', 'web');
+        googletag.pubads().setTargeting('zona', '{{ lastzone }}');
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+    });
+{% endblock admConfigHead %}
+{% block admConfigBody %} 
+    <script>
+        {% if isMobile %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_28425'); 
+                googletag.display('sas_28427'); 
+            });
+        {% else %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27528'); 
+                googletag.display('sas_27838'); 
+            });
+        {% endif %}
+    </script>
+{% endblock admConfigBody %} 
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-a'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %} Resultados de juegos de azar | {{ parent() }}{% endblock pageTitle %}
+
+{% block metas %}
+    <link rel="canonical" href="https:{{ url('azar', {}, true) }}"/>
+    <meta name="description" content="Conoce los ultimos resultados de los juegos de azar como 5 de oro, tombola, quiniela y la loteria uruguaya | {{BRAND}}" />
+    <meta name="keywords" content="juegos de azar, 5 de oro, tombola, quiniela, loteria, comercios, uruguay, servicios" />
+    <meta name="robots" content="index, all" />
+    <meta name="DC.title" content="{{BRAND}}" />
+    <meta name="publisher" content="{{BRAND}}" />
+    <meta name="language" content="es" />
+    <meta name="distribution" content="global"/>
+{% endblock metas %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block content %}
+    <div class="row small-uncollapse">
+        <div class="large-8 medium-8 small-12 columns u-box-cntr">
+            <div class="row">
+                <div class="large-12 medium-12 small-12 text-center">
+                    <h1 class="section-header">Juegos de azar</h1>
+                    <h2 class="section-subheader">Enterate si ya ganaste a tu juego favorito</h2>
+                </div>
+                <div class="large-10 large-offset-1 medium-10 medium-offset-1 small-12 columns nbox" >
+                    <ul class="tabs" data-tabs id="azartabs" s>
+                        <li style="width: 25%;text-align: center;" class="tabs-title is-active"><a id="bPanel1" href="#panel1" aria-selected="true" style="padding: 8px;font-size: 16px;font-weight: bold;">5 de oro</a></li>
+                        <li style="width: 25%;text-align: center;" class="tabs-title"><a id="bPanel2" href="#panel2" style="padding: 8px;font-size: 16px;font-weight: bold;">Quiniela</a></li>
+                        <li style="width: 25%;text-align: center;" class="tabs-title"><a id="bPanel3" href="#panel3" style="padding: 8px;font-size: 16px;font-weight: bold;">Tombola</a></li>
+                        <li style="width: 25%;text-align: center;" class="tabs-title"><a id="bPanel4" href="#panel4" style="padding: 8px;font-size: 16px;font-weight: bold;">Lotería</a></li>
+                    </ul>
+                    <div class="tabs-content" data-tabs-content="azartabs">
+                        <div class="tabs-panel is-active" id="panel1" style="padding-bottom: 50px;">
+                            <div class="large-12 medium-12 small-12 columns" style="color:#666;">
+                                <h4>
+                                    {# <img style="height:90px;" src="{{ app.request.basepath }}/img/azar/5deoro.png" alt="5 de oro"/> #}
+                                    <picture>
+                                        <source data-srcset="{{ app.request.basepath }}/img/azar/5deoro.webp" type="image/webp"/>
+                                        <source data-srcset="{{ app.request.basepath }}/img/azar/5deoro.png" type="image/png"/>
+                                        <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/5deoro.png"
+                                            alt="5 de oro" style="height:90px;background-color:transparent" 
+                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                    </picture>
+                                </h4>
+                                <h5 style="color:#0d4081;">{{datos.fecha}}</h5>
+                                <div>
+                                    <table class="gm-simple-table">
+                                        <tbody>
+                                            <tr>
+                                                <td>Pozo de Oro</td>
+                                                <td><small>$</small><strong> {{datos.pozoOro}}</strong><span style="font-size:11px;white-space: nowrap;"> ({{datos.aciertosOro}})</span></td>
+                                            </tr>
+                                            <tr style="background:transparent;">
+                                                <td>Pozo de plata</td>
+                                                <td><small>$</small><strong> {{datos.pozoPlata}}</strong><span style="font-size:11px;white-space: nowrap;"> ({{datos.aciertosPlata}})</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="tablaCincoro">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="5"></td>
+                                                <td style="font-size:8px;text-align:center">EXTRA</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    {# <img src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num1}}.png" alt="5 de oro | Bolilla 1 | {{datos.num1}}"/> #}
+                                                    <picture>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num1}}.webp" type="image/webp"/>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num1}}.png" type="image/png"/>
+                                                        <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num1}}.png"
+                                                            alt="5 de oro | Bolilla 1 | {{datos.num1}}" style="background-color:transparent"
+                                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                                    </picture>
+                                                </td>
+                                                <td>
+                                                    {# <img src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num2}}.png" alt="5 de oro | Bolilla 2 | {{datos.num2}}" /> #}
+                                                    <picture>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num2}}.webp" type="image/webp"/>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num2}}.png" type="image/png"/>
+                                                        <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num2}}.png"
+                                                            alt="5 de oro | Bolilla 2 | {{datos.num2}}" style="background-color:transparent"
+                                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                                    </picture>
+                                                </td>
+                                                <td>
+                                                    {# <img src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num3}}.png" alt="5 de oro | Bolilla 3 | {{datos.num3}}" /> #}
+                                                    <picture>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num3}}.webp" type="image/webp"/>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num3}}.png" type="image/png"/>
+                                                        <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num3}}.png"
+                                                            alt="5 de oro | Bolilla 3 | {{datos.num3}}" style="background-color:transparent"
+                                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                                    </picture>
+                                                </td>
+                                                <td>
+                                                    {# <img src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num4}}.png" alt="5 de oro | Bolilla 4 | {{datos.num4}}" /> #}
+                                                    <picture>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num4}}.webp" type="image/webp"/>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num4}}.png" type="image/png"/>
+                                                        <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num4}}.png"
+                                                            alt="5 de oro | Bolilla 4 | {{datos.num4}}" style="background-color:transparent"
+                                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                                    </picture>
+                                                </td>
+                                                <td>
+                                                    {# <img src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num5}}.png" alt="5 de oro | Bolilla 5 | {{datos.num5}}" /> #}
+                                                    <picture>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num5}}.webp" type="image/webp"/>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num5}}.png" type="image/png"/>
+                                                        <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.num5}}.png"
+                                                            alt="5 de oro | Bolilla 5 | {{datos.num5}}" style="background-color:transparent"
+                                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                                    </picture>
+                                                </td>
+                                                <td>
+                                                    {# <img src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.numE}}.png" alt="5 de oro | Bolilla Extra | {{datos.numE}}" /> #}
+                                                    <picture>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.numE}}.webp" type="image/webp"/>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.numE}}.png" type="image/png"/>
+                                                        <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.numE}}.png"
+                                                            alt="5 de oro | Bolilla Extra | {{datos.numE}}" style="background-color:transparent"
+                                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                                    </picture>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                        
+                                </div>
+                                <br>
+                                <div >
+                                    <table class="gm-simple-table">
+                                        <tbody>
+                                            <tr>
+                                                <td>Pozo Revancha</td>
+                                                <td><small>$</small><strong> {{datos.pozoRevancha}}</strong><span style="font-size:11px;white-space: nowrap;"> ({{datos.aciertosRevancha}})</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="tablaCincoro">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    {# <img src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev1}}.png" alt="5 de oro Revancha | Bolilla 1 | {{datos.num1}}" /> #}
+                                                    <picture>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev1}}.webp" type="image/webp"/>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev1}}.png" type="image/png"/>
+                                                        <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev1}}.png"
+                                                            alt="5 de oro Revancha | Bolilla 1 | {{datos.rev1}}" style="background-color:transparent"
+                                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                                    </picture>
+                                                </td>
+                                                <td>
+                                                    {# <img src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev2}}.png" alt="5 de oro Revancha | Bolilla 2 | {{datos.num2}}" /> #}
+                                                    <picture>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev2}}.webp" type="image/webp"/>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev2}}.png" type="image/png"/>
+                                                        <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev2}}.png"
+                                                            alt="5 de oro Revancha | Bolilla 2 | {{datos.rev2}}" style="background-color:transparent"
+                                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                                    </picture>
+                                                </td>
+                                                <td>
+                                                    {# <img src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev3}}.png" alt="5 de oro Revancha | Bolilla 3 | {{datos.num3}}" /> #}
+                                                    <picture>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev3}}.webp" type="image/webp"/>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev3}}.png" type="image/png"/>
+                                                        <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev3}}.png"
+                                                            alt="5 de oro Revancha | Bolilla 3 | {{datos.rev3}}" style="background-color:transparent"
+                                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                                    </picture>
+                                                </td>
+                                                <td>
+                                                    {# <img src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev4}}.png" alt="5 de oro Revancha | Bolilla 4 | {{datos.num4}}" /> #}
+                                                    <picture>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev4}}.webp" type="image/webp"/>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev4}}.png" type="image/png"/>
+                                                        <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev4}}.png"
+                                                            alt="5 de oro Revancha | Bolilla 4 | {{datos.rev4}}" style="background-color:transparent"
+                                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                                    </picture>
+                                                </td>
+                                                <td>
+                                                    {# <img src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev5}}.png" alt="5 de oro Revancha | Bolilla 5 | {{datos.num5}}" /> #}
+                                                    <picture>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev5}}.webp" type="image/webp"/>
+                                                        <source data-srcset="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev5}}.png" type="image/png"/>
+                                                        <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/cincoro/cincoro_{{datos.rev5}}.png"
+                                                            alt="5 de oro Revancha | Bolilla 5 | {{datos.rev5}}" style="background-color:transparent"
+                                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                                    </picture>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tabs-panel" id="panel2">
+                            <div class="large-12 medium-12 small-12" style="padding:15px;padding-top:0px;">
+                                <div class="row">
+                                    <div class="large-12 medium-12 small-12">
+                                        <h4>
+                                            {# <img style="height:90px;" src="{{ app.request.basepath }}/img/azar/quiniela.png" alt="Quiniela" /> #}
+                                            <picture>
+                                                <source data-srcset="{{ app.request.basepath }}/img/azar/quiniela.webp" type="image/webp"/>
+                                                <source data-srcset="{{ app.request.basepath }}/img/azar/quiniela.png" type="image/png"/>
+                                                <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/quiniela.png"
+                                                    alt="Quiniela" style="height:90px;background-color:transparent"  
+                                                    src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                            </picture>
+                                        </h4>
+                                    </div>
+                                    <div class="large-12 medium-12 small-12">
+                                        <h5 id="quinTitle1"></h5>
+                                        <h5 id="quinFecha1"></h5>
+                                    </div>
+                                    <div class="large-12 medium-12 small-12" style="color:#666;">
+                                        <div class="row">
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="quinNum1">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="quinNum2">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="quinNum3">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="quinNum4">
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="large-12 medium-12 small-12">
+                                        <h5 id="quinTitle2"></h5>
+                                        <h5 id="quinFecha2"></h5>
+                                    </div>
+                                    <div class="large-12 medium-12 small-12" style="color:#666;">
+                                        <div class="row">
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="quinNum21">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="quinNum22">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="quinNum23">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="quinNum24">
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tabs-panel" id="panel3">
+                            <div class="large-12 medium-12 small-12" style="padding:15px;padding-top:0px;">
+                                <div class="row">
+                                    <div class="large-12 medium-12 small-12">
+                                        <h4>
+                                            {# <img style="height:90px;" src="{{ app.request.basepath }}/img/azar/tombola.png" alt="Tombola" /> #}
+                                            <picture>
+                                                <source data-srcset="{{ app.request.basepath }}/img/azar/tombola.webp" type="image/webp"/>
+                                                <source data-srcset="{{ app.request.basepath }}/img/azar/tombola.png" type="image/png"/>
+                                                <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/tombola.png"
+                                                    alt="Tombola" style="height:90px;background-color:transparent" 
+                                                    src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                            </picture>
+                                        </h4>
+                                    </div>
+                                    <div class="large-12 medium-12 small-12">
+                                        <h5 id="tombTitle1"></h5>
+                                        <h5 id="tombFecha1"></h5>
+                                    </div>
+                                    <div class="large-12 medium-12 small-12" style="color:#666;">
+                                        <div class="row">
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="tombNum1">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="tombNum2">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="tombNum3">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="tombNum4">                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="large-12 medium-12 small-12">
+                                        <h5 id="tombTitle2"></h5>
+                                        <h5 id="tombFecha2"></h5>
+                                    </div>
+                                    <div class="large-12 medium-12 small-12" style="color:#666;">
+                                        <div class="row">
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="tombNum21">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="tombNum22">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="tombNum23">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-3 tablaQuin">
+                                                <ul style="list-style-type:none;" id="tombNum24">
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tabs-panel" id="panel4">
+                            <div class="large-12 medium-12 small-12" style="padding:15px;padding-top:0px;color:#666;">
+                                <div class="row">
+                                    <div class="large-12 medium-12 small-12">
+                                        <h4>
+                                            {# <img style="height:90px;" src="{{ app.request.basepath }}/img/azar/loteriauruguaya.png" alt="Loteria" /> #}
+                                            <picture>
+                                                <source data-srcset="{{ app.request.basepath }}/img/azar/loteriauruguaya.webp" type="image/webp"/>
+                                                <source data-srcset="{{ app.request.basepath }}/img/azar/loteriauruguaya.png" type="image/png"/>
+                                                <img class="lazyload" data-src="{{ app.request.basepath }}/img/azar/loteriauruguaya.png"
+                                                    alt="Loteria" style="height:90px;background-color:transparent" 
+                                                    src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                            </picture>
+                                        </h4>
+                                    </div>
+                                    <div class="large-12 medium-12 small-12">
+                                        <h5 id="lotFecha1"></h5>
+                                    </div>
+                                    <div class="large-12 medium-12 small-12">
+                                        <div class="row">
+                                            <div class="large-3 medium-3 small-6 tablaQuin">
+                                                <ul style="list-style-type:none;" id="lotNum1">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-6 tablaQuin">
+                                                <ul style="list-style-type:none;" id="lotNum2">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-6 tablaQuin">
+                                                <ul style="list-style-type:none;" id="lotNum3">
+                                                </ul>
+                                            </div>
+                                            <div class="large-3 medium-3 small-6 tablaQuin">
+                                                <ul style="list-style-type:none;" id="lotNum4">
+                                                </ul>
+                                            </div>
+                                            <div class="large-8 large-offset-2 medium-8 medium-offset-2 small-10 small-offset-1 tablaQuin">
+                                                <div>Aproximación 1:<span id="lotAprox1"></span></div>
+                                                <div>Aproximación 2:<span id="lotAprox2"></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="large-12 medium-12 small-12" style="background-color:#e2e2e2;padding:15px;border-radius:4px;">
+                                        <div class="row" style="padding:15px;padding-top:0;">
+                                            <div class="large-12 medium-12 small-12 text-left">
+                                                <h5>Premios</h5>
+                                            </div>
+                                            <div class="large-6 medium-6 small-6 text-left">
+                                                Primer premio:<br>
+                                                Segundo premio:<br>
+                                                Tercer premio:<br>
+                                                4º/5º Premio:<br>
+                                                6º/10º Premio:<br>
+                                                11º/20º Premio:<br>
+                                                Premio aprox:<br>
+                                            </div>
+                                            <div class="large-6 medium-6 small-6 text-right">
+                                                <strong id="lotPrem01"></strong><br>
+                                                <strong id="lotPrem02"></strong><br>
+                                                <strong id="lotPrem03"></strong><br>
+                                                <strong id="lotPrem04_05"></strong><br>
+                                                <strong id="lotPrem06_10"></strong><br>
+                                                <strong id="lotPrem11_20"></strong><br>
+                                                <strong id="lotPremaprox"></strong><br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if isMobile %}
+                <div class="row "> 
+                    <div class="large-12 medium-12 small-12 columns " style="margin: 20px 0px;">
+                        <div class="separador"></div>
+                        <div class="show-for-small-only banner300x50" >
+                            <div id="sas_28425" class="gmad-top"></div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if stores | length > 0 %}
+                <div class="row" style="margin-top:50px"> 
+                    <div class="large-12 medium-12 small-12 columns ">
+                        <div class="section-header">Lugares relacionados cerca</div>
+                    </div>
+                    {# {% for sto in stores %}
+                        <div class="large-3 medium-3 small-6 columns ">
+                            {% set stoloc = (sto.idr * 10000) + sto.ids %}
+                            <a href="{{path('comercio', {'id': 'LOC' ~ stoloc, 'comercioNombre': urlize(sto.nam)}) }}" class="store-card">
+                                {% if sto.ims | length > 0 %}
+                                    <picture>
+                                        <source data-srcset="{{sto.ims}}" type="image/webp"/>
+                                        <source data-srcset="{{sto.ims}}" type="image/png"/>
+                                        <img class="lazyload ancho-total" data-src="{{sto.ims}}"
+                                            alt="{{sto.nam}}"  style="background-color:transparent"
+                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                    </picture>
+                                {% else %}
+                                    <picture>
+                                        <source data-srcset="{{ app.request.basepath }}/img/noims2.webp" type="image/webp"/>
+                                        <source data-srcset="{{ app.request.basepath }}/img/noims2.png" type="image/png"/>
+                                        <img class="lazyload ancho-total" data-src="{{ app.request.basepath }}/img/noims2.png"
+                                            alt="{{sto.nam}}" style="background-color:transparent"
+                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                    </picture>
+                                {% endif %}
+                                <div style="padding:5px;">
+                                    <h4><strong>{{sto.nam}}</strong></h4>
+                                    <h5>{{sto.adr}}</h5>
+                                    <h6>{{sto.znam}}</h6>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %} #}
+                    <div class="homecolgrid" >
+                      {% for sto in stores %}
+                        {% set cloc = (sto.idr * 10000) + sto.ids %}
+                        <a href="{{path('comercio', {'id': 'LOC' ~ cloc, 'comercioNombre': urlize(sto.nam)}) }}" class="homecolbox">
+                          {% if sto.ims | length == 0 %}
+                              <picture >
+                                  <source type="image/webp" data-srcset="{{ app.request.basepath }}/img/{{BRANDNOIMS}}.webp">
+                                  <source type="image/png" data-srcset="{{ app.request.basepath }}/img/{{BRANDNOIMS}}.png">
+                                  <img class="lazyload"  data-src="{{ app.request.basepath }}/img/{{BRANDNOIMS}}.png" alt="{{sto.nam}}">
+                              </picture>
+                          {% else %}
+                              <picture >
+                                  <source type="image/webp" data-srcset="{{sto.ims | asWebp}}">
+                                  <source type="image/png" data-srcset="{{sto.ims}}">
+                                  <img class="lazyload" data-src="{{sto.ims}}" alt="{{sto.nam}}">
+                              </picture>
+                          {% endif %}
+                          <div style="padding:10px">
+                            <h4>{{sto.nam}}</h4>
+                            <h5>{{sto.adr}}</h5>
+                            <h6>{{sto.znam}}</h6>
+                          </div>
+                        </a>
+                      {% endfor %}
+                    </div>
+                </div> 
+            {% endif %}
+            {% if isMobile %}
+                <div class="row "> 
+                    <div class="large-12 medium-12 small-12 columns " style="margin: 20px 0px;">
+                        <div class="show-for-small-only banner300x50" >
+                            {# {{ sasTag(sasSpage, 'bottom') | raw }} #}
+                            <div id="sas_28427" class="gmad-top"></div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <aside class="large-4 medium-4 small-12 columns" >
+            {% if not isMobile %}
+                <div class="banner-recuadro">
+                    {# {{ sasTag(sasSpage, 'right') | raw }} #}
+                    <div id="sas_27528" class="gmad-desktop"></div>
+                </div>
+                <div class="separador"></div>
+                {{ render(path('listadoDestacados')) }}
+                <div class="separador"></div>
+                <div class="banner-recuadro">
+                    {# {{ sasTag(sasSpage, 'right1') | raw }} #}
+                    <div id="sas_27838" class="gmad-desktop"></div>
+                </div>
+            {% else %}
+                {{ render(path('listadoDestacados')) }}
+            {% endif %}
+            {# {% include 'components/facebook.html.twig'%} #}
+        </aside>
+    </div>
+    
+    {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'a'} %}
+{% endblock deferredCss %}

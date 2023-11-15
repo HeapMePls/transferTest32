@@ -1,0 +1,48 @@
+{% extends ('components/listadoPromocionesDefault.html.twig') %}
+
+{% block body %}
+    <div class="large-12 medium-12 columns widget-promocion promobanco">
+        {% block elements %}
+            <ul>
+                {% if isMobile() %}
+                <li class="show-for-small-only banner300x50">
+                    {{ sasTag(app.request.get('sasSpage'), 'mobile_top') | raw }}                       
+                </li>
+                {% endif %}    
+                
+                {% for promoClave, promoInfo in promociones %}
+                    {% for localClave, localInfo in promoInfo.stores %}
+                        {% if promoInfo.stores | length > 1 and promoInfo.name != '' or promoInfo.stores | length <= 1 and comercio != '' %}
+                        <li >
+                            <a href="{{ (promoInfo.stores | length > 1)  ?  path('multilocal', {'promocionNombre': urlize(promoInfo.name), 'promocionId': promoInfo.idp}) : path('comercio', {'id': 'PID' ~ pid, 'comercioNombre': urlize(comercio)}) }}">
+                                <div class="imagen">
+                                    <img width="185" height="110" src="{{ promoInfo.imp | default(app.request.basepath ~ '/img/beneficio_default.png') }}" alt="{{ localInfo.name }}">
+                                </div>
+                                <div class="titulo">{{ localInfo.name | upper }}</div>
+                                <div class="informacion">{{ localInfo.dsc }}</div>
+                                <div class="ico-tarjeta">
+                                    <img width="30" src="{{ promoInfo.sponsor.ics | default(app.request.basepath ~ '/img/local_default.png') }}">
+                                </div>
+                                <div class="descripcion"></div>
+                                <div class="descripcion">{{ promoInfo.dsc }}</div>
+                                <div class="ver-oferta">Ver Oferta</div>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if isMobile() and loop.index is divisible by(3) and not loop.last %}
+                        <li class="show-for-small-only banner300x50">
+                            {{ sasTag(app.request.get('sasSpage'), 'mobile_middle') | raw }}                                  
+                        </li>
+                        {% endif %}                           
+                    {% endfor %}
+                {% endfor %}
+                
+                {% if isMobile() %}
+                <li class="show-for-small-only banner300x50">
+                    {{ sasTag(app.request.get('sasSpage'), 'mobile_bottom') | raw }}                    
+                </li>
+                {% endif %}                
+            </ul>
+        {% endblock elements %}
+    </div>
+{% endblock body %}

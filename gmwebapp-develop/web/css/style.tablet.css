@@ -1,0 +1,19 @@
+@media only screen and (min-width: 40.063em) and (max-width: 64em) {
+  /*Listado Promociones*/
+  .listado-promociones ul li {width:auto;}
+  .listado-promociones {height: auto;padding-bottom: 0.8em;width: 100%;}
+  .promociones .titulo {float:left;width:50%;height: 0;text-align: left;}
+
+  /*Modulos Zona, Rubros, Promociones*/
+  .zona .callout.panel.zona {padding:0.8rem;}
+
+  /*Listado comercio*/
+  .listado-comercios ul li {margin-top:0.5em;}
+
+  /*Todo los rubros*/
+  .listado-zona.todos-los-rubros ul li {width:33%;}
+
+  /*Cartelera*/
+  .floating-poster{width:200px;top:-250px;}
+  .ficha-tabs{margin-top: 80px;}
+}

@@ -1,0 +1,21 @@
+{% if comercio.attr is defined and comercio.attr.list | length > 0 %}
+    <div class="u-box-cntr boxedlines" >
+      <div class="titulo-big">Informaci&oacute;n adicional</div>
+      <div class="boxbody attr-cntr">
+        {% for categ in comercio.attr.list %}
+          <div class="row" style="margin: 0px 0px 20px 0px;">
+            {% for attr in categ.attrs %}
+              <div class="{% if isMobile %}large-4 medium-4 small-6 {% else %} large-12 {% endif %} columns" style="position: relative;margin-top: 9px;">
+                <div class="attr-lbl">{{attr.nam}}</div>
+                {% if attr.typ == 'BOOLEAN' %}
+                  <div class="attr-val">SI</div>
+                {% else %}
+                  <div class="attr-val">{{attr.val}}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+{% endif %}

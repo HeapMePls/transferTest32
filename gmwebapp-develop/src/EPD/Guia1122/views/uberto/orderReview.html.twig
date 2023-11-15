@@ -1,0 +1,43 @@
+{% extends ('layout.html.twig') %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+      <style>
+          {{ source( '_inlinecss/'~BRANDCODE~'/c-ov'~filesSignature~'.css') }}
+      </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %} Reseña | {{BRAND}}{% endblock pageTitle %}
+
+{% block metas %}
+    <meta name="ROBOTS" content="NOINDEX" />
+{% endblock metas %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="large-6 large-offset-3 medium-10 medium-offset-1 small-12">
+      <div class="row u-box-cntr" style="background-color: #FFF;">
+        <div class="large-12 medium-12 small-12 columns">
+
+          {% include 'components/uberto/orderReview.html.twig' with {'result':result} %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  {% include 'components/footer.html.twig' %}
+
+{% endblock content %}

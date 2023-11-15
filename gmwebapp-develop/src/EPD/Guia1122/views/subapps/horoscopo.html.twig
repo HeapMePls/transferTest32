@@ -1,0 +1,326 @@
+{% extends ('layout.html.twig') %}
+
+{% set isMobile = isMobile() %}
+{% block admConfigHead %} 
+    googletag.cmd.push(function() {
+        {% if isMobile %}
+        googletag.defineSlot('{{ADS_SLOT_TOP}}', [[320, 100],[300, 100],[320, 50]], 'sas_27839').addService(googletag.pubads());
+        googletag.defineSlot('{{ADS_SLOT_BOTTOM}}', [[320, 100],[300, 100],[320, 50]], 'sas_28427').addService(googletag.pubads());
+        {% else %}
+        googletag.defineSlot('{{ADS_SLOT_RIGHT}}', [[300,250]], 'sas_27528').addService(googletag.pubads());
+        googletag.defineSlot('{{ADS_SLOT_RIGHT1}}', [[300,250]], 'sas_27747').addService(googletag.pubads());
+        {% endif %}
+        googletag.pubads().setTargeting('Channel', 'web');
+        googletag.pubads().setTargeting('zona', '{{ lastzone }}');
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+    });
+{% endblock admConfigHead %}
+{% block admConfigBody %} 
+    <script>
+        {% if isMobile %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27839'); 
+                googletag.display('sas_28427'); 
+            });
+        {% else %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27528'); 
+                googletag.display('sas_27747'); 
+            });
+        {% endif %}
+    </script>
+{% endblock admConfigBody %} 
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-ho'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %} Horóscopo de hoy, conoce las preddciones de tu signo{% endblock pageTitle %}
+
+{% block metas %}
+    <link rel="canonical" href="https:{{ url('horoscopo', {}, true) }}"/>
+    <meta name="description" content="Conocé el destino de tu signo para hoy con el horoscopo. Las mejores predicciones de forma rápida y sencilla. Aprovechá tu futuro." />
+    <meta name="keywords" content="horoscopo, prediccion, signos, futuro" />
+    <meta name="robots" content="index, all" />
+    <meta name="DC.title" content="{{BRAND}}" />
+    <meta name="publisher" content="{{BRAND}}" />
+    <meta name="language" content="es" />
+    <meta name="distribution" content="global"/>
+{% endblock metas %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block content %}
+    <div class="row">
+        <div class="large-8 medium-8 small-12 columns u-box-cntr" style="margin-top:15px;">
+            <div class="row">
+                <div class="large-12 medium-12 small-12 columns text-center" >
+                    <h1 class="section-header">Horóscopo de hoy</h1>
+                    <h2 class="section-subheader">Conoce tu destino para hoy con el horoscopo</h2>
+                </div>
+                <div class="small reveal shrink" id="modalPrediction" data-reveal>
+                    <div class="large-12 medium-12 small-12 text-center">
+                        <img id="iconPrediction" src="" style="width:100px;background-color:transparent" alt="prediccion"><br>
+                        <span style="font-size:24px;color:#159DE1;" id="signName"></span>
+                    </div>
+                    <p id="textPrediction" style="font-size: 18px;background-color: #ece9e9;color: #6d6d6d;padding: 15px;border-radius: 4px;"></p>
+                    <div class="large-12 medium-12 small-12 text-center">
+                        <a class="button radius primary small-expanded" data-close>Cerrar</a>
+                    </div>
+                    <button class="close-button" data-close aria-label="Close modal" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="large-3 medium-3 small-4 columns contBtnHor">
+                    <a class="u-box-cntr boxedlines btnHor" >
+                        <div class="text-center">
+                            <img class="lazy" src="{{ app.request.basepath }}/img/horoscopo/aries.svg" style="width:100px;background-color:transparent" alt="Aries">
+                        </div>
+                        <div class="signoTxt">
+                            <h3 class="signo">Aries</h3>
+                            <p>20 Mar - 18 Abr</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="large-3 medium-3 small-4 columns contBtnHor">
+                    <a  class="u-box-cntr boxedlines btnHor">
+                        <div class="text-center">
+                            <img class="lazy" src="{{ app.request.basepath }}/img/horoscopo/tauro.svg" style="width: 100px;background-color:transparent" alt="Tauro">
+                        </div>
+                        <div class="signoTxt">
+                            <h3 class="signo">Tauro</h3>
+                            <p>19 Abr - 20 May</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="large-3 medium-3 small-4 columns contBtnHor">
+                    <a  class="u-box-cntr boxedlines btnHor">
+                        <div class="text-center">
+                            <img class="lazy" src="{{ app.request.basepath }}/img/horoscopo/geminis.svg" style="width: 100px;background-color:transparent" alt="Geminis">
+                        </div>
+                        <div class="signoTxt">
+                            <h3 class="signo">Geminis</h3>
+                            <p>21 May - 20 Jun</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="large-3 medium-3 small-4 columns contBtnHor">
+                    <a  class="u-box-cntr boxedlines btnHor">
+                        <div class="text-center">
+                            <img class="lazy" src="{{ app.request.basepath }}/img/horoscopo/cancer.svg" style="width: 100px;background-color:transparent" alt="Cancer">
+                        </div>
+                        <div class="signoTxt">
+                            <h3 class="signo">Cancer</h3>
+                            <p>21 Jun - 21 Jul</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="large-3 medium-3 small-4 columns contBtnHor">
+                    <a  class="u-box-cntr boxedlines btnHor">
+                        <div class="text-center">
+                            <img class="lazy" src="{{ app.request.basepath }}/img/horoscopo/leo.svg" style="width: 100px;background-color:transparent" alt="Leo">
+                        </div>
+                        <div class="signoTxt">
+                            <h3 class="signo">Leo</h3>
+                            <p>22 Jul - 22 Ago</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="large-3 medium-3 small-4 columns contBtnHor">
+                    <a  class="u-box-cntr boxedlines btnHor">
+                        <div class="text-center">
+                            <img class="lazy" src="{{ app.request.basepath }}/img/horoscopo/virgo.svg" style="width: 100px;background-color:transparent" alt="Virgo">
+                        </div>
+                        <div class="signoTxt">
+                            <h3 class="signo">Virgo</h3>
+                            <p>23 Ago - 21 Set</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="large-3 medium-3 small-4 columns contBtnHor">
+                    <a  class="u-box-cntr boxedlines btnHor">
+                        <div class="text-center">
+                            <img class="lazy" src="{{ app.request.basepath }}/img/horoscopo/libra.svg" style="width: 100px;background-color:transparent" alt="Libra">
+                        </div>
+                        <div class="signoTxt">
+                            <h3 class="signo">Libra</h3>
+                            <p>22 Set - 22 Oct</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="large-3 medium-3 small-4 columns contBtnHor">
+                    <a  class="u-box-cntr boxedlines btnHor">
+                        <div class="text-center">
+                            <img class="lazy" src="{{ app.request.basepath }}/img/horoscopo/escorpio.svg" style="width: 100px;background-color:transparent" alt="Escorpio">
+                        </div>
+                        <div class="signoTxt">
+                            <h3 class="signo">Escorpio</h3>
+                            <p>23 Oct - 21 Nov</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="large-3 medium-3 small-4 columns contBtnHor">
+                    <a  class="u-box-cntr boxedlines btnHor">
+                        <div class="text-center">
+                            <img class="lazy" src="{{ app.request.basepath }}/img/horoscopo/sagitario.svg" style="width: 100px;background-color:transparent" alt="Sagitario">
+                        </div>
+                        <div class="signoTxt">
+                            <h3 class="signo">Sagitario</h3>
+                            <p>22 Nov - 21 Dic</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="large-3 medium-3 small-4 columns contBtnHor">
+                    <a  class="u-box-cntr boxedlines btnHor">
+                        <div class="text-center">
+                            <img class="lazy" src="{{ app.request.basepath }}/img/horoscopo/capricornio.svg" style="width: 100px;background-color:transparent" alt="Capricornio">
+                        </div>
+                        <div class="signoTxt">
+                            <h3 class="signo">Capricornio</h3>
+                            <p>22 Dic - 19 Ene</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="large-3 medium-3 small-4 columns contBtnHor">
+                    <a  class="u-box-cntr boxedlines btnHor">
+                        <div class="text-center">
+                            <img class="lazy" src="{{ app.request.basepath }}/img/horoscopo/acuario.svg" style="width: 100px;background-color:transparent" alt="Acuario">
+                        </div>
+                        <div class="signoTxt">
+                            <h3 class="signo">Acuario</h3>
+                            <p>20 Ene - 18 Feb</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="large-3 medium-3 small-4 columns contBtnHor">
+                    <a  class="u-box-cntr boxedlines btnHor">
+                        <div class="text-center">
+                            <img class="lazy" src="{{ app.request.basepath }}/img/horoscopo/piscis.svg" style="width: 100px;background-color:transparent" alt="Piscis">
+                        </div>
+                        <div class="signoTxt">
+                            <h3 class="signo">Piscis</h3>
+                            <p>19 Feb - 19 Mar</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% if isMobile %}
+                <div class="row "> 
+                    <div class="large-12 medium-12 small-12 columns ">
+                        <div class="separador"></div>
+                        <div class="banner300x50">
+                            <div id="sas_27839" class="gmad-top"></div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if stores | length > 0 %}
+                <div class="row" style="margin-top:50px">
+                    <div class="large-12 medium-12 small-12 columns" >
+                        <div class="section-header">Predicciones cerca</div>
+                        <div class="row align-stretch">
+                            {# {% for sto in stores %}
+                                <div class="large-3 medium-3 small-6 columns ">
+                                    {% set stoloc = (sto.idr * 10000) + sto.ids %}
+                                    <a href="{{path('comercio', {'id': 'LOC' ~ stoloc, 'comercioNombre': urlize(sto.nam)}) }}" class="store-card">
+                                        {% if sto.ims | length > 0 %}
+                                            <picture>
+                                                <source data-srcset="{{sto.ims | asWebp }}" type="image/webp"/>
+                                                <source data-srcset="{{sto.ims}}" type="image/png"/>
+                                                <img class="lazyload ancho-total" data-src="{{sto.ims}}" 
+                                                    alt="{{sto.nam}}" 
+                                                    src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                            </picture>
+                                        {% else %}
+                                            <img src="{{ app.request.basepath }}/img/noims.webp" class="ancho-total" alt="{{sto.nam}}">
+                                        {% endif %}
+                                        <div style="padding:5px;">
+                                            <h4><strong>{{sto.nam}}</strong></h4>
+                                            <h5>{{sto.adr}}</h5>
+                                            <h6>{{sto.znam}}</h6>
+                                        </div>
+                                    </a>
+                                </div>
+                            {% endfor %} #}
+                            <div class="homecolgrid" >
+                              {% for sto in stores %}
+                                {% set cloc = (sto.idr * 10000) + sto.ids %}
+                                <a href="{{path('comercio', {'id': 'LOC' ~ cloc, 'comercioNombre': urlize(sto.nam)}) }}" class="homecolbox">
+                                  {% if sto.ims | length == 0 %}
+                                      <picture >
+                                          <source type="image/webp" data-srcset="{{ app.request.basepath }}/img/{{BRANDNOIMS}}.webp">
+                                          <source type="image/png" data-srcset="{{ app.request.basepath }}/img/{{BRANDNOIMS}}.png">
+                                          <img class="lazyload"  data-src="{{ app.request.basepath }}/img/{{BRANDNOIMS}}.png" alt="{{sto.nam}}">
+                                      </picture>
+                                  {% else %}
+                                      <picture >
+                                          <source type="image/webp" data-srcset="{{sto.ims | asWebp}}">
+                                          <source type="image/png" data-srcset="{{sto.ims}}">
+                                          <img class="lazyload" data-src="{{sto.ims}}" alt="{{sto.nam}}">
+                                      </picture>
+                                  {% endif %}
+                                  <div style="padding:10px">
+                                    <h4>{{sto.nam}}</h4>
+                                    <h5>{{sto.adr}}</h5>
+                                    <h6>{{sto.znam}}</h6>
+                                  </div>
+                                </a>
+                              {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if isMobile %}
+                <div class="row "> 
+                    <div class="large-12 medium-12 small-12 columns ">
+                        {# <div class="show-for-small-only banner300x50">
+                            {{ sasTag(sasSpage, 'bottom') | raw }}
+                        </div> #}
+                        <div class="banner300x50">
+                            <div id="sas_28427" class="gmad-top"></div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <aside class="large-4 medium-4 small-12 columns">
+            {% if not isMobile %}
+                <div class="banner-recuadro">
+                    <div id="sas_27528" class="gmad-desktop"></div>
+                </div>
+                <div class="separador"></div>
+                {{ render(path('listadoDestacados')) }}
+                <div class="separador"></div>
+                <div class="banner-recuadro">
+                    <div id="sas_27747" class="gmad-desktop"></div>
+                </div>
+            {% else %}
+                {{ render(path('listadoDestacados')) }}
+            {% endif %}
+        </aside>
+    </div>
+
+    {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'ho'} %}
+{% endblock deferredCss %}

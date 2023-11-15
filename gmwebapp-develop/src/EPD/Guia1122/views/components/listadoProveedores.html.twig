@@ -1,0 +1,35 @@
+{% block body %}
+    <div class="row promociones">
+        <div class="large-4 medium-12 columns sin-bordes right">
+            <div class="separador show-for-medium-down"></div>
+            <div class="callout panel promociones">
+                <p class="titulo">Promociones</p>
+                <a href="{{ url('promocionesTodas') }}"><p class="btn-promotablet show-for-medium-only">Ver todas las promociones</p></a>
+            </div>
+            <div class="listado-promociones">
+                {% block elements %}
+                    <ul>
+                        {% for proveedor in proveedores %}
+                            <li>
+                                {% if proveedor.name != '' %}
+                                <a href="{{ path('sponsor', {'sponsorNombre': urlize(proveedor.name), 'sponsorId': proveedor.idr }) }}">
+                                    <img src="{{ proveedor.ics | default(app.request.basepath ~ '/img/local_default.png') }}" alt="{{ proveedor.name }}" width="85" height="85"/>
+                                </a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                        {% block botonVerPromociones %}
+                            <li class="boton">
+                                <a href="{{ url('promocionesTodas') }}">
+                                    <div class="btn-ver-todas-las-promociones show-for-small-up hide-for-medium-only">
+                                        Ver todas las promociones
+                                    </div>
+                                </a>
+                            </li>
+                        {% endblock botonVerPromociones %}
+                    </ul>
+                {% endblock elements %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

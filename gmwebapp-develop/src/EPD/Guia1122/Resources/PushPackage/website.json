@@ -1,0 +1,8 @@
+{  
+    "websiteName": "GuíaMóvil 1122",  
+    "websitePushID": "web.uy.com.1122",  
+    "allowedDomains": ["https://1122.com.uy", "https://wgm.tingelmar.com"],  
+    "urlFormatString": "https://1122.com.uy/%@/%@/%@",  
+    "authenticationToken": "{AUTHTOKEN}",  
+    "webServiceURL": "https://wgm.tingelmar.com"  
+} 

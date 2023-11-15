@@ -1,0 +1,46 @@
+{% extends ('layout.html.twig') %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-h'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %}Rubros | {{ parent() }}{% endblock pageTitle %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block content %}
+    <div class="row">
+        <div class="large-12 medium-12 columns sin-bordes todos-los-rubros">
+            <ul>
+                {% for id, rubro in rubrosArray %}
+                    <li>
+                        {% if rubro != '' %}
+                        <a href="{{ path('rubro', {'rubroNombre': urlize(rubro), 'rubroId': id }) }}" title="{{ rubro | title }}">
+                            {{ rubro | title }}
+                        </a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    {% include 'components/footer.html.twig' %}
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'tlr'} %}
+{% endblock deferredCss %}

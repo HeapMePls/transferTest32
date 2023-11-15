@@ -1,0 +1,157 @@
+{% extends ('layout.html.twig') %}
+{% set isMobile = isMobile() %}
+
+{% block metas %}
+    <meta name="robots" content="noindex">
+{% endblock metas %}
+
+{% block pageTitle %}
+Parece que no pudimos encontrar {{rubro}} en {{zona}}
+{% endblock pageTitle %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-h'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block search %}
+{% endblock search %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block content %}
+
+    {# ICON #}
+    <div class="row " style="margin-top: -10px;background-color: #FFF;padding: 20px;">
+        <div class="large-4 medium-4 small-12 text-center" >
+            <img src="{{ app.request.basepath }}/img/error404.png" alt="Upps">
+        </div>
+        <div class="large-8 medium-8 small-12 text-center" >
+            <div style="height: 100%;display: flex;flex-direction: column;justify-content: center;">
+                <h4>Lo buscamos bastante pero no lo pudimos encontrar</h4>
+                <p style="color: #777;">Nuestros agentes ya fueron avisados, y asi como pasen por <strong>{{zona}}</strong> revisaran si encuentran <strong>{{rubro}}</strong> por ah&iacute;.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row ">
+        <div class="large-12 medium-12 small-12 text-center" style="padding: 20px;display: flex;flex-direction: column;align-items: center;">
+            <p >Por favor, intenta de nuevo aquí:</p>        
+            {% include 'components/search.html.twig' with {'showAboveButtons':false, 'class': 'large-4 medium-4 small-12 columns camposbuscador rubro'} %}
+        </div>
+    </div>
+
+    <div class="row ">
+        <div class="large-12 medium-12 small-12 text-center columns section-header">
+            Encuentra tambien
+        </div>
+        <div class="large-3 medium-3 small-6 columns">
+            <div>Lugares y Servicios</div>
+            <ul style="list-style: none;font-size: 13px;text-align: left;margin-left: 10px;">
+                <li><a href="/buscar/bares">Bar</a></li>
+                <li><a href="/buscar/bancos">Bancos</a></li>
+                <li><a href="/buscar/cajeros">Cajeros</a></li>
+                <li><a href="/buscar/cerrajerias">Cerrajeria</a></li>
+                <li><a href="/buscar/delivery">Delivery</a></li>
+                <li><a href="/buscar/estaciones-de-servicio">Estaciones</a></li>
+                <li><a href="/buscar/farmacias">Farmacias</a></li>
+                <li><a href="/buscar/gomerias">Gomerias</a></li>
+                <li><a href="/buscar/hoteles">Hoteles</a></li>
+                <li><a href="/buscar/restaurantes">Restaurantes</a></li>
+                <li><a href="/buscar/talleres-mecanicos">Talleres</a></li>
+                <li><a href="/buscar/electricistas">Electricistas</a></li>
+                <li><a data-open="moreCategs">Más...</a></li>
+            </ul>
+        </div>
+        <div class="large-3 medium-3 small-6 columns">
+            <div>Promociones</div>
+            <ul style="list-style: none;font-size: 13px;text-align: left;margin-left: 10px;">
+                <li><a href="/promociones-y-ofertas/0/0/vestimenta/3">Vestimenta</a></li>
+                <li><a href="/promociones-y-ofertas/0/0/gastronomia/1">Gastronomia</a></li>
+                <li><a href="/promociones-y-ofertas/0/0/turismo-y-tiempo-libre/4">Turismo y Tiempo Libre</a></li>
+                <li><a href="/promociones-y-ofertas/0/0/hogar-y-electrodomesticos/5">Hogar y Electrodomesticos</a></li>
+                <li><a href="/promociones-y-ofertas/0/0/estetica-y-bienestar/2">Estetica y Bienestar</a></li>
+                <li><a href="/promociones-y-ofertas/0/0/infantil/8">Infantil</a></li>
+                <li><a href="/promociones-y-ofertas/0/0/tecnologia/6">Tecnologia</a></li>
+                <li><a href="/promociones-y-ofertas/0/0/otros-servicios/9">Otros servicios</a></li>
+                <li><a href="/promociones-y-ofertas/0/0/otros-productos/10">Otros productos</a></li>
+                <li><a href="/promociones-y-ofertas">Más...</a></li>
+            </ul>
+        </div>
+        {% if COUNTRY == 'uy' %}
+          <div class="large-3 medium-3 small-6 columns">
+              <div>Más información</div>
+              <ul style="list-style: none;font-size: 13px;text-align: left;margin-left: 10px;">
+                  <li><a href="/azar">Azar</a></li>
+                  <li><a href="/horoscopo">Horoscopo</a></li>
+                  <li><a href="/cartelera/-/0/0">Cartelera</a></li>
+              </ul>
+          </div>
+        {% endif %}
+        <div class="large-3 medium-3 small-6 columns">
+            <div>Zonas principales</div>
+            <ul style="list-style: none;font-size: 13px;text-align: left;margin-left: 10px;">
+              {% if COUNTRY == 'uy' %}
+                <li><a href="{{ path('zona', {'zonaNombre': 'montevideo', 'zonaId': 'Z01'}) }}">Montevideo</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'canelones', 'zonaId': 'Z03'}) }}">Canelones</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'salto', 'zonaId': 'Z15'}) }}">Salto</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'colonia', 'zonaId': 'Z05'}) }}">Colonia</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'maldonado', 'zonaId': 'Z10'}) }}">Maldonado</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'punta-del-este', 'zonaId': 'Z10320'}) }}">Punta del Este</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'paysandu', 'zonaId': 'Z11'}) }}">Paysandu</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'san-jose', 'zonaId': 'Z16'}) }}">San Jose</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'ciudad-de-la-costa', 'zonaId': 'Z03000'}) }}">Ciudad de la cosa</a></li>
+              {% else %}
+                <li><a href="{{ path('zona', {'zonaNombre': 'asuncion', 'zonaId': 'Z20'}) }}">Asunción</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'concepcion', 'zonaId': 'Z01'}) }}">Concepción</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'san-pedro', 'zonaId': 'Z02'}) }}">San Pedro</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'cordillera', 'zonaId': 'Z02'}) }}">Cordillera</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'guaira', 'zonaId': 'Z04'}) }}">Guairá</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'caaguazu', 'zonaId': 'Z05'}) }}">Caaguazú</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'caazapa', 'zonaId': 'Z06'}) }}">Caazapá</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'Itapua', 'zonaId': 'Z07'}) }}">Itapúa</a></li>
+                <li><a href="{{ path('zona', {'zonaNombre': 'misiones', 'zonaId': 'Z08'}) }}">Misiones</a></li>
+              {% endif %}
+                <li><a data-open="moreZones">Más...</a></li>
+            </ul>
+        </div>
+    </div>
+        
+    <div class="reveal" id="moreZones" data-reveal>
+        <div class="section-header section-header-left">Zonas principales</div>
+        <div>
+            {{ render(path('listadoZonas', {'layout': 'Default'})) }}
+        </div>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="reveal" id="moreCategs" data-reveal>
+        <div class="section-header section-header-left">Categorias principales</div>
+        <div>
+            {% include 'components/listadoRubrosPrincipales.html.twig' %}
+        </div>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    {% include 'components/footer.html.twig' %}
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'sr'} %}
+{% endblock deferredCss %}

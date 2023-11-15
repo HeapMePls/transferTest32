@@ -1,0 +1,40 @@
+{% macro show(url, pagina, cantidadPaginas,verTodasPaginas,maxPaginasPrimeras) %}
+    {% set parametroVerTodasPaginas ='' %}
+    {% if (verTodasPaginas == 'todas') %}
+        {% set parametroVerTodasPaginas='&verTodasPaginas=todas' %}
+    {% endif %}
+    {% if (cantidadPaginas > 1) %}
+        <ul class="pagination" role="navigation" aria-label="Pagination">
+            {% if (pagina > 0) %}
+                {% if (pagina == 1) %}
+                    {# <li class="pagination-previous disabled">Anterior</li> #}
+                {% else %}
+                    <li class="pagination-previous">
+                        <a href="{{ (pagina == 1) ? 'javascript: void(0);' :  url ~ '?pagina=' ~  (pagina - 1) ~ parametroVerTodasPaginas  }}">Anterior</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+            {% if (pagina > 0) %}
+                {% for i in 1..cantidadPaginas %}
+                    <li class="{{ pagina == i ?  'current' : '' }}">
+                        <a href="{{ url ~ '?pagina=' ~ i ~ parametroVerTodasPaginas }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+            {%endif %}
+            {% if (pagina > 0) %}
+                {% if pagina == cantidadPaginas %}
+                    {# <li class="pagination-next disabled">Siguiente</li> #}
+                {% else %}
+                    <li class="pagination-next" style="display:inline-block">
+                        <a href="{{ (pagina == cantidadPaginas) ? 'javascript: void(0);' : url ~  '?pagina=' ~ (pagina + 1) ~ parametroVerTodasPaginas }}">Siguiente</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+            {% if (verTodasPaginas == '0') %}
+                <li class="hide-for-small-only"><a href="{{ url ~ '?verTodasPaginas=todas' }}">Ampliar</a></li>
+            {% else %}
+                <li class="hide-for-small-only"><a href="{{ url ~ '?pagina=1' }}">Ver {{ maxPaginasPrimeras }} páginas</a></li>
+            {% endif %}
+        </ul>
+    {% endif %}
+{% endmacro %}

@@ -1,0 +1,368 @@
+{% extends ('layout.html.twig') %}
+
+{% block pageTitle %}Solicitud de presupuesto a {{comercio.nam}} | {{BRAND}}{% endblock pageTitle %}
+
+{% block custom_stylesheets %}
+  {% if IS_PRODUCTION %} 
+    <style>
+        {{ source( '_inlinecss/'~BRANDCODE~'/c-qr'~filesSignature~'.css') }}
+    </style>
+  {% endif %}
+  <link rel="stylesheet" href="{{ app.request.basepath }}/js/vendors/foundation-datepicker/foundation-datepicker.min.css" />
+{% endblock %}
+  
+{% block custom_javascript %}
+  <script src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block content %}
+
+  <div class="row">
+
+    <div class="large-4 medium-4 small-12 columns">
+      <div class="u-box-cntr boxedlines" style="padding-bottom:10px;text-align:center">
+          {% if comercio.ims | length > 0 %}
+              <img src="{{comercio.ims}}">
+              {% if comercio.ics | length > 0 %}
+                  <div class="u-box-cntr" style="margin: -15px 10px 10px 10px;text-align: center;padding: 5px 0px 0px 0px;">
+                      <div>
+                          <img src="{{comercio.ics}}" style="width: 80px;height: 80px;">
+                      </div>
+                      <div>
+
+              {% else %}
+                  <div class="u-box-cntr" style="margin: -15px 10px 10px 10px;-align: center;">
+                      <div>
+                          
+              {% endif %}
+          {% else %}
+              {% if comercio.ics | length > 0 %}
+                  <div style="text-align: center;padding: 5px;">
+                      <div>
+                          <img src="{{comercio.ics}}" style="width: 80px;height: 80px;">
+                      </div>
+                      <div>
+                          
+              {% else %}
+                  <div style="text-align: center;padding: 5px;">
+                      <div>
+                          
+              {% endif %}
+          {% endif %}
+                          
+            <h2 style="font-size: 19px;margin: 0px;">{{comercio.nam}}</h2>
+            <h3 style="font-size: 14px;line-height: 14px;display: block;margin: 0px;">{{ comercio.adr }} ({{comercio.znam}})</h3>
+            <p style="font-size: 14px;color: #777;margin: 0px;">{{comercio.phl}} {{comercio.phm}}</p>
+          </div>
+        </div>
+        <div style="padding:5px">
+          {% if comercio.avgRespTime != NULL %}
+            <div style="font-size: 13px;color: #4CAF50;">
+              En promedio contesta en {{comercio.avgRespTimeNice}}
+            </div>
+          {% endif %}
+          <div style="font-size: 13px;line-height: 15px;padding: 10px;color: #555;">
+            {{comercio.introText}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="large-6 medium-7 small-12 u-box-cntr boxedlines">
+      <form id="qrForm" name="qrForm" action="{{ path('uberto/quoteRequestPost', {'nam':urlize(comercio.nam),'idr': comercio.idr, 'ids': comercio.ids}) }}" method="post" class="u-quote-form" data-abide style="width: 98%;padding-left: 1%;">
+          {# DESCRIPCION GENERAL #}
+          <div class="row" >
+            <div class="large-12 medium-12 small-12 columns " style="text-align: center;">
+              <h1 style="float: none;text-transform: none;font-size: 17px;margin: 0px;">Solicitud de presupuesto</h1>
+              <div>
+                <p>Completa el siguiente formulario lo m&aacute;s que puedas para facilitar la precisi&oacute;n del presupuesto que {{comercio.nam}} pueda realizar.</p>
+              </div>
+            </div>
+            <div class="large-12 medium-12 small-12 columns ">
+              <h5 class="u-req-form-title"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Descripcion</h5>
+            </div>
+            <div class="large-12 medium-12 small-12 columns">
+              <textarea id="qrDesc" name="qrDesc" placeholder="Ingrese lo mas detallado posible sobre su solicitud de presupuesto para facilitar a la otra parte a entender sin problemas y dar un presupuesto mas acorde a la realidad." rows="7" required></textarea>
+              <div class="error">Por favor ingrese la descripcion.</div>
+            </div>
+          </div>
+          {# CUSTOMFIELDS #}
+          {% if customfields | length > 0 %}
+            <div class="row">
+              <div class="large-12 medium-12 small-12 columns ">
+                <h5 class="u-req-form-title"><i class="fa fa-asterisk" aria-hidden="true"></i> Datos adicionales</h5>
+                <div class="u-req-form-title-desc">Complete estos datos para brindar m&aacute;s informaci&oacute;n de forma de tener un presupuesto mas acertado</div>
+              </div>
+            </div>
+          {% endif %}
+          {% for cf in customfields %}
+            <div class="row">
+              <div class="large-11 large-offset-1 medium-11 medium-offset-1 small-11 small-offset-1 columns ">
+                {% if cf.type == 1 %}
+                  <input class="check-custom" id="qrcf-{{cf.type}}-{{cf.id}}" type="checkbox" name="qrcf-{{cf.type}}-{{cf.id}}" value="{{cf.label}}"><label for="qrcf-{{cf.type}}-{{cf.id}}">{{cf.label}} </label>
+                {% elseif cf.type == 2 %}
+                  <label style="font-weight:bold">{{cf.label}}</label>
+                  <fieldset class="u-option">
+                    {% for cfOption in cf.val %}
+                      <input type="radio" name="qrcf-{{cf.type}}-{{cf.id}}" id="qrcfval-{{cfOption.id}}" value="{{cfOption.val}}" ><label for="qrcfval-{{cfOption.id}}">{{cfOption.label}}</label>
+                    {% endfor %}
+                  </fieldset>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+
+          {# CAMERA #}
+          <div class="row" id="photosCntr">
+            <div class="large-12 medium-12 small-12 columns ">
+              <h5 class="u-req-form-title"><i class="fa fa-camera" aria-hidden="true"></i> Fotos <span> (opcional) </span></h5>
+              <div class="u-req-form-title-desc">Agregue fotos de lo que necesita o del problema que necesita solución</div>
+              <div id="photosList" style="display:table">
+              </div>
+            </div>
+            <div class="large-12 medium-12 small-12 columns ">
+              <div id="photosTake" class="button gmbutton secondary small">Tomar con la cámara</div>
+              <div id="photosAdd" class="button gmbutton secondary small" style="margin-left:10px">Cargar desde el dispositivo</div>
+            </div>
+            <div class="large-12 medium-12 small-12 columns ">
+              <div id="photosMaxMsg" style="display:none;font-size: 13px;line-height: 15px;padding: 15px;text-align: center;color: #777;">Puedes agregar un maximo de 4 fotos. Si lo deseas puedes cambiar alguna que no se vea bien.</div>
+              <input type="file" id="photoLoader" name="photoLoader" style="visibility:hidden;width:0;height:0px;">
+            </div>
+          </div>
+
+          {# AGENDA #}
+          <div class="row">
+            <div class="large-12 medium-12 small-12 columns ">
+              <h5 class="u-req-form-title"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> Agenda<span> (opcional) </span></h5>
+              <div class="u-req-form-title-desc">Indique para cuando necesita el servicio o trabajo para verificar la disponibilidad</div>
+              <fieldset class="u-option">
+                <input type="radio" name="qrScheduleType" id="qrScheduleType0" value="0" ><label for="qrScheduleType0">Urgente (cuanto antes)</label>
+                <input type="radio" name="qrScheduleType" id="qrScheduleType1" value="1" ><label for="qrScheduleType1">En el correr del dia</label>
+                <input type="radio" name="qrScheduleType" id="qrScheduleType2" value="2" ><label for="qrScheduleType2">En la semana</label>
+                <input type="radio" name="qrScheduleType" id="qrScheduleType3" value="3" ><label for="qrScheduleType3">En el mes</label>
+                <input type="radio" name="qrScheduleType" id="qrScheduleType4" value="4" ><label for="qrScheduleType4">Fecha especifica</label>
+              </fieldset>
+              <div class="date" id="dpMonths" 
+                data-date-format="dd/mm/yyyy" style="    display: none;width: 135px;margin: 0 auto;background-color: #e6e6e6;border: 1px solid #AAA;border-radius: 3px;padding-left:10px">
+                  <span class="prefix" style="display:inline-flex;width: 20px;background-color: #DDD;"><i class="fa fa-calendar"></i></span>
+                  <input placeholder="Clic aqui" type="text" readonly name="qrScheduleValue" id="qrScheduleValue"
+                    style="display:inline-flex;width: 100px;padding: 0px 10px;text-align: center;border: 0px;border-radius: 0px;margin: 0px;font-size: 13px;">	
+              </div>
+            </div>
+          </div>
+
+          {# UBICACION #}
+          <div class="row" style="margin-top:15px">
+            <div class="large-12 medium-12 small-12 columns " style="text-align: center;">
+              <h5 class="u-req-form-title"><i class="fa fa-map-marker" aria-hidden="true"></i> Su ubicacion</h5>
+              <div class="u-req-form-title-desc">Si la solicitud involucra un trabajo o prestacion de servicio en su domicilio ingrese su ubicacion aproximada, como calle y esquina o barrio. No es necesario ingresar la direccion exacta</div>
+              {% if userData.previousData  %}
+                <div id="qrLocationCntrLabel">
+                  <div style="width: auto;position: relative;margin: 0 auto;border: 1px solid #DDD;display: table;padding: 0px 10px;">
+                    <div style="font-size: 14px;text-align: left;margin: 10px;">
+                      <div style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;color: grey;">{{userData.lastAddress}}</div>
+                    </div>
+                  </div>
+                </div>
+                <a id='changeUserLocation' class="button small gmbutton" style='margin: 15px;'>Cambiar mi ubicaci&oacute;n</a>
+              {% endif %}
+              <div id="qrLocationCntrForm" style="display:{{ (userData.previousData == false) ? 'block' : 'none' }}">
+                <input id="qrLocation" name="qrLocation" type="text" placeholder="Su ubicacion aproximada (calles o barrio)" 
+                  required value="{{userData.lastAddress}}">
+                <div class="error">Por favor ingrese su ubicacion.</div>
+              </div>
+            </div>
+          </div>
+
+          {# DATOS DEL USUARIO #}
+          <div class="row">
+            <div class="large-12 medium-12 small-12 columns ">
+              <h5 class="u-req-form-title"><i class="fa fa-user" aria-hidden="true"></i> Sus datos</h5>
+              <div class="u-req-form-title-desc">Ingrese sus datos para que lo puedan contactar por m&aacute;s detalles</div>
+            </div>
+          </div>
+          {% if userData.previousData %}
+            <div class="row">
+              <div class="large-12 medium-12 small-12 columns " style="text-align: center;" id="qrUserDataLabel">
+                <div style="width: auto;position: relative;height: 92px;margin: 0 auto;border: 1px solid #DDD;display: table;padding: 0px 10px;">
+                  <div id="datosUsuario" style="font-size: 14px;text-align: left;margin: 10px 0px 10px 10px;">
+                    <div style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;color: grey;font-weight: 600;">{{userData.lastName}}</div>
+                    <div style='color: grey; display: inline;'>{{userData.lastPhone}}</div>
+                    <div style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;color: grey;">{{userData.lastEmail}}</div>
+                  </div>
+                </div>
+                <a id='changeUserData' class="button small gmbutton" style='margin: 15px;'>Cambiar mis datos</a>
+              </div>
+            </div>
+          {% endif %}
+          <div class="row" style="display:{{ (userData.previousData == false) ? 'flex' : 'none' }}" id="qrUserDataForm">
+              <div class="large-6 medium-6 small-12 columns ">
+                <div class="name-field">
+                  <label>Nombre
+                    <input id="qrUserName" name="qrUserName" type="text" placeholder="Su nombre" required
+                      value="{{ userData.lastName }}">
+                  </label>
+                  <div class="error">Por favor ingrese su nombre.</div>
+                </div>
+              </div>
+              <div class="large-6 medium-6 small-12 columns">
+                <div class="name-field">
+                  <label>Correo Electronico
+                    <input id="qrUserEmail" name="qrUserEmail" type="email" placeholder="Su direccion de correo electronico" required
+                      value="{{ userData.lastEmail }}">
+                  </label>
+                  <div class="error">Por favor ingrese su correo electronico. Es necesario para que podamos enviarle las respuestas a su casilla.</div>
+                </div>
+              </div>
+              <div class="large-6 medium-6 small-12 columns">
+                <div class="name-field">
+                  <label>Telefono
+                    <input id="qrUserTel" name="qrUserTel" type="tel" placeholder="Su telefono fijo o celular"
+                      value="{{ userData.lastPhone }}">
+                  </label>
+                  <div class="error">Por favor ingrese un numero de telefono valido.</div>
+                </div>
+              </div>
+          </div>
+          <div class="row">
+            <div class="large-12 medium-12 small-12 columns ">
+              <div style="font-size: 12px;line-height: 13px;text-align: center;color: #9E9E9E;"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Sus datos no ser&aacute;n revelados hasta que acepte un prespuesto.</div>
+            </div>
+          </div>
+
+          {# ENVIOS ADICIONALES #}
+          {% if relatedStores is defined and relatedStores | length > 0 %}
+            <div class="row">
+              <div class="large-12 medium-12 small-12 columns ">
+                <h5 class="u-req-form-title"><i class="fa fa-plus" aria-hidden="true"></i> Solicitudes adicionales</h5>
+                <div class="u-req-form-title-desc">Seleccione otros prestadores para tener mas presupuestos sobre su solicitud.</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="large-12 medium-12 small-12 columns ">
+                <fieldset style="text-align: right;">
+                  <label for="qrastoggle-all" style="font-size: 12px;">
+                    <input id="qrastoggle-all" name="qrastoggle-all" type="checkbox">
+                    Selecionar todos
+                  </label>
+                </fieldset>
+              </div>
+            </div>
+            <div class="row" id="qras-cntr">
+              {% for rStore in relatedStores %}
+                <div class="large-6 medium-6 small-6 columns ">
+                  <fieldset class="u-quote-form-addstore">
+                    <label for="qras-{{rStore.idr}}-{{rStore.ids}}" >
+                      <input id="qras-{{rStore.idr}}-{{rStore.ids}}" name="qras-{{rStore.idr}}-{{rStore.ids}}" type="checkbox">
+                      {% if rStore.ics | length > 0 %}
+                        <div style="position:absolute;left: 6px;top: 7px;">
+                          <img src="{{rStore.ics}}" style="width:40px;height:40px">
+                        </div>
+                      {% endif %}
+                      <div style="padding: 4px 25px 0px 52px;">
+                        <div style="font-size: 14px;line-height: 16px;">{{rStore.name}}</div>
+                        <div style="font-size: 12px;line-height: 14px;color: #777;">{{rStore.address}}</div>
+                        {% if rStore.avgRespTime != NULL %}
+                          <div style="font-size: 12px;color: #2196F3;line-height: 12px;">Contesta en promedio en {{rStore.avgRespTimeNice}}</div>
+                        {% endif %}
+                      </div>
+                    </label>
+                  </fieldset>
+                </div>
+              {% endfor %}
+            </div>
+            <div class="row">
+              <div class="large-12 medium-12 small-12 columns" style="text-align: center;color: #777;font-size: 13px;margin-top: 14px;">
+                <div id="qras-desc" data-store="{{comercio.nam}}">Enviaremos la solicitud solo a {{comercio.nam}}</div>
+              </div>
+            </div>
+          {% endif %}
+
+          {# NOTIFICACIONES #}
+          <div class="row" id="qrNotifyMeCntr" style="margin: 25px 0px 0px 0px;border-top: 1px solid #DDD;">
+            <fieldset class="large-12 medium-12 small-12 columns " style="padding-top: 10px;">
+              <table id="qrNotifyMe">
+                <tbody style="background-color: #EEE;border: 1px solid #DDD;cursor: pointer;">
+                  <tr>
+                    <td style="font-size: 20px;text-align:center;padding: 0px 0px 0px 13px;">
+                      <i class="fa fa-bell-o" aria-hidden="true"></i>
+                    </td>
+                    <td>
+                      {# <input id="qrNotifyMe" name="qrNotifyMe" type="checkbox"> #}
+                      <label for="qrNotifyMe" style="cursor: pointer;display: inline-block;line-height: 16px;max-width: 80%;vertical-align: bottom;">
+                        Enviarme notificaciones a este equipo cuando reciba una respuesta
+                      </label>
+                      <div id="qrNotifyMeDesc" style="font-size: 13px;"></div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </fieldset >
+            <div class="large-12 medium-12 small-12 columns ">
+              <div id="qrNotifyMeError1" data-closable class="alert callout small warning" style="display:none">
+                <p style="padding: 3px 24px 3px 3px;margin: 0px;">Para poder recibir notificaciones debe permitir a esta pagina que le envie notificaciones push. Cuando el navegador se lo pregunte, haga clic en Permitir.</p>
+                <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            </div>
+            <div class="large-12 medium-12 small-12 columns ">
+              <div id="qrNotifyMeError2" data-closable class="alert callout small warning" style="display:none">
+                <p style="padding: 3px 24px 3px 3px;margin: 0px;">No hemos podido registrarnos en su navegador para enviarle notificaciones. Intente nuevamente.</p>
+                <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {# ErrMsg #}
+          <div class="row" style="margin-top:15px;">
+            <div class="large-12 medium-12 small-12 columns ">
+              <div  style="font-size:12px;color: #F44336;border: 1px solid #F44336;padding: 5px;display:none" id="errMsg"></div>
+            </div>
+          </div>
+
+          {# ENVIO #}
+          <div class="row" style="padding-top: 20px;border-top: 1px solid #DDD;">
+            <div class="large-8 medium-8 small-12 columns" style="font-size: 11px;color: #777;text-align:center">
+              Al hacer click en "Enviar solicitud" usted acepta los términos y condiciones.
+            </div>
+            <div class="large-4 medium-4 small-12 columns" style="text-align:right">
+              <div class="g-recaptcha"
+                  {% if COUNTRY == 'uy' %}
+                    data-sitekey="6LcIPzwUAAAAAEAKqChvPCt0sx_y03vZM4GiiX5Y"
+                  {% else %}
+                    data-sitekey="6LfzeqEaAAAAAFmSgGiocTLX0ObFqJJ_JzXDpQHB"
+                  {% endif %}
+                  data-callback="quoteRequestSendRequest"
+                  data-size="invisible">
+              </div>
+              <button id="qrSubmit" class="button right small-expanded gmbutton">Enviar solicitud</button>
+            </div>
+          </div>
+
+      </form>
+    </div>
+  </div>
+
+  {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'qr'} %}
+{% endblock deferredCss %}

@@ -1,0 +1,146 @@
+{% extends ('layout.html.twig') %}
+
+{% block adsFilterTags %}sponsor={{ urlize(sponsorArray.sponsor.name) }}{% endblock adsFilterTags %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/c-gm-h'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %}Sponsor {{ sponsorArray.sponsor.name | title }} | {{ parent() }}{% endblock pageTitle %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block content %}
+
+    <div class="row">
+        
+        <div class="large-12 medium-12 columns sin-bordes">
+            <nav class="breadcrumbs sc" role="navigation" aria-label="breadcrumbs">
+                <ul>
+                    <li><a href="{{ path('home') }}"><i class="fa fa-home"></i></a></li>
+                    <li><a href="{{ path('home') }}">Inicio</a></li>
+                    <li><a href="{{ url('promocionesTodas') }}">Sponsor</a></li>
+                    <li class="current"><a href="#">{{ sponsorArray.sponsor.name }}</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="large-12 medium-12 columns banco sin-bordes">
+            <div class="imagen">
+                <img src="{{ sponsorArray.sponsor.ics }}" alt="LOGO SPONSOR {{ sponsorArray.sponsor.name }}" width="85" height="85">
+                <div class="titulotarjeta">
+                    {% if sponsorArray.sponsor.name != '' %}
+                        {% set idLOC = (sponsorArray.sponsor.idr*10000) + 1 %}
+                        <a href="{{ path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(sponsorArray.sponsor.name)}) }}">Más información</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="titulo">
+                <h1 style="float:none;font-size: 1.6em;">Beneficios de {{ sponsorArray.sponsor.name }}</h1>
+                Filtro por rubro
+            </div>
+            <ul>
+                {% for clave, categoria in sponsorArray.sponsor.ctgs %}
+                    <li>
+                        {% if sponsorNombre != '' and categoria.name != '' %}
+                            {% if (categoriaId == categoria.id) %}
+                                <a title="{{ categoria.name }}" class="destacadafiltro" href="{{ path('sponsor', {'sponsorId': sponsorId, 'sponsorNombre': sponsorNombre}) }}">
+                                    {{categoria.name }}
+                                </a>
+                            {% else %}
+                                <a title="{{ categoria.name }}" href="{{ path('sponsor', {'categoriaId':categoria.id, 'categoriaNombre': urlize(categoria.name), 'sponsorId':sponsorId, 'sponsorNombre':sponsorNombre}) }}">
+                                    {{ categoria.name }}
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="titulolocales">Locales Adheridos</div>
+            <ul class="locales-adheridos">
+                {% for claves, store in localesAdheridos %}
+                        <li>
+                            {% set idLOC = (store.idr*10000) + store.ids%}
+                            {% if store.name != '' and store.adr != '' %}
+                                <a title="{{ store.name | title }}" href="{{ path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(store.name)}) }}">{{ store.name | title }} - {{store.adr | title }}</a>
+                            {% endif %}
+                        </li>
+                {% endfor %}
+            </ul>
+        </div>
+            
+        {% if not isMobile() %}
+            <div class="banner970x90 show-for-medium-up">
+                {{ sasTag(sasSpage, 'top') | raw }}                    
+            </div>
+        {% endif %}
+        
+        <div class="large-12 medium-12 columns widget-promocion promobanco">
+            <ul>
+                
+                {% for clave, valor in promociones %}
+                    <li>
+                        {% if valor.nombrePromo != '' and valor.comercioNombre != '' %}
+                            <div class="imagen">
+                                <a title="{{ valor.nombrePromo }}" href="{{ valor.cantLocales > 1  ? path('multilocal', {'promocionNombre': urlize(valor.nombrePromo), 'promocionId': valor.idPromocion}) : path('comercio', {'id': 'LOC' ~ valor.comercioId, 'comercioNombre': urlize(valor.comercioNombre)}) }}">
+                                    <img alt="IMAGEN PROMOCION {{valor.nombrePromo|upper}}" src="{{ valor.imagenPromo | default(app.request.basepath ~ '/img/beneficio_default.png') }}">
+                                </a>
+                            </div>
+                            <div class="titulo">
+                                <a title="{{ valor.nombrePromo }}" href="{{ valor.cantLocales > 1  ? path('multilocal', {'promocionNombre': urlize(valor.nombrePromo), 'promocionId': valor.idPromocion}) : path('comercio', {'id': 'LOC' ~ valor.comercioId, 'comercioNombre': urlize(valor.comercioNombre)}) }}">
+                                    {{ valor.nombrePromo }}
+                                </a>
+                            </div>
+                            <div class="informacion">
+                                <a title="{{ valor.nombrePromo }}" href="{{ valor.cantLocales > 1  ? path('multilocal', {'promocionNombre': urlize(valor.nombrePromo), 'promocionId': valor.idPromocion}) : path('comercio', {'id': 'LOC' ~ valor.comercioId, 'comercioNombre': urlize(valor.comercioNombre)}) }}">
+                                    {{ valor.descripcionLarga | truncate(100) | raw }}
+                                </a>
+                            </div>
+                        {% endif %}
+                        {% if sponsorNombre != '' %}
+                            <div class="ico-tarjeta">
+                                <a title="{{ sponsorNombre }}" href="{{ url("sponsor",{'sponsorNombre': sponsorNombre, 'sponsorId': sponsorId}) }}">
+                                    <img alt="ICONO SPONSOR {{ sponsorArray.sponsor.name|upper }}" src="{{ valor.iconoSponsor | default(app.request.basepath ~ '/img/local_default.png')   }}" width="30" height="30" />
+                                </a>
+                            </div>
+                        {% endif %}
+                        <div class="descripcion">{{ valor.descripcionCorta | raw | truncate(30) }}</div>
+                        <div class="descripcion">{{ valor.condiciones | truncate(30) }} </div>
+                        {% if valor.nombrePromo != '' and valor.comercioNombre != '' %}
+                            <div class="ver-oferta">
+                                <a href="{{ valor.cantLocales > 1  ? path('multilocal', {'promocionNombre': urlize(valor.nombrePromo), 'promocionId': valor.idPromocion}) : path('comercio', {'id': 'LOC' ~ valor.comercioId, 'comercioNombre': urlize(valor.comercioNombre)}) }}">
+                                    Ver Oferta
+                                </a>
+                            </div>
+                        {% endif %}
+                    </li>
+                    
+                    {% if isMobile() and loop.index is divisible by(5) and not loop.last %}
+                    <li class="show-for-small-only banner300x50">
+                        {{ sasTag(sasSpage, 'right') | raw }}                            
+                    </li>
+                    {% endif %}                     
+                {% endfor %}                
+
+                {% if isMobile() %}
+                <li class="show-for-small-only banner300x50">
+                    {{ sasTag(sasSpage, 'right1') | raw }}                     
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        {% include 'components/footer.html.twig' %}
+    </div>
+{% endblock content %}

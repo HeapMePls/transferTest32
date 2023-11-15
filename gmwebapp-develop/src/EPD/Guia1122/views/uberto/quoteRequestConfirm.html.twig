@@ -1,0 +1,80 @@
+{% extends ('layout.html.twig') %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+      <style>
+          {{ source( '_inlinecss/'~BRANDCODE~'/c-h'~filesSignature~'.css') }}
+      </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %} Solicitud enviada | {{BRAND}}{% endblock pageTitle %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block content %}
+
+  <div class="row" >
+    <div class="large-6 large-offset-3 medium-8 medium-offset-2 small-12 u-box-cntr-wh" >
+      <div style="background-color: #8BC34A;display: inline-block;width: 100%;text-align: center;padding: 0px 0px 15px 0px;">
+        <div style="text-align: center;width: 80px;height: 80px;background-color: #FFF;margin: 20px auto;border-radius: 50%;font-size: 50px;padding-top: 5px;color: #4CAF50;"><i class="fa fa-check" aria-hidden="true"></i></div>
+        <div>Hemos enviado la solicitud a <strong>{{retailer.name}}</strong></div>
+        {% if retailer.avgRes is defined %}
+          <div style="font-size: 14px;">Su promedio de respuesta es de {{retailer.avgResNice}}</div>
+        {% endif %}
+      </div>
+      <div style="padding: 10px;font-size: 14px;line-height: 16px;">
+        Le enviaremos la respuesta a su correo electr&oacute;nico (<span style="font-weight:bold">{{user.email}}</span>)
+        {% if user.notify %}
+        y una notificacion a este dispositivo.
+        {% endif %}
+      </div>
+      <div style="width:100%;text-align:center">
+        <a id="qrcSubmit" class="button small secondary" href="{{ path('uberto/requestList') }}">Ver mis pedidos</a>
+      </div>
+    </div>
+  </div>
+  {% if additionals | length > 0 %}
+  <div class="row" >
+    <div class="large-6 large-offset-3 medium-8 medium-offset-2 small-12" style="background-color: #FFF">      
+      <div style="padding: 10px;">
+        <form>
+          <div style="font-weight:bold">Solicita mas presupuestos</div>
+          <div>Puedes enviarle la misma solicitud a otros cerca que encontramos:</div>
+          <ul style="margin: 0px;">
+            {% for additional in additionals %}
+              <li style="list-style: none;border: 1px solid #BBB;padding: 5px;display: inline-block;margin: 0px 5px 5px 0px;">
+                <div>
+                  <input id="{{'qrcSend' + loop.index}}" name="{{'qrcSend' + loop.index}}" type="checkbox" checked="true">
+                  <label for="{{'qrcSend' + loop.index}}">{{additional.name}}</label>
+                  <div style="font-size: 13px;color: #777;margin-left: 20px;margin-top: -12px;">
+                    {{additional.dst}}
+                  </div>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        </form>
+      </div>
+      <div style="width:100%;text-align:right">
+        <a id="qrcSubmit" class="button small">Enviar solicitudes</a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+
+  {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'qr'} %}
+{% endblock deferredCss %}

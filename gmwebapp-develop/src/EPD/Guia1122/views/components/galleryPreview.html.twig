@@ -1,0 +1,173 @@
+<div class="gal-cntr">
+  <h4>{{gal.name}}</h4>
+  <h5>{{gal.description}}</h5>
+
+  {% if not isMobile() %}
+    <!-- Desktop version: horizontal list -->
+    <div class="gal-image-ho-cntr">
+      {% for image in gal.images %}
+        <a class="gal-image-ho" data-id="{{gal.idg}}" data-idrids="{{comercio.idrids}}" data-ide="{{gal.peids}}" 
+            href="{{path('galeria', {'id': comercio.idrids, 'idg': gal.idg, 'comercioNombre': urlize(comercio.nam)})  }}">
+          <picture>
+            <source data-srcset="{{image.src | asWebp }}" type="image/webp"/>
+            <source data-srcset="{{image.src}}" type="image/png"/>
+            <img class="lazyload" data-src="{{image.src}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+                 index="{{loop.index-1}}" 
+                 style="{{ image.metaData.size.width > image.metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}};transform: translate(-{{image.metaData.smartCrop.square.px}}%, -{{image.metaData.smartCrop.square.py}}%);"
+                 alt="{{comercio.nam ~ " " ~ image.title}}" >
+          </picture>
+          {# <img src="/img/imgph.png" data-src="{{image.src}}" index="{{loop.index-1}}" class="lazy"
+              style="{{ image.metaData.size.width > image.metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}};transform: translate(-{{image.metaData.smartCrop.square.px}}%, -{{image.metaData.smartCrop.square.py}}%);"
+              alt="{{comercio.nam ~ " " ~ image.title}}"> #}
+          {% if gal.count > 4 and loop.index == 4 %}
+            <div class="gal-image-shadow">+{{gal.count-4}}</div>
+          {% endif %}
+        </a>
+      {% endfor %}
+      
+    </div>
+  {% else %}
+    <!-- Mobile version: suared list -->
+    <div class="gal-image-sq-cntr">
+      {% if gal.images | length >= 4 %}
+        <a class="gal-image-sq" style="left:0px;top:0px;width:50%;height:50vw;" 
+          href="{{path('galeria', {'id': comercio.idrids, 'idg': gal.idg, 'comercioNombre': urlize(comercio.nam)})  }}">
+          {# <img src="/img/imgph.png" data-src="{{gal.images[0].src}}" class="lazy"
+              style="{{ gal.images[0].metaData.size.width > gal.images[0].metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}};transform: translate(-{{gal.images[0].metaData.smartCrop.square.px}}%, -{{gal.images[0].metaData.smartCrop.square.py}}%)" 
+              alt="{{comercio.nam ~ " " ~ gal.images[0].title}}"> #}
+          <picture>
+            <source data-srcset="{{gal.images[0].src | asWebp }}" type="image/webp"/>
+            <source data-srcset="{{gal.images[0].src}}" type="image/png"/>
+            <img class="lazyload" data-src="{{gal.images[0].src}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+                 style="{{ gal.images[0].metaData.size.width > gal.images[0].metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}};transform: translate(-{{gal.images[0].metaData.smartCrop.square.px}}%, -{{gal.images[0].metaData.smartCrop.square.py}}%)" 
+                 alt="{{comercio.nam ~ " " ~ gal.images[0].title}}" >
+          </picture>
+        </a>
+        <a class="gal-image-sq" style="left:50%;top:0px;width:50%;height:50vw;" 
+          href="{{path('galeria', {'id': comercio.idrids, 'idg': gal.idg, 'comercioNombre': urlize(comercio.nam)})  }}">
+          {# <img src="/img/imgph.png" data-src="{{gal.images[1].src}}" class="lazy"
+              style="{{ gal.images[1].metaData.size.width > gal.images[1].metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}};transform: translate(-{{gal.images[1].metaData.smartCrop.square.px}}%, -{{gal.images[1].metaData.smartCrop.square.py}}%)" 
+              alt="{{comercio.nam ~ " " ~ gal.images[1].title}}"> #}
+          <picture>
+            <source data-srcset="{{gal.images[1].src | asWebp }}" type="image/webp"/>
+            <source data-srcset="{{gal.images[1].src}}" type="image/png"/>
+            <img class="lazyload" data-src="{{gal.images[1].src}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+                 style="{{ gal.images[1].metaData.size.width > gal.images[1].metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}};transform: translate(-{{gal.images[1].metaData.smartCrop.square.px}}%, -{{gal.images[1].metaData.smartCrop.square.py}}%)" 
+                 alt="{{comercio.nam ~ " " ~ gal.images[1].title}}" >
+          </picture>
+        </a>
+        <a class="gal-image-sq" style="left:0px;top:50%;width:50%;height:50vw;" 
+          href="{{path('galeria', {'id': comercio.idrids, 'idg': gal.idg, 'comercioNombre': urlize(comercio.nam)})  }}">
+          {# <img src="/img/imgph.png" data-src="{{gal.images[2].src}}" class="lazy"
+              style="{{ gal.images[2].metaData.size.width > gal.images[2].metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}};transform: translate(-{{gal.images[2].metaData.smartCrop.square.px}}%, -{{gal.images[2].metaData.smartCrop.square.py}}%)" 
+              alt="{{comercio.nam ~ " " ~ gal.images[2].title}}"> #}
+          <picture>
+            <source data-srcset="{{gal.images[2].src | asWebp }}" type="image/webp"/>
+            <source data-srcset="{{gal.images[2].src}}" type="image/png"/>
+            <img class="lazyload" data-src="{{gal.images[2].src}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+                 style="{{ gal.images[2].metaData.size.width > gal.images[2].metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}};transform: translate(-{{gal.images[2].metaData.smartCrop.square.px}}%, -{{gal.images[2].metaData.smartCrop.square.py}}%)" 
+                 alt="{{comercio.nam ~ " " ~ gal.images[2].title}}" >
+          </picture>
+        </a>
+        <a class="gal-image-sq" style="left:50%;top:50%;width:50%;height:50vw;" 
+          href="{{path('galeria', {'id': comercio.idrids,  'idg': gal.idg, 'comercioNombre': urlize(comercio.nam)})  }}">
+          {# <img src="/img/imgph.png" data-src="{{gal.images[3].src}}" class="lazy"
+          style="{{ gal.images[3].metaData.size.width > gal.images[3].metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}};transform: translate(-{{gal.images[3].metaData.smartCrop.square.px}}%, -{{gal.images[3].metaData.smartCrop.square.py}}%)" 
+          alt="{{comercio.nam ~ " " ~ gal.images[3].title}}"> #}
+          <picture>
+            <source data-srcset="{{gal.images[3].src | asWebp }}" type="image/webp"/>
+            <source data-srcset="{{gal.images[3].src}}" type="image/png"/>
+            <img class="lazyload" data-src="{{gal.images[3].src}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+                 style="{{ gal.images[3].metaData.size.width > gal.images[3].metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}};transform: translate(-{{gal.images[3].metaData.smartCrop.square.px}}%, -{{gal.images[3].metaData.smartCrop.square.py}}%)" 
+                 alt="{{comercio.nam ~ " " ~ gal.images[3].title}}" >
+          </picture>
+          {% if gal.count > 4 %}
+            <div class="gal-image-shadow">+{{gal.count-4}}</div>
+          {% endif %}
+        </a>
+      {% elseif gal.images | length == 3 %}
+        <a class="gal-image-sq" style="left:0px;top:0px;width:100%;height:50vw;" 
+          href="{{path('galeria', {'id': comercio.idrids, 'idg': gal.idg, 'comercioNombre': urlize(comercio.nam)})  }}">
+          {# <img src="/img/imgph.png" data-src="{{gal.images[0].src}}" class="lazy"
+              style="{{ gal.images[0].metaData.size.width < gal.images[0].metaData.size.height ? 'height:auto;width:100%;' : 'width:100%;height:auto'}};transform: translate(-{{gal.images[0].metaData.smartCrop.portrait.px}}%, -{{gal.images[0].metaData.smartCrop.portrait.py}}%)"
+              alt="{{comercio.nam ~ " " ~ gal.images[0].title}}"> #}
+          <picture>
+            <source data-srcset="{{gal.images[0].src | asWebp }}" type="image/webp"/>
+            <source data-srcset="{{gal.images[0].src}}" type="image/png"/>
+            <img class="lazyload" data-src="{{gal.images[0].src}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+                 style="{{ gal.images[0].metaData.size.width < gal.images[0].metaData.size.height ? 'height:auto;width:100%;' : 'width:100%;height:auto'}};transform: translate(-{{gal.images[0].metaData.smartCrop.portrait.px}}%, -{{gal.images[0].metaData.smartCrop.portrait.py}}%)"
+                 alt="{{comercio.nam ~ " " ~ gal.images[0].title}}" >
+          </picture>
+        </a>
+        <a class="gal-image-sq" style="left:0px;top:50%;width:50%;height:50vw;" 
+          href="{{path('galeria', {'id': comercio.idrids, 'idg': gal.idg, 'comercioNombre': urlize(comercio.nam)})  }}">
+          {# <img src="/img/imgph.png" data-src="{{gal.images[1].src}}" class="lazy"
+              style="{{ gal.images[1].metaData.size.width > gal.images[1].metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}};transform: translate(-{{gal.images[1].metaData.smartCrop.square.px}}%, -{{gal.images[1].metaData.smartCrop.square.py}}%)"
+              alt="{{comercio.nam ~ " " ~ gal.images[1].title}}"> #}
+           <picture>
+            <source data-srcset="{{gal.images[1].src | asWebp }}" type="image/webp"/>
+            <source data-srcset="{{gal.images[1].src}}" type="image/png"/>
+            <img class="lazyload" data-src="{{gal.images[1].src}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+                 style="{{ gal.images[1].metaData.size.width > gal.images[1].metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}};transform: translate(-{{gal.images[1].metaData.smartCrop.square.px}}%, -{{gal.images[1].metaData.smartCrop.square.py}}%)"
+                 alt="{{comercio.nam ~ " " ~ gal.images[1].title}}" >
+          </picture>
+        </a>
+        <a class="gal-image-sq" style="left:50%;top:50%;width:50%;height:50vw;" 
+          href="{{path('galeria', {'id': comercio.idrids, 'idg': gal.idg, 'comercioNombre': urlize(comercio.nam)})  }}">
+          {# <img src="/img/imgph.png" data-src="{{gal.images[2].src}}" class="lazy"
+              style="{{ gal.images[2].metaData.size.width > gal.images[2].metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}};transform: translate(-{{gal.images[2].metaData.smartCrop.square.px}}%, -{{gal.images[2].metaData.smartCrop.square.py}}%)" 
+              alt="{{comercio.nam ~ " " ~ gal.images[2].title}}"> #}
+          <picture>
+            <source data-srcset="{{gal.images[2].src | asWebp }}" type="image/webp"/>
+            <source data-srcset="{{gal.images[2].src}}" type="image/png"/>
+            <img class="lazyload" data-src="{{gal.images[2].src}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+                 style="{{ gal.images[2].metaData.size.width > gal.images[2].metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}};transform: translate(-{{gal.images[2].metaData.smartCrop.square.px}}%, -{{gal.images[2].metaData.smartCrop.square.py}}%)" 
+                 alt="{{comercio.nam ~ " " ~ gal.images[2].title}}" >
+          </picture>
+        </a>
+      {% elseif gal.images | length == 2 %}
+        <a class="gal-image-sq" style="left:0px;top:0px;width:100%;height:50vw;" 
+          href="{{path('galeria', {'id': comercio.idrids, 'idg': gal.idg, 'comercioNombre': urlize(comercio.nam)})  }}">
+          {# <img src="/img/imgph.png" data-src="{{gal.images[0].src}}" class="lazy"
+            style="{{ gal.images[0].metaData.smartCrop.square.width > gal.images[0].metaData.smartCrop.square.height ? 'height:100%' : 'width:100%'}};height: auto !important;max-width: none;width: 100%;margin-left:0%;margin-top:0%"
+              alt="{{comercio.nam ~ " " ~ gal.images[0].title}}"> #}
+          <picture>
+            <source data-srcset="{{gal.images[0].src | asWebp }}" type="image/webp"/>
+            <source data-srcset="{{gal.images[0].src}}" type="image/png"/>
+            <img class="lazyload" data-src="{{gal.images[0].src}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+                 style="{{ gal.images[0].metaData.smartCrop.square.width > gal.images[0].metaData.smartCrop.square.height ? 'height:100%' : 'width:100%'}};height: auto !important;max-width: none;width: 100%;margin-left:0%;margin-top:0%"
+                 alt="{{comercio.nam ~ " " ~ gal.images[0].title}}" >
+          </picture>
+        </a>
+        <a class="gal-image-sq" style="left:0px;top:50%;width:100%;height:50vw;" 
+          href="{{path('galeria', {'id': comercio.idrids, 'idg': gal.idg, 'comercioNombre': urlize(comercio.nam)})  }}">
+          {# <img src="/img/imgph.png" data-src="{{gal.images[1].src}}" class="lazy"
+            style="{{ gal.images[1].metaData.smartCrop.square.width > gal.images[1].metaData.smartCrop.square.height ? 'height:100%' : 'width:100%'}};height: auto !important;max-width: none;width: 100%;margin-left:0%;margin-top:0%"
+              alt="{{comercio.nam ~ " " ~ gal.images[1].title}}"> #}
+          <picture>
+            <source data-srcset="{{gal.images[1].src | asWebp }}" type="image/webp"/>
+            <source data-srcset="{{gal.images[1].src}}" type="image/png"/>
+            <img class="lazyload" data-src="{{gal.images[1].src}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="  
+                 style="{{ gal.images[1].metaData.smartCrop.square.width > gal.images[1].metaData.smartCrop.square.height ? 'height:100%' : 'width:100%'}};height: auto !important;max-width: none;width: 100%;margin-left:0%;margin-top:0%"
+                 alt="{{comercio.nam ~ " " ~ gal.images[1].title}}" >
+          </picture>
+        </a>
+      {% elseif gal.images | length == 1 %}
+        <a class="gal-image-sq" style="left:0px;top:0px;width:100%;height:100vw;" 
+          href="{{path('galeria', {'id': comercio.idrids, 'idg': gal.idg, 'comercioNombre': urlize(comercio.nam)})  }}">
+          {# <img src="/img/imgph.png" data-src="{{gal.images[0].src}}" class="lazy"
+            style="{{ gal.images[0].metaData.size.width > gal.images[0].metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}}"
+              alt="{{comercio.nam ~ " " ~ gal.images[0].title}}"> #}
+          <picture>
+            <source data-srcset="{{gal.images[0].src | asWebp }}" type="image/webp"/>
+            <source data-srcset="{{gal.images[0].src}}" type="image/png"/>
+            <img class="lazyload" data-src="{{gal.images[0].src}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+                 style="{{ gal.images[0].metaData.size.width > gal.images[0].metaData.size.height ? 'height:100%;width:auto' : 'width:100%;height:auto'}}"
+                 alt="{{comercio.nam ~ " " ~ gal.images[0].title}}" >
+          </picture>
+        </a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+</div>

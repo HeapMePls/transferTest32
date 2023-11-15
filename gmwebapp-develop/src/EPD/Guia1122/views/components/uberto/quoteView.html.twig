@@ -1,0 +1,320 @@
+{% block body %}
+
+  {% if not request is null %}
+
+    <div id="req-info" class="u-quote-info" data-token="{{request.token}}">
+      <!-- LABEL -->
+      <div class="u-quote-info-label">
+        {% if request.status == 'PENDIENTE' %}
+          <div style="color:#FFF;"><i class="fa fa-clock-o" aria-hidden="true"></i> Entregado</div>
+        {% elseif request.status == 'VISTO' %}
+          <div style="color:#FFF;"><i class="fa fa-eye" aria-hidden="true"></i> Visto</div>
+        {% elseif request.status == 'CONTESTADO' %}
+          <div style="color:#FFF;"><i class="fa fa-info-circle" aria-hidden="true"></i> Contestado</div>
+        {% elseif request.status == 'ACEPTADO' %}
+          <div style="color:#FFF;"><i class="fa fa-check-square-o" aria-hidden="true"></i> Aceptado</div>
+        {% elseif request.status == 'RECHAZADO' %}
+          <div style="color:#FFF;"><i class="fa fa-times" aria-hidden="true"></i> Rechazado</div>
+        {% elseif request.status == 'ENTREGADO' %}
+          <div style="color:#FFF;"><i class="fa fa-check-square-o" aria-hidden="true"></i> Finalizado</div>
+        {% endif %}
+      </div>
+      <!-- nro pedido -->
+      <div class="u-quote-info-num">Nro. {{request.requestId}}</div>
+      <!-- HEADER -->
+      <div>Solicitado {{request.dateFromNice}}</div>
+      <div>{{request.user.name}} <span class="u-quote-info-sec">({{request.user.email}})</span></div>
+      {% if request.scheduleType >= 0 %}
+        <div>Cuando: 
+          {% if (request.scheduleType == 0) %}
+            Urgente (cuanto antes)
+          {% elseif (request.scheduleType == 1) %}
+            En el correr del dia
+          {% elseif (request.scheduleType == 2) %}
+            En la semana
+          {% elseif (request.scheduleType == 3) %}
+            En el mes
+          {% elseif (request.scheduleType == 4) %}
+            {{request.scheduleValue}}
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+    <div>
+      <div class="u-quote-info-desc">{{request.description}}</div>
+      <div class="u-quote-info-notice">
+        {% if request.status == 'PENDIENTE' %}
+          <i class="fa fa-info-circle" aria-hidden="true"></i> La solicitud ha sido enviada y estamos esperando que el negocio la revise y conteste. En cuanto lo haga le enviaremos una notificacion y un correo electronico.
+        {% elseif request.status == 'VISTO' %}
+          <i class="fa fa-info-circle" aria-hidden="true"></i> El negocio ya ha visto su solicitud por lo que pronto la respondera.
+        {% elseif request.status == 'CONTESTADO' %}
+          <i class="fa fa-info-circle" aria-hidden="true"></i> Ya tiene una respuesta y puede aceptarla si cree apropiada.
+        {% elseif request.status == 'ACEPTADO' %}
+          <i class="fa fa-info-circle" aria-hidden="true"></i> Ha aceptado este presupuesto y le hemos enviado el aviso al negocio o profesional. Puede contactarlo para coordinar el servicio.
+        {% elseif request.status == 'ENTREGADO' %}
+          <i class="fa fa-info-circle" aria-hidden="true"></i> El trabajo de esta solicitud ya fue realizada o entregada.
+        {% elseif request.status == 'RECHAZADO' %}
+          <i class="fa fa-info-circle" aria-hidden="true"></i> La solicitud fue rechazada
+        {% endif %}
+      </div>
+    </div>
+
+    <div id="resps-info" class="u-quote-info-resps">
+      {% for response in request.responses %}
+        {% if response.status == 'PENDIENTE' %}
+          {% if request.status != 'ACEPTADO' and request.status != 'ENTREGADO' %}
+            {% set respColor = '#1779ba' %}
+            {% set respSoftColor = '#b1dbf7' %}
+          {% else %}
+            {% set respColor = '#999' %}
+            {% set respSoftColor = '#999' %}
+          {% endif %}
+          {% set respLabel = '<i class="fa fa-clock-o" aria-hidden="true"></i> Pendiente' %}
+        {% elseif response.status == 'VISTO' %}
+          {% if request.status != 'ACEPTADO' and request.status != 'ENTREGADO' %}
+            {% set respColor = '#9C27B0' %}
+            {% set respSoftColor = '#f0c6f7' %}
+          {% else %}
+            {% set respColor = '#999' %}
+            {% set respSoftColor = '#999' %}
+          {% endif %}
+          {% set respLabel = '<i class="fa fa-eye" aria-hidden="true"></i> Visto' %}
+          {#<div style="color:#9C27B0;padding: 0px 0px 0px 6px;font-size: 14px;line-height: 15px;text-align: right;"><i class="fa fa-eye" aria-hidden="true"></i> Visto</div>#}
+        {% elseif response.status == 'CONTESTADO' %}
+          {% if request.status != 'ACEPTADO' and request.status != 'ENTREGADO' %}
+            {% set respColor = '#FF9800' %}
+            {% set respSoftColor = '#f7d4a0' %}
+          {% else %}
+            {% set respColor = '#999' %}
+            {% set respSoftColor = '#999' %}
+          {% endif %}
+          {% set respLabel = '<i class="fa fa-info-circle" aria-hidden="true"></i> Contestado' %}
+          {#<div style="color:#FF9800;padding: 0px 0px 0px 6px;font-size: 14px;line-height: 15px;text-align: right;"><i class="fa fa-info-circle" aria-hidden="true"></i> Contestado</div>#}
+        {% elseif response.status == 'ACEPTADO' %}
+          {% set respColor = '#4CAF50' %}
+          {% set respSoftColor = '#acdeae' %}
+          {% set respLabel = '<i class="fa fa-check-square-o" aria-hidden="true"></i> Aceptado' %}
+          {#<div style="color:#4CAF50;padding: 0px 0px 0px 6px;font-size: 14px;line-height: 15px;text-align: right;"><i class="fa fa-check-square-o" aria-hidden="true"></i> Aceptado</div>#}
+        {% elseif response.status == 'ENTREGADO' %}
+          {% set respColor = '#4CAF50' %}
+          {% set respSoftColor = '#acdeae' %}
+          {% set respLabel = '<i class="fa fa-check-square-o" aria-hidden="true"></i> Finalizado' %}
+        {% elseif response.status == 'RECHAZADO' %}
+          {% set respColor = '#EF9A9A' %}
+          {% set respSoftColor = '#FFCDD2' %}
+          {% set respLabel = '<i class="fa fa-times" aria-hidden="true"></i> Rechazado' %}
+        {% elseif response.status == 'NO ACEPTADO' %}
+          {% set respColor = '#999' %}
+          {% set respSoftColor = '#999' %}
+          {% set respLabel = '<i class="fa fa-times" aria-hidden="true"></i> Descartado' %}
+        {% endif %}
+
+
+        <div style="position:relative;border: 1px solid {{respColor}};margin: 10px 0px;box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.5);">
+          <div style="position: absolute;right: 5px;top:15px">
+            <div style="color:{{respColor}};padding: 0px 0px 0px 6px;font-size: 14px;line-height: 15px;text-align: right;">{{respLabel | raw}}</div>          
+            <div style="font-size: 13px;text-align: right;">{{response.dateFromNice}}</div>
+          </div>
+          <div class="u-quote-info-ret">
+            {% if request.status == 'ACEPTADO' or request.status == 'ENTREGADO' %}
+              {% if response.status == 'ACEPTADO' or response.status == 'ENTREGADO' %}
+                <img src="{{response.ics}}">
+              {% else %}
+                <img src="{{response.ics}}" style="-webkit-filter: grayscale(100%);filter: grayscale(100%);opacity: 0.6;">
+              {% endif %}
+            {% else %}
+              <img src="{{response.ics}}">
+            {% endif %}
+            <div>
+              <h4>{{response.name}}</h4>
+              <h5>{{response.address}}</h5>
+            </div>
+          </div>
+          <div>
+            <table style="margin: 0px;">
+              <tbody style="background-color: transparent;">
+                {% if response.description | length > 0 %}
+                <tr>
+                  <td colspan="2" style="background-color: #f1f1f1;font-size: 14px;">
+                    {% if response.previousDescription is null %}
+                      <div style="font-weight:600">Respuesta:</div>
+                    {% else %}
+                      <div style="font-weight:600">Respuesta actualizada:</div>
+                    {% endif %}
+                    {{response.description}}
+                  </td>
+                </tr>
+                {% endif %}
+                <tr>
+                  {% if response.status == 'PENDIENTE' or response.status == 'VISTO' %}
+                    {% if request.status != 'ACEPTADO' and request.status != 'ENTREGADO' %}
+                      <td colspan="2" style="font-size: 13px;line-height: 14px;text-align: center;color: #777;background-color: #f1f1f1;">Aqui se mostrara el tiempo y costo estimados, y una aclaracion de ser necesaria </td>
+                    {% endif %}
+                  {% elseif (response.status == 'RECHAZADO') %}
+                    <td colspan="2" style="background-color: #f1f1f1;"></td>
+                  {% else %}
+                    <td style="padding: 10px;font-size: 13px;background-color: #f1f1f1;">
+                      Tiempo estimado: 
+                      {% if response.estimatedTime | length > 0 %} 
+                        <span style="font-weight: 600;">{{response.estimatedTimeNice}}</span>
+                      {% else %}
+                        &lt;sin especificar&gt;
+                      {% endif %}
+                    </td>
+                    <td style="padding: 10px;font-size: 13px;text-align: right;background-color: #f1f1f1;">
+                      Precio: $ <span style="font-size: 130%;font-weight: 600;">{{response.price}}
+                    </td>
+                  {% endif %}
+                </tr>
+              </tbody>
+            </table>
+
+            {% if not response.previousDescription is null %}
+              <table style="margin: 0px;">
+                <tbody style="background-color: #FFF;">
+                  {% if response.previousDescription | length > 0 %}
+                    <tr>
+                      <td colspan="2" style="font-size: 14px;">
+                        <div >Respuesta anterior:</div>
+                        {{response.previousDescription}}
+                      </td>
+                    </tr>
+                  {% endif %}
+                  <tr>
+                    <td style="padding: 0px 10px;font-size: 13px;background-color: #FFF;">
+                      Tiempo estimado: 
+                      {% if response.previousET | length > 0 %} 
+                        <span >{{response.previousET}}</span>
+                      {% else %}
+                        &lt;sin especificar&gt;
+                      {% endif %}
+                    </td>
+                    <td style="padding: 0px 10px;font-size: 13px;text-align: right;background-color: #FFF;">
+                      Precio: $ <span style="font-size: 130%;">{{response.previousPrice}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            {% endif %}
+          </div>
+          {% if request.status != 'ACEPTADO' and request.status != 'ENTREGADO' %}
+            {% if response.status == 'CONTESTADO' %}
+              <div style="width:100%;text-align: center;padding: 10px;">
+                <button id="qBtnAccept" style="margin: 0px;" type="button" class="small button gmbutton small-expanded btnAccept" data-id="{{response.id}}" data-name="{{response.name}}">Aceptar presupuesto</button>
+              </div>
+            {% endif %}
+          {% else %}
+            {% if response.status == 'ENTREGADO' %}
+              {% if response.review is defined and response.review != NULL %}
+                <div style="font-size: 14px;line-height: 15px;position: relative;">
+                  <div style="padding: 8px;font-size: 13px;text-align: center;">
+                    <div>Has enviado una reseña {{response.review.dateNice}}</div>
+                    <div style="margin: 10px 0px;">{{response.review.text}}</div>
+                  </div>
+                </div>
+              {% else %}
+                <div style="font-size: 14px;line-height: 15px;position: relative;">
+                  <div style="padding: 5px;">
+                    <form id="qrevForm" name="qrevForm" action="{{ path('doQuoteReview') }}" method="post" data-abide>
+                      <input type="hidden" name="qrevToken" id="qrevToken" value="{{request.token}}">
+                      <div class="row" style="margin-top:20px;">
+                        <div class="large-10 large-offset-1 medium-10 medium-offset-1 small-10 small-offset-1" style="text-align:center">
+                          <h5>Escribe una reseña</h5>
+                          <p style="font-size: 13px;line-height: 15px;">
+                            Ayuda a tus amigos, tus vecinos y el resto de la comunidad a conocer a los buenos o malos y que tengan una buena experiencia, o salvarlos de una mala!<br>
+                          </p>
+                        </div>
+                        <div class="large-10 large-offset-1 medium-12 small-12 columns u-review-form">
+                          <table>
+                            <tr>
+                              <td style="width: 70%;">
+                                Trabajo en general
+                              </td>
+                              <td style="width: 30%;">
+                                <div class="switch small u-review-switch" >
+                                  <input class="switch-input" id="qrevworkval" type="checkbox" name="qrevworkval" checked="true">
+                                  <label class="switch-paddle" for="qrevworkval">
+                                    <span class="switch-active" aria-hidden="true">BIEN</span>
+                                    <span class="switch-inactive" aria-hidden="true">MAL</span>
+                                  </label>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr id="trwrongworkval" style="display:none">
+                              <td colspan="2" style="padding: 0px 0px 0px 30px;font-size: 90%">Que salio mal?</td>
+                            </tr>
+                            <tr id="trwrongworkbad" style="display:none">
+                              <td style="padding-left: 30px;font-size: 90%" colspan="2">
+                                <input style="display: inline;" id="qrevwrongworkbad" name="qrevwrongworkbad" type="checkbox">
+                                <label style="display: inline-flex;width: 80%;font-size: 13px;line-height: 14px;" for="qrevwrongworkbad">El trabajo o servicio resultante no fue como el esperado.</label>
+                              </td>
+                            </tr>
+                            <tr id="trwrongworkslow" style="display:none">
+                              <td style="padding-left: 30px;font-size: 90%" colspan="2">
+                                <input style="display: inline;" id="qrevwrongworkslow" name="qrevwrongworkslow" type="checkbox">
+                                <label style="display: inline-flex;width: 80%;font-size: 13px;line-height: 14px;" for="qrevwrongworkslow">El trabajo o servicio demoro mas de lo prometido/estimado.</label>
+                              </td>
+                            </tr>
+                            <tr id="trwrongworksloppy" style="display:none">
+                              <td style="padding-left: 30px;font-size: 90%" colspan="2">
+                                <input style="display: inline;" id="qrevwrongworksloppy" name="qrevwrongworksloppy" type="checkbox">
+                                <label style="display: inline-flex;width: 80%;font-size: 13px;line-height: 14px;" for="qrevwrongworksloppy">El trabajo o servicio no fue muy ordenado o limpio.</label>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="width: 70%;">
+                                Relacion precio/calidad
+                              </td>
+                              <td style="width: 30%;">
+                                <div class="switch small u-review-switch" >
+                                  <input class="switch-input" id="qrevpriceval" type="checkbox" name="qrevpriceval" checked="true">
+                                  <label class="switch-paddle" for="qrevpriceval">
+                                    <span class="switch-active" aria-hidden="true">BIEN</span>
+                                    <span class="switch-inactive" aria-hidden="true">MAL</span>
+                                  </label>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr id="trpricevalwrong" style="display:none">
+                              <td colspan="2" style="padding: 0px 0px 0px 30px;font-size: 90%">Que salio mal?</td>
+                            </tr>
+                            <tr id="trwrongpriceexpensive" style="display:none">
+                              <td style="padding-left: 30px;font-size: 90%" colspan="2">
+                                <input style="display: inline;" id="qrevwrongpriceexpensive" name="qrevwrongpriceexpensive" type="checkbox">
+                                <label style="display: inline-flex;width: 80%;font-size: 13px;line-height: 14px;" for="qrevwrongpriceexpensive">El trabajo o servicio termino costando bastante mas de lo estimado.</label>
+                              </td>
+                            </tr>
+                          </table>
+                        </div>
+                        <div class="large-12 medium-12 small-12 columns ">
+                        </div>
+                        <div class="large-12 medium-12 small-12 columns">
+                          <label for="qrevDesc" style="font-weight:bold">Comentario</label>
+                          <textarea id="qrevDesc" name="qrevDesc" placeholder="Ingrese un comentario adicional" rows="4" style="width:100%"></textarea>
+                        </div>
+                      </div>
+                      <div style="text-align: right;padding: 10px 2px;">
+                        <button style="margin: 0px;" type="submit" class="small button gmbutton small-expanded" >Enviar reseña</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              {% endif %}
+            {% elseif response.status == 'ACEPTADO' %}
+              <div style="width: 100%;text-align: center;font-size: 13px;padding: 10px;color: #4CAF50;">Este presupuesto fue el aceptado.</div>
+            {% else %}
+              <div style="width: 100%;text-align: center;font-size: 13px;padding: 10px;color: #777;">Ya ha aceptado otro presupuesto</div>
+            {% endif %}
+          {% endif %}
+          
+        </div>
+      {% endfor %}
+    </div>
+
+  {% else %}
+    <div>
+      {{errMsg}}
+    </div>
+  {% endif %}
+
+{% endblock body %}

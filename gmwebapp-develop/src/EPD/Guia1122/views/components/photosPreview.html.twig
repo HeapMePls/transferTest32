@@ -1,0 +1,67 @@
+
+{% if (mode == 'SQUARE_GRID') %}
+  <div class="gal-cntr">
+    <div class="gal-pics-cntr-row" >
+      {% for pic in comercio.pics %}
+          <a class="gal-pics-cntr-column"  
+            href="{{path('galeria', {'id': comercio.idrids, 'idg': pic.galId, 'comercioNombre': urlize(comercio.nam)})  }}"
+            data="{{pic.metaData | json_encode}}"
+            >
+            <picture>
+              <source data-srcset="{{pic.src | asWebp }}" type="image/webp"/>
+              <source data-srcset="{{pic.src}}" type="image/png"/>
+              <img class="lazyload" data-src="{{pic.src}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+                  style="{{ 
+                    pic.metaData.size.width > pic.metaData.size.height ?
+                      'height:100%;width:auto' : 
+                      'width:100%;height:auto'}};
+                    transform: translate(-{{pic.metaData.smartCrop.square.px }}%);" 
+                  alt="{{comercio.nam ~ " " ~ pic.title}}" >
+            </picture>
+            {% if ( pic.title != NULL and pic.title | length > 0) or (pic.desc != NULL and pic.desc | length > 0) %}
+              <div class="gal-pics-cntr-title">
+                <div>{{pic.title}}</div>
+                <span>{{pic.desc}}</span>
+              </div>
+            {% endif %}
+          </a>
+      {% endfor %}
+    </div>
+  </div>
+{% elseif (mode == 'ADAPTIVE_GRID') %}
+  <div class="gal-pics-cntr2">
+      {% for pic in comercio.pics %}
+          <a  
+            href="{{path('galeria', {'id': comercio.idrids, 'idg': pic.galId, 'comercioNombre': urlize(comercio.nam)})  }}"
+            {# data="{{pic.metaData | json_encode}}" #}
+            >
+            <picture>
+              <source data-srcset="{{pic.src | asWebp }}" type="image/webp"/>
+              <source data-srcset="{{pic.src}}" type="image/png"/>
+              <img class="lazyload" data-src="{{pic.src}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+                  alt="{{comercio.nam ~ " " ~ pic.title}}" >
+            </picture>
+            {% if ( pic.title != NULL and pic.title | length > 0) or (pic.desc != NULL and pic.desc | length > 0) %}
+              <div class="gal-pics-cntr-title">
+                <div>{{pic.title}}</div>
+                <span>{{pic.desc}}</span>
+              </div>
+            {% endif %}
+          </a>
+      {% endfor %}
+  </div>
+{% endif %}
+
+
+{# 
+"square":{
+  "x":112,
+  "y":0,
+  "px":25,
+  "py":0,
+  "width":250,
+  "height":250},
+
+
+
+ #}

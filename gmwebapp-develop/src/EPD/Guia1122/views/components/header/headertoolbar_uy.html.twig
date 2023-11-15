@@ -1,0 +1,284 @@
+  <div class="header-toolbar" id="headerToolbar">
+      <div class="main-menu">
+        {% if not isMobile %}
+          {# OLD #}
+          {# <div id="mi-home" class="u-tb-item"><a href="{{path('home')}}" title="Inicio"><i class="fa fa-home" ></i></a></div>
+          <div id="mi-prms" class="u-tb-item"><a href="{{path('promocionesHome')}}">Promociones</a></div>
+          <div id="mi-azar" class="u-tb-item"><a href="{{path('azar')}}">Azar</a></div>
+          <div id="mi-horo" class="u-tb-item"><a href="{{path('horoscopo')}}">Horoscopo</a></div>
+          <div id="mi-cart" class="u-tb-item"><a href="{{path('cartelera',  {'place': '-', 'placeidr': 0, 'placeids': 0})}}">Cartelera</a></div> #}
+          <div class="btnsBuscador">
+            <ul class="dropdown menu" data-dropdown-menu>
+              <li>
+                <div class="btnBuscador">Comida</div>
+                <ul class="menu submenu is-dropdown-submenu first-sub vertical">
+                  <a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000898', 'rubroNombre':'restaurantes' }) }}">Restaurantes</a>
+                  <a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000787', 'rubroNombre':'panaderias' }) }}">Panaderias</a>
+                  <a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD10050', 'rubroNombre':'delivery' }) }}">Delivery</a>
+                  {# <a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1002085', 'rubroNombre':'bares' }) }}">Bares</a> #}
+                  <a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000834', 'rubroNombre':'pizzerias' }) }}">Pizzerías</a>
+                  <a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1001049', 'rubroNombre':'productos-naturales' }) }}">Productos Naturales</a>
+                  <a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000297', 'rubroNombre':'rotiserias' }) }}">Rotiserías</a>
+                  <a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000296', 'rubroNombre':'congelados' }) }}">Congelados</a>
+                </ul>
+              </li>
+              <li>
+                <div class="btnBuscador">Servicios</div>
+                <ul class="menu submenu is-dropdown-submenu first-sub vertical">
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1002165', 'rubroNombre':'construcciones' }) }}">Construcción</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000390', 'rubroNombre':'electricistas' }) }}">Electricistas</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000922', 'rubroNombre':'sanitarios' }) }}">Sanitarios</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000247', 'rubroNombre':'cerrajerias' }) }}">Cerrajerías</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1001040', 'rubroNombre':'vidrierias' }) }}">Vidrierías</a></li>
+                  {# <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1002184', 'rubroNombre':'albañiles' }) }}">Albañiles</a></li> #}
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1001033', 'rubroNombre':'veterinarias' }) }}">Veterinarias</a></li>
+                </ul>
+              </li>
+              <li>
+                <div class="btnBuscador">Salud y Belleza</div>
+                <ul class="menu submenu is-dropdown-submenu first-sub vertical">
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000500', 'rubroNombre':'farmacias' }) }}">Farmacias</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000776', 'rubroNombre':'odontologos' }) }}">Odontólogos</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000808', 'rubroNombre':'peluquerias' }) }}">Peluquerías</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1001538', 'rubroNombre':'centros-estetica' }) }}">Centros Estéticos</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000553', 'rubroNombre':'gimnasios' }) }}">Gimnasios</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD8057', 'rubroNombre':'depilaciones' }) }}">Depilación</a></li>
+                  {# <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1002012', 'rubroNombre':'frutas-y-verduras-puestos' }) }}">Frutas y verduras</a></li> #}
+                </ul>
+              </li>
+              {# <li>
+                <a href="#">Profesionales</a>
+                <ul class="menu">
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000002', 'rubroNombre':'abogados' }) }}">Abogados</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD10109639', 'rubroNombre':'escribanos' }) }}">Escribanos</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1001161', 'rubroNombre':'contadores publicos' }) }}">Contadores Públicos</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000063', 'rubroNombre':'arquitectos' }) }}">Arquitectos</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000617', 'rubroNombre':'ingenierios' }) }}">Ingenieros</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1001033', 'rubroNombre':'veterinarias' }) }}">Veterinarias</a></li>
+                </ul>
+              </li> #}
+              <li>
+                <div class="btnBuscador">Auto</div>
+                <ul class="menu submenu is-dropdown-submenu first-sub vertical">
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1001872', 'rubroNombre':'talleres-mecanicos' }) }}">Talleres Mecánicos</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1002006', 'rubroNombre':'talleres-motos' }) }}">Talleres de Motos</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD3718', 'rubroNombre':'autopartes' }) }}">Autopartes</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD729', 'rubroNombre':'taxis' }) }}">Taxis</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000100', 'rubroNombre':'automotoras' }) }}">Automotoras</a></li>
+                  <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD2159', 'rubroNombre':'alquiler-autos' }) }}">Alquiler de Autos</a></li>
+                  {# <li><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD14979', 'rubroNombre':'alquiler-autos' }) }}">Mecánica Agrícola</a></li> #}
+                </ul>
+              </li>
+              <li>
+                <div class="btnBuscador">Más...</div>
+                <ul class="menu submenu is-dropdown-submenu first-sub vertical">
+                  <li><a href="{{path('azar')}}">Azar</a></li>
+                  <li><a href="{{path('horoscopo')}}">Horóscopo</a></li>
+                  <li><a href="{{path('cartelera',  {'place': '-', 'placeidr': 0, 'placeids': 0})}}">Cartelera</a></li>
+                  <li><a href="{{path('promocionesHome')}}">Promociones</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        {% else %}
+          {# MOBILE POPUP MENU #}
+
+          {# Close btn #}
+          <div style="position: fixed;top: 15px;right: 15px;width: 20px;" id="btnMenuClose">
+            <svg x="0px" y="0px" viewBox="0 0 512.001 512.001"><g><g><path d="M284.286,256.002L506.143,34.144c7.811-7.811,7.811-20.475,0-28.285c-7.811-7.81-20.475-7.811-28.285,0L256,227.717L34.143,5.859c-7.811-7.811-20.475-7.811-28.285,0c-7.81,7.811-7.811,20.475,0,28.285l221.857,221.857L5.858,477.859c-7.811,7.811-7.811,20.475,0,28.285c3.905,3.905,9.024,5.857,14.143,5.857c5.119,0,10.237-1.952,14.143-5.857L256,284.287l221.857,221.857c3.905,3.905,9.024,5.857,14.143,5.857s10.237-1.952,14.143-5.857c7.811-7.811,7.811-20.475,0-28.285L284.286,256.002z"/></g></g></svg>
+          </div>
+          {# USER MENU #}
+          {% if header.userData is defined and header.userData != NULL and header.userData.email != NULL %}
+            <div class="head-menu-item head-menu-item-title">Hola, {{header.userData.nick}}</div>
+            <div class="head-menu-item"><a href="/favs">Guardados</a></div>
+            <div class="head-menu-item"><a href="{{path('uberto/requestList')}}">Pedidos</a></div>
+          {% else %}
+            <div class="head-menu-item" style="border-top: 2px solid #EEE;"><a href="/login?retUrl=/" >Iniciar sesión</a></div>
+          {% endif %}
+          {# CATEGS #}
+          <div class="head-menu-item head-menu-item-title" style="border-top: 2px solid #EEE;">Busca</div>
+          <div class="head-menu-subtitle">Comida</div>
+          <div class="head-menu-halfcntr">
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000898', 'rubroNombre':'restaurantes' }) }}">Restaurantes</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000787', 'rubroNombre':'panaderias' }) }}">Panaderías</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD10050', 'rubroNombre':'delivery' }) }}">Delivery</a></div>
+            {# <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1002085', 'rubroNombre':'bares' }) }}">Bares</a></div> #}
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000834', 'rubroNombre':'pizzerias' }) }}">Pizzerías</a></div>
+            {# <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD10114318', 'rubroNombre':'comidas-sin-gluten' }) }}">Para celíacos</a></div> #}
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1001049', 'rubroNombre':'productos-naturales' }) }}">Productos Naturales</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000297', 'rubroNombre':'rotiserias' }) }}">Rotiserías</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000296', 'rubroNombre':'congelados' }) }}">Congelados</a></div>
+          </div>
+          <div class="head-menu-subtitle">Salud y Belleza</div>
+          <div class="head-menu-halfcntr">
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000500', 'rubroNombre':'farmacias' }) }}">Farmacias</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000776', 'rubroNombre':'odontologos' }) }}">Odontólogos</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000808', 'rubroNombre':'peluquerias' }) }}">Peluquerías</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1002070', 'rubroNombre':'centros-estetica' }) }}">Centros Estéticos</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000553', 'rubroNombre':'gimnasios' }) }}">Gimnasios</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD8057', 'rubroNombre':'depilaciones' }) }}">Depilación</a></div>
+          </div>
+          <div class="head-menu-subtitle">Servicios</div>
+          <div class="head-menu-halfcntr">
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1002165', 'rubroNombre':'construcciones' }) }}">Construcción</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000390', 'rubroNombre':'electricistas' }) }}">Electricistas</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000922', 'rubroNombre':'sanitarios' }) }}">Sanitarios</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000247', 'rubroNombre':'cerrajerias' }) }}">Cerrajerías</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1001040', 'rubroNombre':'vidrierias' }) }}">Vidrierías</a></div>
+            {# <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1002184', 'rubroNombre':'albañiles' }) }}">Albañiles</a></div> #}
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1001033', 'rubroNombre':'veterinarias' }) }}">Veterinarias</a></div>
+          </div>
+          <div class="head-menu-subtitle">Auto</div>
+          <div class="head-menu-halfcntr">
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1001872', 'rubroNombre':'talleres-mecanicos' }) }}">Talleres Mecánicos</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1002006', 'rubroNombre':'talleres-motos' }) }}">Talleres de Motos</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD3718', 'rubroNombre':'autopartes' }) }}">Autopartes</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD729', 'rubroNombre':'taxis' }) }}">Taxis</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD1000100', 'rubroNombre':'automotoras' }) }}">Automotoras</a></div>
+            <div class="head-menu-halfitem"><a href="{{ path('rubroZona', {'zonaId': 'Z'~header.zoneId, 'zonaNombre': urlize(header.zoneName), 'rubroId':'PRD2159', 'rubroNombre':'alquiler-autos' }) }}">Alquiler de Autos</a></div>
+          </div>
+          <div class="head-menu-item head-menu-item-title" style="border-top: 2px solid #EEE;">Explora</div>
+          <div class="head-menu-item"><a href="{{path('promocionesHome')}}">Promociones</a></div>
+          <div class="head-menu-item"><a href="{{path('azar')}}">Azar</a></div>
+          <div class="head-menu-item"><a href="{{path('horoscopo')}}">Horoscopo</a></div>
+          <div class="head-menu-item"><a href="{{path('cartelera',  {'place': '-', 'placeidr': 0, 'placeids': 0})}}">Cartelera</a></div>
+          
+
+
+          {% if header.userData is defined and header.userData != NULL and header.userData.email != NULL %}
+            <div class="head-menu-item" style="border-top: 2px solid #EEE;"><a href="/logout" >Cerrar sesión</a></div>
+          {% endif %}
+
+          <div style="margin: 40px 0px 20px 0px;text-align: center;color: #CCC;border-top: 2px solid #EEE;padding: 30px 40px 10px 40px;">
+
+              <div style="color: #555;">
+                <p>
+                  Agregue su negocio o servicio para mejorar su presencia digital
+                </p>
+                <a href="https://empresas.1122.com.uy" alt="Empresas 1122" style="color: #EEE;border: 1px solid #eaeaea;padding: 7px 15px;display: inline-block;border-radius: 6px;background-color: #159de1;">
+                  Agregar y gestionar mi negocio ahora
+                </a>
+              </div>
+
+              {# <div style="margin-top:20px">
+                  <div style="font-weight:600;margin-top: 40px;">Gu&iacute;aM&oacute;vil 1122</div>
+                  <div style="font-size: 82%;">
+                      <a href="tel:29001122" style="color:#CCC"><i class="fa fa-phone" aria-hidden="true"></i> 2900 1122</a><br>
+                      <a id="fContactEmail" href="mailto:info@1122.com.uy" style="color:#CCC"><i class="fa fa-envelope-o" aria-hidden="true"></i> info@1122.com.uy</a><br>
+                      Rio Negro 1108 Piso 6<br>
+                      Montevideo, Uruguay
+                  </div>
+              </div> #}
+
+          </div>
+        {% endif %}
+      </div>
+
+      {% if not isMobile %}
+        <div class="user-menu">
+            {% if header.userData is defined and header.userData != NULL and header.userData.email != NULL %}
+                <ul class="dropdown menu" data-dropdown-menu data-alignment="right" style="display: inline-block;">
+                    <li>
+                        <a href="#" style="color: #222;    padding: 4px 23px;"><i class="fa fa-user-circle" style="font-size: 20px;"></i>
+                            <div style="display: inline-block;vertical-align: text-top;margin-left: 6px;">{{header.userData.nick}}</div>
+                        </a>
+                        <ul class="menu is-dropdown-submenu" >
+                            <li>
+                                <a href="/favs" style="padding: 10px 10px 0px 10px;position:relative;display:block;min-height: 50px;">
+                                    <i class="fa fa-bookmark" style="width: 20px;font-size: 20px;padding-bottom: 0px;"></i> 
+                                    <div style="position:absolute;padding-left: 25px;top: 12px;">
+                                        <div>Guardados</div>
+                                        <div style="color: #777;font-size: 12px; margin-top: 5px;">Lugares favoritos</div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{path('uberto/requestList')}}" style="padding: 10px 10px 0px 10px;position:relative;display:block;min-height: 50px;">
+                                    <i class="fa fa-shopping-cart" style="width: 20px;font-size: 20px;padding-bottom: 0px;"></i> 
+                                    <div style="position:absolute;padding-left: 25px;top: 12px;">
+                                        <div>Pedidos</div>
+                                        <div style="color: #777;font-size: 12px; margin-top: 5px;">Presupuestos y pedidos</div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li><hr style="margin: 1px;"></li>
+                            <li><a href="/logout">Cerrar sesion</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            {% else %}
+                <a id="btnLogin" href="/login?retUrl=/" style="color: #5f6368;"><i class="fa fa-user-circle"></i> Iniciar sesion</a>
+            {% endif %}
+            {% if (header.userData.currentOrders is defined and header.userData.currentOrders | length > 0) %}
+                <ul class="dropdown menu" data-dropdown-menu data-alignment="right" style="display: inline-block;">
+                    {% if header.cart == null %}
+                    <li>
+                        <a href="#" style="color: #222;padding: 4px 23px;"><i class="fa fa-shopping-cart" style="font-size: 20px;"></i>
+                            <div style="width: 15px; height: 15px; background-color: #FFF; position: absolute; bottom: 1px; border-radius: 50%; right: 13px; font-size: 9px; font-family: arial; padding: 3px 0px 0px 0px; border: 1px solid #159de1; color: #159de1; font-weight: 700; text-align: center;">{{ header.userData.currentOrders | length }}</div></a>
+                        <ul class="menu is-dropdown-submenu" style="z-index: 100;">
+                            <li style="position: relative;padding: 4px;text-align: center;color: #777;font-size: 12px;">
+                                Tienes {{header.userData.currentOrders | length}} carritos en curso
+                            </li>
+                            {% for cart in header.userData.currentOrders %}
+                                <li style="position: relative; min-height: 52px;">
+                                  {% if cart.storeName is defined and cart.storeName | length > 0 %}
+                                    <a style="padding: 3px;width: auto;" href="{{path('storeStart', {'nam': cart.storeName,'idr': cart.retailerNumber, 'ids': cart.storeNumber, '?t': cart.token}) }}">
+                                        {% if (cart.storeIconUrl | length > 0) %}
+                                            <img src="{{cart.storeIconUrl}}" style="width:50px;height:50px;position: absolute;left: 0px;top: 0px;">
+                                        {% else %}
+                                            <div style="width:50px;height:50px;position: absolute;left: 3px;top: 3px;"></div>
+                                        {% endif %}
+                                        <div style="padding-left: 50px;">
+                                            <div style="font-size: 11px;color: #555;line-height: 14px;font-weight: 700;">{{cart.storeName}}</div>
+                                            <div style="color: #888;font-size: 10px;">{{cart.storeAddress}}</div>
+                                            <div style="color: #159de1;font-size: 11px;">Tiene {{cart.items}} item/s</div>
+                                        </div>
+                                    </a>
+                                  {% endif %}
+                                </li>
+                            {% endfor %}
+                            <li style="position: relative;padding: 4px;text-align: center;color: #777;font-size: 12px;">
+                                <a href="{{path('uberto/requestList')}}">Ver todos mis pedidos</a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a href="#" style="color: #222;padding: 4px 23px;"><i class="fa fa-shopping-cart" style="font-size: 20px;"></i>
+                            <div style="width: 15px; height: 15px; background-color: #FFF; position: absolute; bottom: 1px; border-radius: 50%; right: 13px; font-size: 9px; font-family: arial; padding: 3px 0px 0px 0px; border: 1px solid #159de1; color: #159de1; font-weight: 700; text-align: center;">{{ header.cart.plist | length }}</div>
+                        </a>  
+                        <ul class="menu" style="max-height: 80vh;overflow-y: scroll;padding: 0px 5px 0px 5px;">
+                            <li style="position: relative;padding: 4px;text-align: center;color: #777;font-size: 12px;">
+                                Tienes {{ header.cart.plist | length}} productos en el carrito
+                            </li>
+                            {% for item in header.cart.plist %}
+                                <li style="position: relative; min-height: 52px;">
+                                        <a style="padding: 3px;width: auto;" href="{{path('productOrderMenu', {'name': item.name, 'id': item.id, 'idr': header.idr, 'ids': header.ids}) }} {{'?l=' ~item.lineId ~ '&t=' ~header.token}}">
+                                        {% if (item.image | length > 0) %}
+                                            <img src="{{item.image}}" style="width:50px;height:50px;position: absolute;left: 0px;top: 0px;">
+                                        {% else %}
+                                            <div style="width:50px;height:50px;position: absolute;left: 3px;top: 3px;"></div>
+                                        {% endif %}
+                                        <div style="padding-left: 50px;">
+                                            <div style="font-size: 11px;color: #555;line-height: 14px;font-weight: 700;">{{item.name}}</div>
+                                            <div style="color: #888;font-size: 10px;">x{{item.quantity}}</div>
+                                            <div style="color: #159de1;font-size: 11px;">${{item.itemPrice}}</div>
+                                            <a style="font-size:12px" href="{{path('productDelete', {'lineId': item.lineId, 'token': header.token, 'idr': header.idr, 'ids': header.ids}) }}">Quitar</a>
+                                        </div>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                            <li style="position: relative;padding: 4px;text-align: center;color: #777;font-size: 12px;">
+                                Total: ${{header.cart.price}}
+                            </li>
+                            <li style="position: relative;padding: 4px;text-align: center;color: #777;font-size: 12px;">
+                                <a href="{{path('orderMenuCheckout', {'idr': header.idr, 'ids': header.ids, 'token': header.token}) }}">Finalizar compra</a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+            {% endif %}
+        </div>
+      {% endif %}
+  </div> 

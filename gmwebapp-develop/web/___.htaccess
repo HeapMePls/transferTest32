@@ -1,0 +1,20 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    RewriteCond %{HTTP_HOST} ^www\.1122\.com\.uy$ [NC]
+    RewriteRule (.*) http://1122.com.uy/$1 [R=301,L]
+
+    #RewriteRule ^neg\/(.*?)-(.*?)-(.*?)-(.*?)-(.*?)(\?.*)?$ /local/$1/LOC$5 [QSA,L,R=302]
+    
+    RewriteCond %{REQUEST_FILENAME} !-f 
+    
+    # GuiaMovil
+    RewriteRule ^(.*)$ app_dev.php [QSA,L]
+    RewriteRule ^(.*)$ app.php [QSA,L]
+
+    # BuscoInfo
+    #RewriteRule ^(.*)$ appbi_dev.php [QSA,L]
+    #RewriteRule ^(.*)$ app_bi.php [QSA,L]
+
+</IfModule>

@@ -1,0 +1,27 @@
+{% if showAboveButtons %}
+  <div style="display: flex;padding: 5px 10px 10px 10px;justify-content: space-between;align-items: center;">
+    <div id="cancelSearch" style="color: #555;">Cancelar</div>
+    <div id="doSearch" style="font-weight: 500;color: #159de1;">Buscar</div>
+  </div>
+{% endif %}
+<form id="searcher-form" class="search-form {% if showAboveButtons %}camposbuscador-btnabove{% endif %}">
+  <label class="rubro">
+    <input type="text" placeholder="Productos & Servicios" id="search-rubroNombre" maxlength="50">
+  </label>
+  <label class="zona" style="position: relative;">
+    {% if not isMobile %}
+    <div style="position: absolute;z-index: 1;color: #DDD;line-height: 16px;font-size: 12px;background-color: #FFF;top: 11px;left: -11px;padding: 0px 3px;border-radius: 6px;">en</div>
+    {% endif %}
+    <input type="text" placeholder="Zona" id="search-zonaNombre" maxlength="50">
+    <i id="cross" class="fa fa-crosshairs" style="position: absolute;right: 8px;cursor: pointer;top: 8px;font-size: 19px;color: #777;"></i>
+  </label>
+  {% if not showAboveButtons %}
+    <a href="#" aria-label="Buscar">
+      {% if isMobile %}
+      <span>Buscar</span>
+      {% endif %}
+      <i class="fa fa-search"></i>
+    </a>
+  {% endif %}
+  <input type="submit" style="display: none" />
+</form>

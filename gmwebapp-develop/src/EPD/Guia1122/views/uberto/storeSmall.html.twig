@@ -1,0 +1,462 @@
+{% extends ('layout.html.twig') %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-os'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %}Pedí en {{data.nam}} | {{BRAND}}{% endblock pageTitle %}
+
+{% block metas %}
+    <meta name="description" content="Compra en {{data.nam}} | {{BRAND}}" />
+
+    {% if mapFramework == 1 %}
+        <link rel='stylesheet' href='https://unpkg.com/leaflet@1.3.1/dist/leaflet.css' />
+    {% endif %}
+    <link rel='stylesheet' href='{{ app.request.basepath }}/js/vendors/photoswipe/dist/photoswipe.css' />
+    <link rel='stylesheet' href='{{ app.request.basepath }}/js/vendors/photoswipe/dist/default-skin/default-skin.css' />
+    <link rel="stylesheet" href="{{ app.request.basepath }}/css/swiper.css" />
+{% endblock metas %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/photoswipe/dist/photoswipe.min.js"></script>
+  <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/photoswipe/dist/photoswipe-ui-default.min.js"></script>
+  <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/Swiper/4.2.6/swiper.min.js"></script>
+{% endblock javascripts %}
+
+{% if isMobile() %}
+    {% set boxClass = 'u-box-cntr' %}
+{% else %}
+    {% set boxClass = '' %}
+{% endif %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block content %}
+
+    <div class="row large-uncollapse medium-uncollapse small-uncollapse" style="max-width: 1200px;">
+
+        <div class="large-8 medium-8 small-12 columns">
+          <div class="row ">
+            <div class="large-5 medium-4 small-12 columns" >
+              <div class="u-box-cntr boxedlines">
+                <div id="retInfoCntr" style="padding-bottom:10px;text-align:center" data-idr="{{data.idr}}"  data-ids="{{data.ids}}" data-stype="0">
+                    {% set idLOC = (data.idr*10000) + data.ids%}
+                    {% if data.ims | length > 0 %}
+                        <img src="{{data.ims}}">
+                        {% if data.ics | length > 0 %}
+                            <div class="{{boxClass}} u-menu-retinfo-logo">
+                                <div>
+                                    <img src="{{data.ics}}" style="width: 80px;height: 80px;border-radius: 4px;">
+                                </div>
+                                <div>
+
+                        {% else %}
+                            <div class="{{boxClass}} u-menu-retinfo-logo">
+                                <div>
+                                    
+                        {% endif %}
+                    {% else %}
+                        {% if data.ics | length > 0 %}
+                            <div style="text-align: center;padding: 5px;">
+                                <div>
+                                    <img src="{{data.ics}}" style="width: 80px;height: 80px;border-radius: 4px;">
+                                </div>
+                                <div>      
+                        {% else %}
+                            <div style="text-align: center;padding: 5px;">
+                                <div>
+                                    
+                        {% endif %}
+                    {% endif %}
+                            
+                            <h3 style="font-size: 19px;margin: 0px;"><a href="{{ path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(data.nam) }) }}">{{data.nam}}</a></h3>
+                            {% set aux = "" %}
+                            {% if data.delivery == 1 %}
+                                {% set aux = "Envíos a domcilio" %}
+                            {% elseif data.delivery == 2 %}
+                                {% set aux = "Envíos a nivel nacional" %}
+                            {% elseif data.delivery == 3 %}
+                                {% set aux = "Envíos a domicilio y nacionales" %}
+                            {% endif %}
+
+                            {% if data.delivery != 0 and data.pickup == 1 %}
+                                {% set aux = aux ~ "; y pickup en el local" %}
+                            {% elseif data.delivery == 0 and data.pickup == 1 %}
+                                {% set aux = "Servicio de pickup solamente" %}
+                            {% endif %}
+                            <div style="margin: 0px 5px; text-align: center;font-size: 13px;line-height: 15px;padding: 4px;">{{aux}}</div>
+                        </div>
+                    </div>
+                    <div id="retInfoCntr" class="row " style="font-size:13px;margin: 0px;" >
+                        {% if data.avgTimeNice is defined %}
+                            <div class="large-12 medium-12 small-6">
+                                <div style="font-size: 11px;color: #888;;margin-top:5px">Tiempo de entrega</div>
+                                <div>{{data.avgTimeNice}}</div>
+                            </div>
+                        {% endif %}
+                        {% if data.delivery >= 1 %}
+                            <div class="large-12 medium-12 small-6">
+                                <div style="font-size: 11px;color: #888;margin-top:5px">Costo de env&iacute;o</div>
+                                <div><a id="openCoverage">Ver cobertura</a></div>
+                            </div>
+                        {% endif %}
+                        <div class="large-12 medium-12 small-6" style="font-size: 13px;">
+                            <div style="font-size: 11px;color: #888;;margin-top:5px">Horario de atenci&oacute;n</div>
+                            <div id="hourToday" style="text-align: center;cursor:pointer;">
+                                {% if data.hours[0].isOpen %}
+                                    Hoy {{data.hours[0].sday}} 
+                                    {% for hours in data.hours[0].hours %}
+                                        {{hours.sstart}} - {{hours.send}}
+                                    {% endfor %}
+                                {% else %}
+                                    <span style="color:#FF0000">
+                                    Hoy {{data.hours[0].sday}} cerrado
+                                    </span>
+                                {% endif %}
+                                <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </div>
+                            <div id="restHours" class="u-menu-hours" style="display:none">
+                                <table>
+                                    {% for i in 1..6 %}
+                                        <tr> 
+                                            <td>{{data.hours[i].sday}}</td>
+                                            <td style="padding-left: 20px">
+                                                {% if data.hours[i].isOpen %}
+                                                    {% for hours in data.hours[i].hours %}
+                                                        {{hours.sstart}} - {{hours.send}}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    cerrado
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                        {#<div class="large-12 medium-12 small-6">
+                            <div style="font-size: 11px;color: #888;;margin-top:5px">Formas de pago</div>
+                            <div>uno - dos - tres</div>
+                        </div>#}
+                    </div>
+                </div>
+                {# {% if labels | length > 0 %}
+                    <div style="margin-bottom: 7px;font-size: 11px;text-align: center;padding: 10px 0px 0px 0px;">
+                        {% for lbl in labels %}
+                            <div style="display:inline-block;margin-right:10px"><span class="icon bicon-{{lbl.icon}}" style="color:{{lbl.color}}"></span> {{lbl.val}}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %} #}
+                <div class="{{boxClass}} u-menu-section" id="prodgroups">
+                    <div><strong>Secciones</strong></div>
+                    <ul>
+                        {% for group in data.glist %}
+                            <li><a href="#g-{{group.id}}">{{group.name}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div id="btnprodgroups" class="u-menu-section-button"><i class="fa fa-navicon" aria-hidden="true"></i></div>
+              </div>
+            </div>
+            <div class="large-7 medium-8 small-12 columns ">
+              <div class="u-box-cntr boxedlines">
+                {# CHECK OPENED #}
+                {% if not data.hoursState.isOpen %}
+                    <div style="color: #9a7545;font-size: 14px;line-height: 15px;padding: 10px;border: 1px solid #FFD54F;margin-bottom: 10px;background-color: #FFECB3; border-radius: 3px;">
+                        <i style="position: absolute;font-size: 25px;" class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                        <div style="padding-left: 30px;">
+                            {% if data.hoursState.openHourToday %}
+                                {% if data.hoursState.minsToOpen > 0 %}
+                                    Nos encontramos cerrados ahora, abrimos en {{data.hoursState.minsToOpen}} minutos.
+                                {% else %}
+                                    Nos encontramos cerrados ahora, abrimos a las {{data.hoursState.openHourTodayTime}}.
+                                {% endif %}
+                            {% elseif data.hoursState.openHourTomorrow %}
+                                Ya nos encontramos cerrados por hoy, abrimos mañana a las {{data.hoursState.openHourTomorrowTime}}.
+                            {% else %}
+                                Ya nos encontramos cerrados por hoy. 
+                                Abrimos el {{data.hoursState.openHourDay}} a las {{data.hoursState.openHourDayTime}}.
+                            {% endif %}
+                            {% if data.outOfHours == 1 %}
+                                {% if data.delivery == 1 and data.pickup == 1 %}
+                                    <br>Igualmente puedes realizar el pedido ahora y agendarlo para levantar o entregar en algun momento en el que estemos abiertos.
+                                {% elseif data.delivery == 1 and data.pickup == 0 %}
+                                    <br>Igualmente puedes realizar el pedido ahora y agendarlo para entregar en algun momento en el que estemos abiertos.
+                                {% else %}
+                                    <br>Igualmente puedes realizar el pedido ahora y agendarlo para levantar en algun momento en el que estemos abiertos.
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% elseif data.hoursState.minsToClose > 0 and data.hoursState.minsToClose < 20 %}
+                    <div style="position: relative;color: #9a7545;font-size: 14px;line-height: 15px;padding: 10px;border: 1px solid #FFD54F;margin-bottom: 10px;background-color: #FFECB3; border-radius: 3px;">
+                        <i style="font-size: 25px;" class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                        <div style="padding-left: 30px;position: absolute;top: 15px;">
+                            Cerramos en {{data.hoursState.minsToClose}} minutos! Apurate!
+                        </div>
+                    </div>
+                {% endif %}
+                {# MENU COLUMN #}
+                <div class=" u-menu-cntr">
+
+                    {# HIGHLIGHTS #}
+                    {% if data.highlights | length > 0 %}
+                        <div class="u-menu-grp">
+                            <h3>Destacados</h3>
+                        </div>
+                        {% if data.highlightsMode == 'CARROUSEL' %}
+                            <div id="swipHighlights" class="swiper-container" style="padding: 0px 0px 30px 5px;">
+                                <div class="swiper-wrapper ">
+                                    {% for producto in data.highlights %}
+                                        <div class="swiper-slide">
+                                            <div class="u-prod-card" >
+                                                <a href="" data-id="{{producto.id}}" data-name="{{producto.name}}" data-ids="{{data.ids}}" data-idr="{{data.idr}}" data-store="{{data.storeTemplate}}" itemscope itemtype="http://schema.org/Product">
+                                                    <div class="panel panel-default" style="overflow: hidden">
+                                                        <meta itemprop="image" content="{{producto.imageHSrc}}"/>
+                                                        <div class="image-wrapper">
+                                                            <img class="lazyload image img-responsive" data-src="{{producto.imageHSrc}}" alt="{{producto.name}}" style="width:100%">
+                                                        </div>
+                                                        <div class="container">
+                                                            <h4 class="line-clamp-3" itemprop="name">{{producto.name}}</h4>
+                                                            <p class="line-clamp-3">{{producto.description}}</p>
+                                                            <span itemprop="offers" itemscop e itemtype="http://schema.org/Offer">
+                                                                <div class="u-menu-price" style="text-align: right;">{{producto.price | price | raw }}</div>
+                                                                {% if producto.regularPrice is defined and producto.regularPrice != '' %}
+                                                                    <div class="u-menu-price regular" style="text-align: right;">{{producto.regularPrice | price | raw}}</div>
+                                                                {% endif %}
+                                                                <meta itemprop="price" content="{{producto.price}}" />
+                                                                <meta itemprop="priceCurrency" content="PYG" />
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <ul>
+                                {% for producto in data.highlights %}
+                                    <li class="u-menu-item highlighted" data-id="{{producto.id}}" data-name="{{producto.name}}" data-ids="{{data.ids}}" data-idr="{{data.idr}}" data-store="{{data.storeTemplate}}" itemscope itemtype="http://schema.org/Product">
+                                        {% if not producto.image is empty %}
+                                            <img src="{{ producto.image }}" class="u-menu-image" alt="Imagen">
+                                            <meta itemprop="image" content="{{producto.imageUrl}}"/>
+                                        {% endif %}
+                                        <div>
+                                            <div class="item-name">
+                                                <h4 itemprop="name">{{producto.name}}</h4>
+                                            </div>
+                                            {% if producto.customFields | length > 0 %}
+                                                <div style="display: inline-block;font-size: 13px;margin-bottom: 5px;">
+                                                    {% for cf in producto.customFields %}
+                                                        {% if cf.icon is defined and cf.icon | length > 0 %}
+                                                            {% if cf.color is defined %}
+                                                                <span class="icon bicon-{{cf.icon}}" style="color:{{cf.color}};margin-right: 5px;">bb</span>
+                                                            {% else %}
+                                                                <span class="icon bicon-{{cf.icon}}" style="margin-right: 5px;">aa</span>
+                                                            {% endif %}
+                                                        {% else %}
+                                                            <div class="u-menu-label" style="color:{{cf.color}};border: 1px solid {{cf.color}};">{{cf.val}}</div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                            
+                                            <p>{{producto.description}}</p>
+                                            <span itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                                                <div class="u-menu-price">
+                                                {{ producto.price | price | raw }}
+                                                </div>
+                                                {% if producto.regularPrice != '' %}
+                                                    <div class="u-menu-price regular">{{producto.regularPrice | price | raw}}</div>
+                                                {% endif %}
+                                                <meta itemprop="price" content="{{producto.price}}" />
+                                                <meta itemprop="priceCurrency" content="UYU" />
+                                            </span>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endif %}
+
+                    {# GROUPS LIST #}
+                    {% for group in data.glist %}
+                        {% if group.plist | length > 0 %}
+                            <div class="u-menu-grp" id="g-{{group.id}}" >
+                              <div style="padding:5px">
+                                <h3>{{group.name}}</h3>
+                                <p>{{group.description}}</p>
+                              </div>
+                              {% if group.imgUrl is defined and group.imgUrl | length > 0 %}
+                                  <img src="{{group.imgUrl}}" alt="{{group.name}}">
+                              {% endif %}
+                            </div>
+                            <ul>
+                            {% for producto in group.plist %}
+                                <li class="u-menu-item" data-id="{{producto.id}}" data-name="{{producto.name}}" data-ids="{{data.ids}}" data-idr="{{data.idr}}" data-store="{{data.storeTemplate}}" itemscope itemtype="http://schema.org/Product">
+                                    {% if not producto.image is empty %}
+                                        <img src="{{ producto.image }}" class="u-menu-image" alt="Imagen">
+                                        <meta itemprop="image" content="{{producto.imageUrl}}"/>
+                                    {% endif %}
+                                    <div style="padding:5px">
+                                        <div class="item-name">
+                                            <h4 itemprop="name">{{producto.name}}</h4>
+                                            {% if producto.highlight %}
+                                                <i class="fa fa-certificate" aria-hidden="true"></i>
+                                            {% endif %}
+                                        </div>
+                                        {% if producto.customFields | length > 0 %}
+                                            <div style="display: inline-block;font-size: 13px;margin-bottom: 5px;">
+                                                {% for cf in producto.customFields %}
+                                                    {% if cf.icon is defined and cf.icon | length > 0 %}
+                                                        {% if cf.color is defined %}
+                                                            <span class="icon bicon-{{cf.icon}}" style="color:{{cf.color}};margin-right: 5px;">bb</span>
+                                                        {% else %}
+                                                            <span class="icon bicon-{{cf.icon}}" style="margin-right: 5px;">aa</span>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <div class="u-menu-label" style="color:{{cf.color}};border: 1px solid {{cf.color}};">{{cf.val}}</div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        
+                                        <p>{{producto.description}}</p>
+                                        <span itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                                            <div class="u-menu-price">
+                                            {{ producto.price | price | raw }}
+                                            </div>
+                                            {% if producto.regularPrice != '' %}
+                                                <div class="u-menu-price regular">{{producto.regularPrice | price | raw}}</div>
+                                            {% endif %}
+                                            <meta itemprop="price" content="{{producto.price}}" />
+                                            <meta itemprop="priceCurrency" content="UYU" />
+                                        </span>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="large-4 medium-4 small-12 columns">
+            <div id="carritoCntr" class="u-box-cntr u-cart" data-token="{{data.token}}" style="padding: 0px;">
+                <div class="u-cart-head">
+                  <div>
+                    <button id="bottomCartClose" class="close-button show-for-small-only" data-close="" aria-label="Close modal" type="button" ><span aria-hidden="true" style="color: #555;">×</span></button>
+                    <div class="titulo">PEDIDO</div>
+                  </div>
+                  <table id="carrito" class="u-menu-order">
+                      <tr><td style="font-size: 12px;text-align: center;padding: 30px;">
+                          Nada por aqui. Busca un producto y agregalo a tu carrito
+                      </td></tr>
+                  </table>
+                </div>
+                <div class="zig-zag-bottom"></div>
+                <a id="lnkCheckout" class="hide-for-small-only" href="{{ path('orderMenuCheckout', {'token':data.token, 'idr':data.idr, 'ids':data.ids}) }}" title=""
+                  style="display:block;padding: 0px 10px;">
+                    <button type="button" class="button expanded">FINALIZAR <i class="fa fa-sign-out" aria-hidden="true"></i></button>
+                </a>
+            </div>
+        </aside>
+
+    </div>
+
+    <div class="u-bottom-cart" id="bottomCart">
+        <div class="u-bottom-cart-button" id="bottomCartView">
+            <button id="bottomCartView" type="button" class="button expanded">
+                <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                <span style="margin: 0px 4px;">VER PEDIDO</span>
+                <div class="u-bottom-cart-qty" style="display:none"></div>
+            </button>
+        </div>
+        <div class="u-bottom-cart-button" id="bottomCartCheckout">
+            <a id="lnkCheckout" href="{{ path('orderMenuCheckout', {'token':data.token, 'idr':data.idr, 'ids':data.ids}) }}" title="">
+                <button type="button" class="button expanded">FINALIZAR <i class="fa fa-sign-out" aria-hidden="true"></i></button>
+            </a>
+        </div>
+    </div>
+
+    <div class="reveal u-reveal large" id="viewCoverage" data-reveal>
+        <div class="u-reveal-body">
+            <div>
+                <h5>Cobertura de entregas</h5>
+            </div>
+            <div class="row">
+                <div id="btnShowUrban" class="large-6 medium-6 small-6 columns" style="font-weight: 600;cursor: pointer;font-size: 16px;text-align: center;margin: 5px 0px 10px 0px;border-right: 1px solid #AAA;">Urbano</div>
+                <div id="btnShowNational" class="large-6 medium-6 small-6 columns" style="cursor: pointer;font-size: 16px;text-align: center;margin: 5px 0px 10px 0px;">Nacional</div>
+            </div>
+            <div id="covUrban">
+                <div id="coverageMap" style="width: 100%;min-height: 400px;"></div>
+                <div id="coverageZonesDesc" style="padding: 3px;font-size: 13px;"></div>
+            </div>
+            <div id="covNational" style="display:none">
+                Realizamos envios nacionales a los siguientes departamentos:
+                <div></div>
+            </div>
+
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+
+    {% if data.cart is defined %}
+
+        <script>
+            window.loadCarrito = {
+                token : '{{data.token}}',
+                idr   : {{data.idr}},
+                ids   : {{data.ids}},
+                items :[]
+            };
+            {% for item in data.cart.plist %}
+                window.loadCarrito.items.push({
+                    id            : {{item.id}},
+                    lineId        : {{item.lineId}},
+                    notes         : '{{item.notes}}',
+                    price         : {{item.itemPrice}},
+                    originalPrice : {{item.origPrice}},
+                    productName   : '{{item.name}}',
+                    quantity      : {{item.quantity}},
+                    customFields  :[
+                        {% for cf in item.customFields %}
+                        {% if cf.type == 1 %}
+                            { id: {{cf.id}},type: {{cf.type}}, name: '{{cf.name}}', price: {{cf.price > 0 ? cf.price : '0'}} },
+                        {% else %}
+                            { id: {{cf.id}},type: {{cf.type}}, name: '{{cf.name}}', price: {{cf.price > 0 ? cf.price : '0'}}, optName: '{{cf.optName}}', val: {{cf.val}} } ,
+                        {% endif %}
+                        {% endfor %}
+                    ]
+                });
+            {% endfor %}    
+        </script>
+
+    {% endif %}
+
+    {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'os'} %}
+{% endblock deferredCss %}

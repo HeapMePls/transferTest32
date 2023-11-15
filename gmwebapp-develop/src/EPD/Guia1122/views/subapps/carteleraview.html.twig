@@ -1,0 +1,343 @@
+{% extends ('layout.html.twig') %}
+
+{% set isMobile = isMobile() %}
+
+{% set hasBackdrop = (data.event.inf.media.bl is defined and data.event.inf.media.bl | length > 0)
+                      or 
+                      (data.event.inf.media.bm is defined and data.event.inf.media.bm | length > 0) %}
+
+{% set hasPoster = (data.event.inf.media.pm is defined and data.event.inf.media.pm | length > 0)
+                  or
+                  (data.event.inf.media.ps is defined and data.event.inf.media.ps | length > 0) %}
+
+{% block admConfigHead %} 
+    googletag.cmd.push(function() {
+        {% if isMobile %}
+          googletag.defineSlot('{{ADS_SLOT_RIGHT}}', [[320, 100],[300, 100],[320, 50]], 'sas_27528').addService(googletag.pubads());
+        {% else %}
+          googletag.defineSlot('{{ADS_SLOT_RIGHT}}', [[300,250]], 'sas_27528').addService(googletag.pubads());
+        {% endif %}
+        googletag.pubads().setTargeting('Channel', 'web');
+        googletag.pubads().setTargeting('zona', '{{ lastzone }}');
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+    });
+{% endblock admConfigHead %}
+{% block admConfigBody %} 
+    <script>
+        {% if isMobile %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27528'); 
+            });
+        {% else %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27528'); 
+            });
+        {% endif %}
+    </script>
+{% endblock admConfigBody %} 
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+      <style>
+          {{ source( '_inlinecss/'~BRANDCODE~'/c-cav'~filesSignature~'.css') }}
+      </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %}{{title}} | {{ parent() }}{% endblock pageTitle %}
+
+{% block metas %}
+  <link rel="canonical" href="https:{{ url('carteleraview',  {'eventname': urlize(data.event.nam), 'eventid': data.event.idp}, true) }}"/>
+  <meta name="description" content="{{data.event.nam}} | Guía Móvil 1122" />
+  <meta name="keywords" content="1122, {{data.event.nam}}, peliculas, estrenos, salas, uruguay, servicios" />
+  <meta name="robots" content="index, all" />
+  <meta name="DC.title" content="Guía Móvil 1122" />
+  <meta name="publisher" content="Guía Movil 1122" />
+  <meta name="language" content="es" />
+  <meta name="distribution" content="global"/>
+
+  {# PRELOAD PRECONNECT PRREFETCH SECTION #}
+    <link rel="preconnect" href="https://static.tingelmar.com/" />
+    <link rel="dns-prefetch" href="https://static.tingelmar.com/" />
+
+    <link rel="preload" as="style" href="{{ app.request.basepath }}/css/dist/p-{{BRANDCODE}}/p-cav{{ filesSignature }}.min.css" />
+    {% if hasBackdrop %}
+      {% if data.event.inf.media.bl is defined and data.event.inf.media.bl | length > 0 %}
+        <link rel="preload" as="image" href="{{data.event.inf.media.bl | asWebp }}" />
+        <link rel="preload" as="image" href="{{data.event.inf.media.bl}}" />
+      {% elseif data.event.inf.media.bm is defined and data.event.inf.media.bm | length > 0 %}
+        <link rel="preload" as="image" href="{{data.event.inf.media.bm | asWebp }}" />
+        <link rel="preload" as="image" href="{{data.event.inf.media.bm}}" />
+      {% endif %}
+    {% else %}
+      {% if data.event.inf.media.pm is defined and data.event.inf.media.pm | length > 0 %}
+        <link rel="preload" as="image" href="{{data.event.inf.media.pm | asWebp }}" />
+        <link rel="preload" as="image" href="{{data.event.inf.media.pm}}" />
+      {% elseif data.event.inf.media.ps is defined and data.event.inf.media.ps | length > 0 %}
+        <link rel="preload" as="image" href="{{data.event.inf.media.ps | asWebp }}" />
+        <link rel="preload" as="image" href="{{data.event.inf.media.ps}}" />
+      {% endif %}
+    {% endif %}
+  {# END PRELOAD #}
+{% endblock metas %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block content %}
+    <div class="row">
+
+        <div class="large-10 large-offset-1 small-12 u-box-cntr">
+           
+            <!-- backdrop -->
+            {% if hasBackdrop %}
+              <div class="backdrop-poster">
+                {% if data.event.inf.media.bl is defined and data.event.inf.media.bl | length > 0 %}
+                  <picture>
+                      <source data-srcset="{{data.event.inf.media.bl | asWebp }}" type="image/webp"/>
+                      <source data-srcset="{{data.event.inf.media.bl}}" type="image/png"/>
+                      <img class="lazyload item-icon" data-src="{{data.event.inf.media.bl}}" 
+                          alt="{{data.event.nam}}"
+                          src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                  </picture>
+                {% elseif data.event.inf.media.bm is defined and data.event.inf.media.bm | length > 0 %}
+                  <picture>
+                      <source data-srcset="{{data.event.inf.media.bm | asWebp }}" type="image/webp"/>
+                      <source data-srcset="{{data.event.inf.media.bm}}" type="image/png"/>
+                      <img class="lazyload item-icon" data-src="{{data.event.inf.media.bm}}" 
+                          alt="{{data.event.nam}}"
+                          src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                  </picture>
+                {% elseif data.event.inf.media.pm is defined and data.event.inf.media.pm | length > 0 %}
+                  <div style="height:380px;overflow:hidden">
+                    <picture>
+                      <source data-srcset="{{data.event.inf.media.pm | asWebp }}" type="image/webp"/>
+                      <source data-srcset="{{data.event.inf.media.pm}}" type="image/png"/>
+                      <img class="lazyload item-icon" data-src="{{data.event.inf.media.pm}}" 
+                          alt="{{data.event.nam}}" style="width: 100%;margin-top: -50%;opacity: 0.7;-webkit-filter: blur(5px);-moz-filter: blur(8px);-o-filter: blur(8px);-ms-filter: blur(8px);filter: blur(8px);"
+                          src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                    </picture>
+                  </div>
+                {% elseif data.event.inf.media.ps is defined and data.event.inf.media.ps | length > 0 %}
+                  <div style="height:380px;overflow:hidden">
+                    <picture>
+                      <source data-srcset="{{data.event.inf.media.ps | asWebp }}" type="image/webp"/>
+                      <source data-srcset="{{data.event.inf.media.ps}}" type="image/png"/>
+                      <img class="lazyload item-icon" data-src="{{data.event.inf.media.ps}}" 
+                          alt="{{data.event.nam}}" style="width: 100%;margin-top: -50%;opacity: 0.7;-webkit-filter: blur(5px);-moz-filter: blur(8px);-o-filter: blur(8px);-ms-filter: blur(8px);filter: blur(8px);">
+                          src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                    </picture>
+                  </div>
+                {% else %}
+                  <div style="height:150px;"></div>
+                {% endif %}
+              </div>
+            {% else %}
+                {% if (data.event.inf.media.pm is defined and data.event.inf.media.pm | length > 0)
+                  or
+                  (data.event.inf.media.ps is defined and data.event.inf.media.ps | length > 0)
+                  %}
+                  <div style="height:320px;"></div>
+                {% endif %}
+            {% endif %}
+
+            <!-- ficha -->
+            <div style="position:relative;padding:10px">
+
+              <!-- floating poster -->
+              {% if hasPoster %}
+                <div class="floating-poster">
+                  {% if data.event.inf.media.pm is defined and data.event.inf.media.pm | length > 0 %}
+                    <picture>
+                      <source data-srcset="{{data.event.inf.media.pm | asWebp }}" type="image/webp"/>
+                      <source data-srcset="{{data.event.inf.media.pm}}" type="image/png"/>
+                      <img class="lazyload item-icon" data-src="{{data.event.inf.media.pm}}" 
+                          alt="{{data.event.nam}}" 
+                          src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                    </picture>
+                  {% elseif data.event.inf.media.ps is defined and data.event.inf.media.ps | length > 0 %}
+                    {# <img src="{{data.event.inf.media.ps}}" alt="{{data.event.nam}}"> #}
+                    <picture>
+                      <source data-srcset="{{data.event.inf.media.ps | asWebp }}" type="image/webp"/>
+                      <source data-srcset="{{data.event.inf.media.ps}}" type="image/png"/>
+                      <img class="lazyload item-icon" data-src="{{data.event.inf.media.ps}}" 
+                          alt="{{data.event.nam}}" 
+                          src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                    </picture>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+              <!-- ficha tabs -->
+              <div class="u-box-cntr boxedlines letra-gris" style="margin-top: 70px;">
+
+                <ul class="tabs fichaTabs" data-tabs id="ficha-tabs">
+                  <li class="tabs-title is-active"><a href="#paneldetalles" aria-selected="true">Detalles</a></li>
+                  <li class="tabs-title"><a href="#panelhorarios">Horarios</a></li>
+                  {% if data.event.inf.media.trailer is defined %}
+                    {% if data.event.inf.media.trailer | length > 0 %}
+                      <li class="tabs-title"><a href="#paneltrailer">Trailer</a></li>
+                    {% endif %}
+                  {% endif %}
+                </ul>
+
+                <!-- ficha contents -->
+                <div class="tabs-content" data-tabs-content="ficha-tabs">
+                  <!-- ficha tab: detalles -->
+                  <div class="tabs-panel is-active letra-gris" id="paneldetalles">
+                    
+                    <div class="row">
+                      <div class="large-6 medium-6 small-12 columns">
+
+                        <h1 class="section-header section-header-left">
+                          {{data.event.nam}}
+                        </h1>
+                        {% if data.event.inf.ficha.original_title is defined %}
+                          <h2 class="section-subheader" style="color: #999;">{{data.event.inf.ficha.original_title}}</h2>
+                        {% endif %}
+                        {% if data.event.inf.ficha.genres is defined %}
+                          <h4 style="font-size: 15px;line-height: 20px;margin: 0px;color: #159de1;">
+                            {% for genre in data.event.inf.ficha.genres %}
+                              {{genre.name}},
+                            {% endfor %}
+                          </h4>
+                        {% endif %}
+                        <div style="font-size: 13px;line-height: 16px;margin-top: 10px;">
+                          <table class="gm-simple-table">
+                          {% if data.event.inf.ficha.runtime is defined %}
+                            <tr><td>Duracion</td><td>: {{data.event.inf.ficha.runtime}} mins.</td></tr>
+                          {% endif %}
+                          {% if data.event.inf.ficha.release_date is defined %}
+                            <tr><td>Lanzamiento</td><td>: {{data.event.inf.ficha.release_date}}</td></tr>
+                          {% endif %}
+                          {% if data.event.inf.ficha.production_companies is defined %}
+                            <tr><td>Producida por</td><td>: 
+                              {% for prod in data.event.inf.ficha.production_companies %}
+                                {{prod.name}}
+                              {% endfor %}
+                            </td></tr>
+                          {% endif %}
+                          {% if data.event.inf.ficha.budget is defined %}
+                            <tr><td>Presupuesto</td><td>: {{data.event.inf.ficha.budget | cost}}</td></tr>
+                          {% endif %}
+                          {% if data.event.inf.ficha.revenue is defined %}
+                            <tr><td>Ganancias</td><td>: {{data.event.inf.ficha.revenue | cost}}</td></tr>
+                          {% endif %}
+                          </table>
+                        </div>
+                        {% if data.event.inf.ficha.overview is defined %}
+                          <div style="font-size: 14px;line-height: 17px;margin: 25px 0px;">{{data.event.inf.ficha.overview}}</div>
+                        {% endif %}
+                        
+
+                        {#
+                        data.event.inf.ficha.revenue
+                        data.event.inf.ficha.budget
+                        data.event.inf.ficha.vote_count
+                        data.event.inf.ficha.vote_average
+                        data.event.inf.ficha.runtime
+                        #}
+
+                      </div>
+
+                      <div class="large-6 medium-6 small-12 columns text-center">
+                        <div class="banner300x50">
+                          {# {{ sasTag(sasSpage, 'right') | raw }}  #}
+                          <div id="sas_27528" class="gmad-desktop"></div>
+                        </div>
+                      </div>
+                    
+                    </div>
+
+                  </div>
+
+                  <!-- ficha tab: horarios -->
+                  <div class="tabs-panel" id="panelhorarios">
+                    {% for store in data.event.sto %}
+                      {% if store.funciones | length > 0 %}
+                        <!-- store details -->
+                        <div style="position:relative;margin-bottom: 20px;border-bottom: 1px solid #DDD;">
+                          {% if store.ics | length > 0 %}
+                            {# <img src="{{store.ics}}" style="position:absolute;left:0px;top:0px;width:45px;height:45px" alt="{{store.nam}}"> #}
+                            <picture>
+                              <source data-srcset="{{store.ics | asWebp }}" type="image/webp"/>
+                              <source data-srcset="{{store.ics}}" type="image/png"/>
+                              <img class="lazyload item-icon" data-src="{{store.ics}}" 
+                                  alt="{{store.nam}}"  style="position:absolute;left:0px;top:0px;width:45px;height:45px"
+                                  src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                            </picture>
+                            <div style="padding-left: 50px">
+                          {% else %}
+                            <div>
+                          {% endif %}
+                              {% set idLOC = (store.idr*10000) + store.ids %}
+                              <a href="{{ path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(store.nam)}) }}">
+                                <h3 class="letra-gris" style="font-size: 16px;line-height: 16px;font-weight: 600;margin: 0px;">
+                                  {{store.nam}}
+                                </h3>
+                              </a>
+                              <div style="font-size: 12px;line-height: 14px;color: #777;">{{store.adr}}</div>
+                              <div style="font-size: 12px;line-height: 14px;color: #777;">{{store.znm}}</div>
+                            </div>
+                          <!-- store hours -->
+                          {% for funcion in store.funciones %}
+                            <div style="padding: 10px;margin: 5px 0px;" class="letra-gris">
+                              <div style="font-size: 14px;border-bottom: 1px solid #DDD;">{{funcion.ndatetime}}</div>
+                              {% for horario in funcion.horarios %}
+                                <div style="font-size: 14px;border-radius: 6px;display: table;color: #159de1;">{{horario.horario}} | {{horario.idioma}}</div>
+                              {% endfor %}
+                            </div>
+                          {% endfor %}
+                        </div>
+                      {% endif %}
+                    {% else %}
+                      <div>Lo sentimos, ya no hay mas salas disponibles</div>
+                    {% endfor %}
+                  </div>
+
+                  <!-- ficha trailer -->
+                  {% if data.event.inf.media.trailer is defined %}
+                    {% if data.event.inf.media.trailer | length > 0 %}
+                      <div class="tabs-panel" id="paneltrailer">
+                        {% if trailerInfo.isYoutube %}
+                          {% if trailerInfo.youtubeId != -1 %}
+                            <div style="width:100%;min-height:400px;text-align: center;">
+                              <iframe class="gm-bill-ytif" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" type="text/html" src="https://www.youtube.com/embed/{{trailerInfo.youtubeId}}?autoplay=0&fs=1&iv_load_policy=3&showinfo=0&rel=0"></iframe>
+                            </div>
+                          {% else %}
+                            <a href="{{trailerInfo.link}}">Ver trailer</a>
+                          {% endif %}
+                        {% else %}
+                          <a href="{{trailerInfo.link}}">Ver trailer</a>
+                        {% endif %}
+                      </div>
+                    {% endif %}
+                  {% endif %}
+
+                </div>
+
+              </div>
+
+            </div>
+        </div>
+
+    </div>
+    
+    {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'cav'} %}
+{% endblock deferredCss %}

@@ -1,0 +1,33 @@
+{% block body %}
+<!-- div class="row promociones"-->
+    <div class="large-12 medium-12 small-12 columns sin-bordes right">
+        <div class="callout panel promociones">
+            <p class="titulo">Promociones</p>
+        </div>
+        <div class="listado-promociones">
+            {% block elements %}
+            <ul>
+                {% for proveedor in proveedores %}
+                <li>
+                    {% if proveedor.name != '' %}
+                    <a href="{{ path('sponsor', {'sponsorNombre': urlize(proveedor.name), 'sponsorId': proveedor.idr }) }}">
+                        <img src="{{ proveedor.ics | default(app.request.basepath ~ '/img/local_default.png') }}" alt="ICONO SPONSOR {{ proveedor.name }}" width="85" height="85"/>
+                    </a>
+                    {% endif %}
+                </li>
+                {% endfor %}
+                {% block botonVerPromociones %}
+                <li class="boton">
+                    <a href="{{ url('promocionesTodas') }}">
+                        <div class="btn-ver-todas-las-promociones ">
+                            Ver todas las promociones
+                        </div>
+                    </a>
+                </li>
+                {% endblock botonVerPromociones %}
+            </ul>
+            {% endblock elements %}
+        </div>
+    </div>
+<!--/div-->
+{% endblock %}

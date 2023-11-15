@@ -1,0 +1,8 @@
+<div style="text-align: center; margin: 30px;"><img style="width: 150px;" src="{{ app.request.basepath }}/img/correct.png"/></div>
+<div style="text-align: center;"><label>El pedido se ha realizado correctamente.</label></div>
+<div style="text-align: center;"><label>El total a pagar es ${{total}}</label></div>
+<div style="text-align: center;"><label>Nº de Pedido {{id}}</label></div><br>
+<div class="u-box-cntr">
+    <div style="text-align:center;">El pedido esta pendiente, a la espera de la confirmacion.<br>Le llegara una notificacion y un mail cuando sea aceptado.</div>
+</div><br><br>
+<div style="text-align: center;"><a href="{{path('uberto/requestList')}}">Ver mis pedidos</a></div>

@@ -1,0 +1,147 @@
+{% extends ('layout.html.twig') %}
+
+{% set sasSpage = 'promociones-y-ofertas' %}
+{% block sasSpage %}{{ sasSpage }}{% endblock sasSpage %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/c-gm-h'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %}Promociones y Ofertas | {{ parent() }}{% endblock pageTitle %}
+
+{% block metas %}
+    <meta name="description" content="Promociones y Ofertas | {{BRAND}}" />
+{% endblock metas %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+{% endblock javascripts %}
+
+{% block content %}
+    <div class="row">
+        <div class="large-12 medium-12 columns sin-bordes">
+            <h1>Promociones y Ofertas</h1>
+            <nav class="breadcrumbs sc" role="navigation" aria-label="breadcrumbs">
+                <ul>
+                    <li><a href="{{ path('home') }}"><i class="fa fa-home"></i></a></li>
+                    <li class=""><a href="{{ path('home') }}">Inicio</a></li>
+                    <li class="current"><a href="{{ url("promocionesTodas") }}">Promociones y Ofertas</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="large-12 medium-12 columns banco general sin-bordes">
+            {% if sponsorNombre != '' %}
+            {{ render(path('listadoProveedores', {'layout': 'TodasPromociones', 'sponsorNombre': urlize(sponsorNombre), 'sponsorId': sponsorId,'categoriaId': categoriaId})) }}
+            {% endif %}
+            <div class="widget-filtro">
+                <div class="titulo">Filtro por rubro</div>
+                <ul>
+                    {% for catPos, categoria in categorias %}
+                        <li>
+                            {% if sponsorNombre != '' and categoria.name != '' %}
+                                {% if (categoria.id == categoriaId) %}
+                                    <a  class="destacadafiltro" href="{{ path('promocionesTodas', {'sponsorId': sponsorId, 'sponsorNombre': sponsorNombre}) }}" title="{{ categoria.name }}">
+                                        {{ categoria.name }}
+                                    </a>
+                                {% else %}
+                                    <a href="{{ path('promocionesTodas', {'categoriaId': categoria.id, 'categoriaNombre': urlize(categoria.name), 'sponsorId': sponsorId, 'sponsorNombre': sponsorNombre}) }}" title="{{ categoria.name }}">
+                                        {{ categoria.name }}
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        {#{% if not isMobile() %}#}
+            <div class="banner970x90">
+                {{ sasTag(sasSpage, 'top') | raw }} 
+            </div>
+        {#{% endif %}#}
+
+        <div class="large-12 medium-12 columns widget-promocion promobanco">
+            <ul>
+
+                {% for clave, valor in promociones %}
+                    {% if valor.cantLocales > 1 and valor.nombrePromo != '' or valor.cantLocales <= 1 and valor.comercioNombre != '' %}
+                        <li>
+                            {% if valor.bonus is defined %} 
+                                {% if valor.bonus != '' %}
+                                    <div style="white-space: nowrap;color: white;float: right;right: 0px;bottom: 0px;font-size: 11px;">
+                                        <div style="background: #d63476;display: inline-block; padding: 0px 4px 0px 4px;margin-left: 10px;">{{ valor.bonus }}</div>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            
+                            <div class="imagen">
+                                <a title="{{ valor.nombrePromo }}" href="{{ valor.cantLocales > 1  ? path('multilocal', {'promocionNombre': urlize(valor.nombrePromo), 'promocionId': valor.idPromocion}) : path('comercio', {'id': 'LOC' ~ valor.comercioId, 'comercioNombre': urlize(valor.comercioNombre)}) }}">
+                                    <img alt="Imagen Promo {{valor.nombrePromo}}" width="185" height="110" src="{{ valor.imagenPromo | default(app.request.basepath ~ '/img/beneficio_default.png') }}">
+                                </a>
+                            </div>
+                            <div class="titulo">
+                                <a title="{{ valor.nombrePromo }}" href="{{ valor.cantLocales > 1  ? path('multilocal', {'promocionNombre': urlize(valor.nombrePromo), 'promocionId': valor.idPromocion}) : path('comercio', {'id': 'LOC' ~ valor.comercioId, 'comercioNombre': urlize(valor.comercioNombre)}) }}">
+                                    {{ valor.nombrePromo }}
+                                </a>
+                            </div>
+                            <div class="informacion">
+                                <a title="{{ valor.nombrePromo }}" href="{{ valor.cantLocales > 1  ? path('multilocal', {'promocionNombre': urlize(valor.nombrePromo), 'promocionId': valor.idPromocion}) : path('comercio', {'id': 'LOC' ~ valor.comercioId, 'comercioNombre': urlize(valor.comercioNombre)}) }}">
+                                    {{ valor.descripcionLarga | truncate(100) | raw }}
+                                </a>
+                            </div>
+                            
+                            <div class="ico-tarjeta">
+                                {% if valor.nombreBanco != '' %}
+                                <a title="{{ valor.nombreBanco }}" href="{{ path('sponsor', {'sponsorNombre': urlize(valor.nombreBanco), 'sponsorId': valor.idBanco}) }}">
+                                    <img alt="ICONO SPONSOR {{ valor.nombreBanco }}" src="{{ valor.iconoSponsor | default(app.request.basepath ~ '/img/local_default.png') }}" width="30" height="30">
+                                </a>
+                                {% endif %}
+                            </div>
+                            <div class="descripcion">{{ valor.descripcionCorta }}</div>
+                            <div class="descripcion">{{ valor.condiciones }} </div>
+                            <div class="ver-oferta">
+                                <a title="{{ valor.nombrePromo }}" href="{{ valor.cantLocales > 1  ? path('multilocal', {'promocionNombre': urlize(valor.nombrePromo), 'promocionId': valor.idPromocion}) : path('comercio', {'id': 'LOC' ~ valor.comercioId, 'comercioNombre': urlize(valor.comercioNombre)}) }}">
+                                    Ver Oferta
+                                </a>
+                            </div>
+                        </li>
+                    {% endif %}
+                                        
+                    {#{% if isMobile() and loop.index is divisible by(5) and not loop.last %}
+                    <li class="show-for-small-only banner300x50">
+                        {{ sasTag(sasSpage, 'right') | raw }}  
+                    </li>
+                    {% endif %}#}
+                {% endfor %}
+
+                {#{% if isMobile() %}
+                <li class="show-for-small-only banner300x50">
+                    {{ sasTag(sasSpage, 'right1') | raw }}  
+                </li>
+                {% endif %}#}
+            </ul>
+        </div>
+
+        <div class="paginadorpromociones">
+            {{ macroPaginator.show(path('promocionesTodas', {'sponsorNombre': urlize(sponsorNombre), 'sponsorId': sponsorId,'categoriaNombre':urlize(categoriaNombre),'categoriaId':categoriaId}), pagina, cantidadPaginas,verTodasPaginas,maxPaginasPrimeras) }}
+        </div>
+
+        <div class="banner970x90">
+            {{ sasTag(sasSpage, 'bottom') | raw }} 
+        </div>
+
+        {% include 'components/footer.html.twig' %}
+    </div>
+{% endblock content %}

@@ -1,0 +1,1578 @@
+{% extends ('layout.html.twig') %}
+
+{% set isMobile  = isMobile() %}
+{% set thisURL   = 'https:'~ url('comercio', {'id': comercio.piid, 'comercioNombre': urlize(comercio.nam) }, true) %}
+{% set shareText = comercio.nam ~ '-' ~ comercio.adr ~ ' ' ~ (comercio.znam is empty ? '' : '- ') ~ comercio.znam ~ ' ' ~ (comercio.sta is empty ? '' : '- ') ~ comercio.sta %}
+{% set hasImage  = (comercio.ims | length > 0 or comercio.imshq | length > 0) %}
+{% set hasSMI    = (comercio.smi is defined and comercio.smi | length > 0) %}
+{% set hasMap    = (not comercio.lat is empty and not comercio.lon is empty and comercio.lat | length > 0) %}
+
+{% block admConfigHead %} 
+    {% if comercio.spo != 2 and not isAdultContent %}
+    googletag.cmd.push(function() {
+        {% if isMobile %}
+            googletag.defineSlot('{{ADS_SLOT_RIGHT}}', [[320, 250],[300, 250]], 'sas_27528').addService(googletag.pubads());
+            googletag.defineSlot('{{ADS_SLOT_MIDDLE}}', [[320, 100], [300, 100], [320, 50]], 'sas_28427').addService(googletag.pubads());
+            googletag.defineSlot('{{ADS_SLOT_BOTTOM}}',  [[320, 100], [300, 100], [320, 50]], 'sas_28425').addService(googletag.pubads());
+        {% else %}
+            googletag.defineSlot('{{ADS_SLOT_RIGHT}}', [[300, 250],[320, 250]], 'sas_27528').addService(googletag.pubads());
+            googletag.defineSlot('{{ADS_SLOT_RIGHT1}}', [[300, 250],[320, 250]], 'sas_27747').addService(googletag.pubads());
+        {% endif %}
+        googletag.pubads().setTargeting('zona', '{{ zona }}');
+        googletag.pubads().setTargeting('rubro', '{{ rubro }}');
+        googletag.pubads().setTargeting('Channel', 'web');
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+    });
+    {% endif %}
+{% endblock admConfigHead %}
+{% block admConfigBody %} 
+    {% if comercio.spo != 2 and not isAdultContent %}
+        <script>
+            {% if isMobile %}
+                googletag.cmd.push(function() { 
+                    googletag.display('sas_27528'); 
+                    googletag.display('sas_28427'); 
+                    googletag.display('sas_28425'); 
+                });
+            {% else %}
+                googletag.cmd.push(function() { 
+                    googletag.display('sas_27528'); 
+                    googletag.display('sas_27747'); 
+                });
+            {% endif %}
+        </script>
+    {% endif %}
+{% endblock admConfigBody %} 
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-c'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block pageTitle %}
+{{ comercio.nam | title }} | {{ rubro | title }} | {{ zona | title }}
+{% endblock pageTitle %}
+
+{% block metas %}
+    <meta name="description" content="{{ comercio.nam | title  }} | {{ rubro | title }}, {{ comercio.adr | title }}, {{ zona | title }}, {{ comercio.dsc | raw | truncate(100) }}" />
+    <meta name="keywords" content="{{ rubro | lower}}, {{ comercio.nam | lower }}, busqueda, comercios, uruguay, comercios, servicios, zonas, departamentos, local, telefono, direccion" />
+    <meta name="robots" content="index,all" />
+    <meta name="DC.title" content="{{ comercio.nam | title }} en {{ zona | title }} {{ comercio.adr | title }} | {{ rubro | title }} | {{BRAND}}" />
+    <meta name="geo.region" content="UY-MO" />
+    <meta name="geo.placename" content="{{ zona | title }}" />
+
+    {% if comercio.imshq is defined and comercio.imshq | length > 0 %}
+    <meta property="twitter:card" content="summary_large_image"/>
+    <meta property="twitter:image" content="{{ comercio.imshq }}"/>
+    {% else %}
+    <meta property="twitter:card" content="summary"/>
+    <meta property="twitter:image" content="{{ comercio.icshq | default('https://' ~ app.request.server.get('HTTP_HOST') ~ '/img/local_default.png') }}"/>
+    {% endif %}
+    <meta property="twitter:site" content="@{{BRAND}}"/>
+    <meta property="twitter:title" content="{{ comercio.nam | title }} en {{ zona | title }} {{ comercio.adr | title }} | {{ rubro | title }} | {{BRAND}}"/>
+    <meta property="twitter:description" content="{{ comercio.nam | title  }}, {{ comercio.adr | title }}, {{ comercio.dsc | raw | title }} | {{ rubro | title }} | {{BRAND}}"/>
+
+    <meta property="fb:app_id" content="766711133402070" /> 
+    <meta property="og:title" content="{{ comercio.nam | title }} en {{ zona | title }} {{ comercio.adr | title }} | {{ rubro | title }} | {{BRAND}}"/>
+    <meta property="og:description" content="{{ comercio.nam | title  }}, {{ comercio.adr | title }}, {{ comercio.dsc | raw | title }} | {{ rubro | title }} | {{BRAND}}"/>
+    <meta property="og:site_name" content="{{BRAND}}" />
+    <meta property="og:type" content="business.business" />
+    <meta property="og:locale" content="es_ES"/>
+    <meta property="og:url" content="{{ app.request.uri }}"/>
+    <meta property="og:image" content="{{ comercio.icshq | default('https://' ~ app.request.server.get('HTTP_HOST') ~ '/img/local_default.png') }}"/>
+
+    {% if not comercio.lat is empty and not comercio.lon is empty %}
+        <meta name="geo.position" content="{{ comercio.lat }}; {{ comercio.lon }}" />
+        <meta name="ICBM" content="{{ comercio.lat }}, {{ comercio.lon }}" />
+        <meta property="place:location:latitude" content="{{ comercio.lat }}">
+        <meta property="place:location:longitude" content="{{ comercio.lon }}">
+    {% else %}
+        <meta name="geo.position" content="-34.906857;-56.194156" />
+        <meta name="ICBM" content="-34.902528, -56.185395" />
+    {% endif %}
+
+    <meta name="publisher" content="{{BRAND}}" />
+    <meta name="language" content="es" />
+    <meta name="distribution" content="global"/>
+    
+    <link rel="canonical" href="{{thisURL}}"/>
+
+    {# PRELOAD PRECONNECT PRREFETCH SECTION #}
+    <link rel="preconnect" href="https://static.tingelmar.com/" />
+    <link rel="dns-prefetch" href="https://static.tingelmar.com/" />
+    {% if hasSMI %}
+      <link rel="preconnect" href="https://assets.tingelmar.com/" />
+      <link rel="dns-prefetch" href="https://assets.tingelmar.com/" />
+    {% endif %}
+
+    <link rel="preload" as="style" href="{{ app.request.basepath }}/css/dist/p-{{BRANDCODE}}/p-c{{ filesSignature }}.min.css" />
+    {% if isMobile and hasImage %}
+      <link rel="preload" as="image" href="{{comercio.imshq | asWebp }}" />
+      <link rel="preload" as="image" href="{{comercio.imshq}}" />
+    {% endif %}
+    {% if isMobile and not hasImage and hasSMI %}
+      <link rel="preload" as="image" href="{{mapStaticImage ~ comercio.smi | asWebp }}" />
+      <link rel="preload" as="image" href="{{mapStaticImage ~ comercio.smi}}" />
+    {% endif %}
+
+    {% if isMobile and comercio.iPrm is defined and comercio.iPrm | length > 0 %}
+      {% for keyPromo, promo in comercio.iPrm %}
+        {% if promo.imp is defined and promo.imp | length > 0 %}
+          <link rel="preload" as="image" href="{{promo.imphq | asWebp }}" />
+          <link rel="preload" as="image" href="{{promo.imphq}}" />
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    {% if not isMobile and hasSMI %}
+      <link rel="preload" as="image" href="{{mapStaticImage ~ comercio.smi | asWebp }}" />
+      <link rel="preload" as="image" href="{{mapStaticImage ~ comercio.smi}}" />
+    {% endif %}
+
+{% endblock metas %}
+
+{% block inlineJavascripts %}
+    {{ parent() }}
+{% endblock inlineJavascripts %}
+
+{% block header %}
+    {{ render(path('headerComponent', {'zoneId':zonaId, 'zoneName':zona})) }}
+{% endblock header %}
+
+{% block content %}
+
+    {% if comercio.del is defined and comercio.del %}
+        <div class="noexiste">Este local ya no existe<span><br>Útilice el buscador para encontrar uno similar.</span></div>
+    {% endif %}
+
+    <div class="row is-collapse-child large-uncollapse medium-uncollapse small-collapse contenedor-ficha">
+        <div class="large-8 medium-8 small-12 columns nbox ficha-cntr" style="margin-bottom: 20px;">
+            {# FICHA #}
+            <div id="ficha" class="u-box-cntr ficha" 
+                 data-name="{{ comercio.nam }}" data-idr="{{comercio.idr}}" data-ids="{{comercio.ids}}"
+                 data-username="{{userData != NULL ? userData.name : ''}}" data-useremail="{{userData != NULL ? userData.email : ''}}"
+                 >
+
+                {# ZUCK CARROUSEL #}
+                {% if isMobile %}
+                    {% if showZuck %}
+                        {# <div id="zuckSwiper" class="swiper-container zuck">
+                            <div class="swiper-wrapper" style="margin-left: 0px;">
+                                {% for zuck in showZuck %}
+                                    <div class="swiper-slide">
+                                        <picture>
+                                            <source data-srcset="{{zuck.src | asWebp }}" type="image/webp"/>
+                                            <source data-srcset="{{zuck.src}}" type="image/png"/>
+                                            <img class="lazyload" data-src="{{zuck.src}}" alt="{{zuck.title}} - {{comercio.nam}}"
+                                                src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                        </picture>
+                                        {% if zuck.title | length > 0 %}
+                                            <div class="zuck-title">
+                                                <h4>{{zuck.title}}</h4>
+                                                <p>{{zuck.desc}}</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="swiper-pagination"></div>
+                        </div> #}
+                        <div class="keen-slider-cntr">
+                          <div id="keenCovers" class="keen-slider">
+                            {% for zuck in showZuck %}
+                              <div class="keen-slider__slide" {% if loop.index0 > 0 %}style="display:none"{% endif %}>
+                                {% if loop.index0 == 0 %}
+                                  <picture>
+                                      <source srcset="{{zuck.src | asWebp }}" type="image/webp"/>
+                                      <source srcset="{{zuck.src}}" type="image/png"/>
+                                      <img decoding="async" src="{{zuck.src}}" alt="{{zuck.title}} - {{comercio.nam}}">
+                                  </picture>
+                                {% else %}
+                                  <picture>
+                                      <source data-srcset="{{zuck.src | asWebp }}" type="image/webp"/>
+                                      <source data-srcset="{{zuck.src}}" type="image/png"/>
+                                      <img class="lazyload" data-src="{{zuck.src}}" alt="{{zuck.title}} - {{comercio.nam}}"
+                                          src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                  </picture>
+                                {% endif %}
+                                {% if zuck.title | length > 0 %}
+                                    <div class="zuck-title">
+                                        <h4>{{zuck.title}}</h4>
+                                        <p>{{zuck.desc}}</p>
+                                    </div>
+                                {% endif %}
+                              </div>
+                            {% endfor %}
+                          </div>
+                          <div id="dots" class="story-dots">
+                            {% for zuck in showZuck %}
+                              <div class="story-dot"></div>
+                            {% endfor %}
+                          </div>
+                        </div>
+                    {% else %}
+                        {% if hasImage %}
+                            <div class="portada">
+                                <picture>
+                                    <source srcset="{{comercio.imshq | asWebp }}" type="image/webp"/>
+                                    <source srcset="{{comercio.imshq}}" type="image/png"/>
+                                    <img decoding="async" src="{{comercio.imshq}}" alt="{{ comercio.nam }}" {{ comercio.ims|length == 0 ? 'style="display:none"' : '' }}>
+                                </picture>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+
+                {# ICONS & DATA #}
+                <div style="position:relative">
+                    {% set hasIcon = (comercio.ics | length > 0 or comercio.icshq | length > 0) %}
+                    {% if hasIcon %}
+                        <div class="imagen">
+                            {# {% if not isMobile %}
+                                <img src="{{ comercio.ics | default(app.request.basepath ~ '/img/local_default.png') }}" alt="{{ comercio.ics is empty ? 'N/A' : comercio.nam }}" height="85" width="85">
+                            {% else %}
+                                <img onerror="this.onerror=null;this.src='{{ comercio.ics }}';this.style.width='85px';this.style.height='85px'" src="{{ comercio.icshq | default(app.request.basepath ~ '/img/local_default.png') }}" alt="{{ comercio.ics is empty ? 'N/A' : comercio.nam }}" height="180" width="180">
+                            {% endif %} #}
+                            <picture>
+                                <source srcset="{{comercio.icshq | asWebp }}" type="image/webp"/>
+                                <source srcset="{{comercio.icshq}}" type="image/png"/>
+                                <img decoding="async" class="lazyload" src="{{comercio.icshq}}" alt="{{ comercio.nam }}"
+                                    src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+                                    height="135" width="135">
+                            </picture>
+                        </div>
+                    {% endif %}
+                    {# {% if comercio.lRnk > 0 and hasIcon %}
+                        <div class="ranking">
+                            <ul>
+                                {% for i in 1..5 %}
+                                    <li class="fa fa-star {{ (loop.index <= comercio.lRnk) ? 'check' : '' }}"></li>
+                                {% endfor %}
+                            </ul>
+                            {% if comercio.cRnk > 0 %}
+                                <div>{{ (comercio.cRnk == 1) ? comercio.cRnk~' evaluacion' : comercio.cRnk~' evaluaciones' }}</div>
+                            {% endif %}
+                        </div>
+                    {% endif %} #}
+                    
+                    <div class="infoFicha {{ comercio.ics | length > 0 ? '' : 'infoFichaSI' }}">
+                        {# NAME #}
+                        <div class="title {{ comercio.ics | length > 0 ? '' : 'infoFichaSI' }}">
+                            <div>
+                                <h1>{{ comercio.nam }}</h1>
+                                {# VERIFIED BADGE #}
+                                {% if comercio.vfd is defined and comercio.vfd != '' %}
+                                    <span data-open="verifiedModal">
+                                        {# <svg width="23px" height="23px" viewBox="0 0 124.202 124.202"><g><polygon  fill="#4CAF50" points="93.52,104.314 12.396,104.314 12.396,23.191 88.221,23.191 100.614,10.797 0,10.797 0,116.71 105.914,116.71 105.914,45.757 93.52,58.151"/><polygon fill="#4CAF50" points="42.432,35.664 29.315,48.784 62.672,82.141 124.202,20.611 111.083,7.492 62.672,55.903"/></g></svg> #}
+                                        <svg height="23" viewBox="0 -11 512.02797 512" width="23"><path d="m441.644531 247.59375-11.457031-32.554688-123.582031 123.585938c-12.074219 12.097656-28.160157 18.75-45.25 18.75-17.085938 0-33.171875-6.652344-45.246094-18.75l-90.667969-90.667969c-12.097656-12.074219-18.753906-28.160156-18.753906-45.246093 0-17.089844 6.65625-33.175782 18.753906-45.25 12.074219-12.09375 28.160156-18.75 45.246094-18.75 17.089844 0 33.175781 6.65625 45.25 18.75l45.417969 45.398437 121.6875-121.683594-8.195313-23.253906-3.773437-22.570313c-2.367188-14.464843-11.90625-26.453124-25.453125-32.066406-13.609375-5.652344-28.796875-3.902344-40.722656 4.652344l-59.285157 42.921875-59.949219-43.03125c-12.03125-8.488281-27.261718-10.175781-40.789062-4.5-13.4375 5.632813-22.890625 17.601563-25.257812 31.980469l-11.605469 72.253906-72.683594 12.074219c-14.441406 2.371093-26.429687 11.90625-32.0625 25.453125-5.632813 13.589844-3.882813 28.820312 4.671875 40.746094l42.902344 59.285156-43.03125 59.945312c-8.46875 12.03125-10.175782 27.285156-4.5 40.789063 5.652344 13.441406 17.597656 22.890625 31.976562 25.261719l72.257813 11.625 12.074219 72.660156c2.347656 14.421875 11.820312 26.390625 25.257812 32.023437 13.546875 5.671875 28.800781 3.988281 40.941406-4.609375l59.285156-42.921875 59.796876 42.921875c7.316406 5.226563 15.828124 7.914063 24.46875 7.914063 5.480468 0 10.984374-1.066407 16.253906-3.261719 13.570312-5.632812 23.085937-17.621094 25.453125-32.023438l11.625-72.253906 72.660156-12.074218c14.421875-2.371094 26.371094-11.820313 32.023437-25.261719 5.675782-13.503907 3.988282-28.757813-4.609374-40.9375zm0 0" fill="#ffc107"/><path d="m261.355469 314.710938c-5.460938 0-10.921875-2.089844-15.082031-6.25l-90.667969-90.667969c-8.339844-8.339844-8.339844-21.824219 0-30.164063 8.34375-8.34375 21.824219-8.34375 30.167969 0l75.582031 75.582032 214.25-214.25c8.34375-8.339844 21.824219-8.339844 30.167969 0 8.339843 8.339843 8.339843 21.824218 0 30.164062l-229.335938 229.335938c-4.160156 4.160156-9.621094 6.25-15.082031 6.25zm0 0" fill="#607d8b"/></svg>
+                                    </span>
+                                {% endif %}
+                            </div>
+                            {% if comercio.lRnk > 0  %}
+                                <div class="ranking">
+                                    <ul>
+                                        {% for i in 1..5 %}
+                                            <li class="fa fa-star {{ (loop.index <= comercio.lRnk) ? 'check' : '' }}"></li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% if comercio.cRnk > 0 %}
+                                        <div>({{ (comercio.cRnk == 1) ? comercio.cRnk~' evaluacion' : comercio.cRnk~' evaluaciones' }})</div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {# DIRECCION #}
+                        <h2 class="icon d-adr" id="locAdr" style="{{ comercio.adr is empty ? 'display:none' : '' }}">
+                            {{ comercio.adr }} {{ comercio.znam is empty ? '' : '- ' ~ comercio.znam }} {{ comercio.sta is empty ? '' : '- ' ~ comercio.sta }} 
+                        </h2>
+                        {# TELEFONOS FIJOS #}
+                        {% if not comercio.phl is empty and not hideRetailerData %}
+                            <h3 class="icon d-phl">
+                                {% for telefono in telefonos %}
+                                    <a href="tel:{{ telefono }}"> {{telefono}} </a>
+                                    {% if loop.index != loop.length %}
+                                       &nbsp;-&nbsp;
+                                    {% endif %}
+                                {% endfor %}
+                            </h3>
+                        {% endif %}
+                        {# CELULAR #}
+                        {% if not comercio.phm is empty and not hideRetailerData %}
+                            <h3 class="icon d-phm">
+                                {% for celular in celulares %}
+                                    <a href="tel:{{ celular }}"> {{celular}} </a>
+                                    {% if loop.index != loop.length %}
+                                        &nbsp;-&nbsp;
+                                    {% endif %}
+                                {% endfor %}
+                            </h3>
+                        {% endif %}
+                        {# WEB #}
+                        {% if not comercio.url is empty and not hideRetailerData %}
+                            <h3 class="icon d-url">
+                                <a href="{{ comercio.url }}" target="_blank" rel="noopener nofollow"> {{ comercio.urlNice | truncate(50) }}
+                                </a>
+                            </h3>
+                        {% endif %}
+                        {# EMAIL #}
+                        {% if not comercio.eml is empty and not hideRetailerData %}
+                            <h3 class="icon d-eml">
+                                <a href="mailto:{{ comercio.eml }}"> {{ comercio.eml }}</a>
+                            </h3>
+                        {% endif %}
+                        {# HORARIO #}
+                        {% if not comercio.hrs is empty and not hideRetailerData %}
+                            {% if comercio.hrsp is defined and comercio.hrsp != 0 %}
+                                <h3 class="icon d-clk" >
+                                {% if not comercio.hoursState.isOpen %}
+                                    {% if comercio.hoursState.openHourToday %}
+                                        {% if comercio.hoursState.minsToOpen > 0 %}
+                                            <span style='color:#cc362b;'>Ahora cerrado </span><span>&nbsp;(abre en {{comercio.hoursState.minsToOpen}} mins)</span>
+                                        {% else %}
+                                            <span style='color:#cc362b;'>Ahora cerrado </span><span>&nbsp;(abre hoy a las {{comercio.hoursState.openHourTodayTime}})</span>
+                                        {% endif %}
+                                    {% elseif comercio.hoursState.openHourTomorrow %}
+                                        <span style='color:#cc362b'>Ahora cerrado </span><span>&nbsp;(abre mañana{% if comercio.hoursState.openHourTomorrowTime %} a las {{comercio.hoursState.openHourTomorrowTime}}{% endif %})</span>
+                                    {% else %}
+                                        <span style='color:#cc362b'>Ahora cerrado </span><span>
+                                        {% if comercio.hoursState.openHourDay and comercio.hoursState.openHourDayTime %}
+                                         (abre el {{comercio.hoursState.openHourDay}} a las {{comercio.hoursState.openHourDayTime}})
+                                        {% endif %}
+                                        </span>
+                                    {% endif %}
+                                {% elseif comercio.hoursState.minsToClose > 0 %}
+                                    <span style='color:#c74802'>Ahora abierto </span><span>&nbsp;(cierra en {{comercio.hoursState.minsToClose}} mins)</span>
+                                {% else %}
+                                    <span style='color:#2f7733;'>Ahora abierto</span>
+                                {% endif %}
+                                </h3>
+                                <h3 style='margin: 0' id="horarioEspecial"></h3>
+                            {% else %}
+                                <h3 class="icon d-clk">Horario: {{ comercio.hrs }}</h3>
+                            {% endif %}
+                        {% endif %}
+                        {# BADGES ( 24hrs | Promo ) #}
+                        {# {% if comercio.o24 == 1 or comercio.iPrm | length > 0 %} #}
+                        {% if comercio.o24 == 1 %}
+                            <div class="header-badges">
+                            {% if comercio.o24 == 1 %}
+                                <div class="badge-24h">24 horas</div>
+                            {% endif %}
+                            {# {% if comercio.iPrm | length > 0 %}
+                                {% if comercio.iPrm[0].sponsor.prmm is defined and comercio.iPrm[0].sponsor.prmm %}
+                                    <div class="badge-promo">
+                                        <a href="#promos">
+                                            <div class="badge-promo-premium-title">
+                                                Beneficiate con {{comercio.iPrm[0].sponsor.nmp}} aquí
+                                            </div>
+                                            <div class="badge-promo-premium-logo">
+                                                <picture>
+                                                    <source data-srcset="{{comercio.iPrm[0].sponsor.ics | asWebp }}" type="image/webp"/>
+                                                    <source data-srcset="{{comercio.iPrm[0].sponsor.ics}}" type="image/png"/>
+                                                    <img class="lazyload" data-src="{{comercio.iPrm[0].sponsor.ics}}" alt="{{comercio.iPrm[0].sponsor.nmp}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                                </picture>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% else %}
+                                <div class="badge-promo"><a href="#promos"> Beneficios aqu&iacute;</a></div>
+                                {% endif %}
+                            {% endif %} #}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {# HIGHLIGHTS / ATTRIBUTES #}
+                {# {% if comercio.attr is defined and comercio.attr.highlights | length > 0 %}
+                    <div class="attrs">
+                        {% for attr in comercio.attr.highlights %}
+                            <div style="align-items: center;display: flex;flex-direction: column;max-width: 85px;">
+                                {% if attr.typ == 'BOOLEAN' %}
+                                    <picture >
+                                        <source type="image/webp" data-srcset="{{attr.ico | asWebp}}">
+                                        <source type="image/png" data-srcset="{{attr.ico}}">
+                                        <img class="lazyload" data-src="{{attr.ico}}" alt="{{attr.nam}}"
+                                            style="margin: 8px;width: 50px;background-color:transparent"
+                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                    </picture>
+                                    <p style="margin: 0px;line-height: 14px;font-size: 13px;text-align: center;">{{attr.nam}}</p>
+                                {% else %}
+                                    <picture >
+                                        <source type="image/webp" data-srcset="{{attr.ico | asWebp}}">
+                                        <source type="image/png" data-srcset="{{attr.ico}}">
+                                        <img class="lazyload" data-src="{{attr.ico}}" alt="{{attr.nam}}"
+                                            style="margin: 8px;width: 50px;background-color:transparent"
+                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                    </picture>
+                                    <p style="margin: 0px;line-height: 14px;font-size: 13px;text-align: center;">{{attr.nam}}: {{attr.val}}</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %} #}
+
+                {# BUTTONS #}
+                <ul class="retact-cntr dropdown menu" data-dropdown-menu data-disable-hover="true" 
+                    data-click-open="true" data-close-on-click="true" data-close-on-click-inside="true">
+
+                    {# DEFAULT CTA  BUTTON #}
+                    {# {% if isMobile %} #}
+                        {% if not comercio.cta is defined or (comercio.cta is defined and comercio.cta.btn == 'CALL') %}
+                            {% if telcels | length == 1 %}
+                                <li class="retact-def-btn">
+                                    <a data-type="0" href="tel:{{ telcels[0] }}">
+                                        <i class="fa fa-phone" aria-hidden="true"></i>
+                                        Llamar
+                                    </a>
+                                </li>
+                            {% elseif telcels | length > 1 %}
+                                <li class="retact-def-btn">
+                                    <a href="#">
+                                        <i class="fa fa-phone" aria-hidden="true"></i>
+                                        Llamar
+                                    </a>
+                                    <ul class="menu" >
+                                        {% for telefono in telcels %}
+                                            <li>
+                                                <a data-type="0" href="tel:{{ telefono }}">Llamar al {{telefono}} </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endif %}
+                        {% elseif comercio.cta is defined %}
+                            {% if comercio.cta.btn == 'SMS' %}
+                                <li class="retact-def-btn">
+                                    <a data-type="1" href="sms:{{ comercio.cta.val }}">
+                                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                                        Enviar SMS
+                                    </a>
+                                </li>
+                            {% elseif comercio.cta.btn == 'WHATSAPP' %}
+                                <li class="retact-def-btn">
+                                    <a data-type="2" href="https://wa.me/{{comercio.cta.val}}?text=Desde%20{{BRAND}}" target="_blank" rel="noopener nofollow">
+                                        <i class="fa fa-whatsapp" aria-hidden="true"></i>
+                                        Enviar WhatsApp
+                                    </a>
+                                </li>
+                            {% elseif comercio.cta.btn == 'TELEGRAM' %}
+                                <li class="retact-def-btn">
+                                    <a data-type="2" href="https://tg.me/{{comercio.cta.val}}?text=Desde%20{{BRAND}}" target="_blank" rel="noopener nofollow">
+                                        <i class="fa fa-whatsapp" aria-hidden="true"></i>
+                                        Enviar Telegram
+                                    </a>
+                                </li>
+                            {% elseif comercio.cta.btn == 'UBERTO' and comercio.ubo is defined %}
+                                {% if comercio.ubo.typ == 1 %}
+                                    <li class="retact-def-btn">
+                                        <a data-type="3" href="{{ path('storeStart', {'nam':urlize(comercio.nam),'idr': comercio.idr, 'ids': comercio.ids}) }}">
+                                            <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+                                            {% if comercio.ubo.bt is defined and comercio.ubo.bt != '' %}
+                                                {{comercio.ubo.bt}}
+                                            {% else %}
+                                                Pedir
+                                            {% endif %}    
+                                        </a>
+                                    </li>
+                                {% elseif comercio.ubo.typ == 2 %}
+                                    <li class="retact-def-btn">
+                                        <a data-type="3" href="{{ path('uberto/quoteRequest', {'nam': urlize(comercio.nam), 'idr': comercio.idr, 'ids': comercio.ids}) }}">
+                                            <i class="fa fa-calculator" aria-hidden="true"></i>
+                                            Solicitar presupuesto
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% elseif comercio.cta.btn == 'RESERVE' %}
+                                <li class="retact-def-btn">
+                                    <a data-type="3" href="{{ path('reservar', {'comercioNombre': urlize(comercio.nam), 'loc': comercio.idrids}) }}">
+                                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                                        Reservar
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                    {# {% endif %} #}
+
+                    {% if not comercio.lat is empty %}
+                        <li class="retact-btn">
+                            <a id="btn-getdir" href="#" data-addr="{{comercio.adr}}" data-lat="{{comercio.lat}}"
+                                data-lon="{{comercio.lon}}">
+                                <i class="fa fa-location-arrow" aria-hidden="true"></i>
+                                Como llegar
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li class="retact-btn" id="btnShareCntr">
+                        <a id="btnShare">
+                            <i class="fa fa-share-alt" aria-hidden="true"></i>
+                            Compartir
+                        </a>
+                        {# <div class="sharerpanel" id="btnShareMenu">
+                            <div>Compartir en:</div>
+                            <a href="https://facebook.com/sharer/sharer.php?u={{thisURL}}" target="_blank" rel="noopener" aria-label="Facebook">
+                                <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                            </a>
+                            <a href="https://twitter.com/intent/tweet/?text={{shareText}}&amp;url={{thisURL}}" target="_blank" rel="noopener" aria-label="Twitter">
+                                <i class="fa fa-twitter" aria-hidden="true"></i>
+                            </a>
+                            <a href="mailto:?subject={{shareText}}&amp;body={{thisURL}}" target="_self" rel="noopener" aria-label="E-Mail">
+                                <i class="fa fa-envelope" aria-hidden="true"></i>
+                            </a>
+                            {% if not isMobile %}
+                                <a href="whatsapp://send?text={{shareText}}%20{{thisURL}}" target="_blank" rel="noopener" aria-label="WhatsApp">
+                                    <i class="fa fa-whatsapp" aria-hidden="true"></i>
+                                </a>
+
+                                <a href="https://telegram.me/share/url?text={{shareText}}&amp;url={{thisURL}}" target="_blank" rel="noopener" aria-label="Telegram">
+                                    <i class="fa fa-telegram" aria-hidden="true"></i>
+                                </a>
+                            {% endif %}
+
+                        </div> #}
+                    </li>
+                    {% if not celulares is empty and isMobile and (not comercio.cta is defined or (comercio.cta is defined and comercio.cta.btn != 'SMS')) %}
+                        <li class="retact-btn">
+                            <a href="sms:{{ celulares[0] }}">
+                                <i class="fa fa-envelope" aria-hidden="true"></i>
+                                Enviar SMS
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if not comercio.eml is empty %}
+                        <li class="retact-btn">
+                            <a href="mailto:{{ comercio.eml }}">
+                                <i class="fa fa-envelope" aria-hidden="true"></i>
+                                Enviar Email
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if not comercio.url is empty %}
+                        <li class="retact-btn">
+                            <a href="{{comercio.url}}" target="_blank" rel="noopener nofollow">
+                                <i class="fa fa-link" aria-hidden="true"></i>
+                                Visitar web
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if comercio.mFav is defined and comercio.mFav == 1 %}
+                        <li class="retact-btn">
+                            <a href="#" id="bookSave" data-saved="1" >
+                                <i class="fa fa-bookmark" aria-hidden="true"></i>
+                                Guardado
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="retact-btn">
+                            <a href="#" id="bookSave" data-saved="0" >
+                                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                                Guardar
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li class="retact-btn">
+                        <a href="{{ path('reportarerror',{'id': comercio.piid }) }}">
+                            <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                            Reportar error
+                        </a>
+                    </li>
+
+                    {% if comercio.ubo is defined and comercio.ubo.typ is defined %}
+                        {% if comercio.ubo.typ == 1 %}
+                            <li class="retact-btn">
+                                <a href="{{ path('storeStart', {'nam':urlize(comercio.nam),'idr': comercio.idr, 'ids': comercio.ids}) }}">
+                                    <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+                                    {% if comercio.ubo.bt is defined and comercio.ubo.bt != '' %}
+                                        {{comercio.ubo.bt}}
+                                    {% else %}
+                                        Pedir
+                                    {% endif %}    
+                                </a>
+                            </li>    
+                        {% elseif comercio.ubo.typ == 2 %}
+                            <li class="retact-btn">
+                                <a href="{{ path('uberto/quoteRequest', {'nam': urlize(comercio.nam), 'idr': comercio.idr, 'ids': comercio.ids}) }}">
+                                    <i class="fa fa-calculator" aria-hidden="true"></i>
+                                    Solicitar presupuesto
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+
+            </div>
+
+            {# DESCRIPCION #}
+            {% if not comercio.dsc is empty or (comercio.attr is defined and comercio.attr.highlights) %}
+                <div class="u-box-cntr ">
+                    <div class="titulo-big">Informaci&oacute;n </div>
+                    <div class="ficha">
+                        <h3 class="descripcion">{{ comercio.dsc }}</h3>
+                        {% if comercio.attr is defined and comercio.attr.highlights | length > 0 %}
+                        <div class="attrs">
+                            {% for attr in comercio.attr.highlights %}
+                                <div style="align-items: center;display: flex;flex-direction: column;max-width: 85px;">
+                                    {% if attr.typ == 'BOOLEAN' %}
+                                        <picture >
+                                            <source type="image/webp" data-srcset="{{attr.ico | asWebp}}">
+                                            <source type="image/png" data-srcset="{{attr.ico}}">
+                                            <img class="lazyload" data-src="{{attr.ico}}" alt="{{attr.nam}}"
+                                                style="margin: 8px;width: 50px;background-color:transparent"
+                                                src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                        </picture>
+                                        <p style="margin: 0px;line-height: 14px;font-size: 13px;text-align: center;">{{attr.nam}}</p>
+                                    {% else %}
+                                        <picture >
+                                            <source type="image/webp" data-srcset="{{attr.ico | asWebp}}">
+                                            <source type="image/png" data-srcset="{{attr.ico}}">
+                                            <img class="lazyload" data-src="{{attr.ico}}" alt="{{attr.nam}}"
+                                                style="margin: 8px;width: 50px;background-color:transparent"
+                                                src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                        </picture>
+                                        <p style="margin: 0px;line-height: 14px;font-size: 13px;text-align: center;">{{attr.nam}}: {{attr.val}}</p>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {# MAPA (mobile)) #}
+            {% if isMobile and hasMap %}
+                <div class="u-box-cntr" >
+                    <div class="titulo-big">Ubicaci&oacute;n </div>
+                    <div class="boxbody">
+                        <div class="mapa" id="mapa" data-lat="{{ comercio.lat }}" data-lng="{{ comercio.lon }}" data-im="{{ isMobile ? 'true' : 'false'}}"
+                            style="width:100%; height:315px">
+                            {% if hasSMI %}
+                              <picture>
+                                <source srcset="{{mapStaticImage ~ comercio.smi | asWebp }}" type="image/webp"/>
+                                <source srcset="{{mapStaticImage ~ comercio.smi}}" type="image/jpg"/>
+                                <img id="smiImg" decoding="async" src="{{mapStaticImage ~ comercio.smi}}" alt="{{ comercio.nam }}" style="cursor:pointer;display:block;margin:0 auto">
+                              </picture>
+                            {% else %}
+                              &nbsp;
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {# UBERTO #}
+            {% if isMobile %}
+              {% include 'components/comercioUbertoCard.html.twig' with {'comercio':comercio} %}
+            {% endif %}
+
+            {# TABLA DE HORARIOS #}
+            {% if isMobile %}
+              {% include 'components/comercioInfoHorarios.html.twig' with {'comercio':comercio} %}
+            {% endif %}
+
+            {# INFORMACION ADICIONAL (mobile) #}
+            {% if isMobile %}
+              {% include 'components/comercioInfoAdicional.html.twig' with {'comercio':comercio, 'isMobile':isMobile} %}
+            {% endif %}
+
+            {# REDES SOCIALES #}
+            {% if comercio.snet is defined and comercio.snet | length > 0 %}
+                <div class="u-box-cntr" >
+                  <div class="titulo-big">Conoce m&aacute;s sobre nosotros en</div>
+                  <div class="boxbody snet-cntr" id="snets">
+                    
+                      {% for sn in comercio.snet %}
+                      <div>
+                        {% if sn.net == 'FACEBOOK' %}
+                          <a href="{{sn.lnk}}" title="{{comercio.nam}}" style="color: #3b5998;" target="_blank" data-net="{{sn.net}}" rel="noopener">
+                            <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                            <div style="color: #555;">Facebook</div>
+                          </a>
+                        {% elseif sn.net == 'YOUTUBE' %}
+                          <a href="{{sn.lnk}}" title="{{comercio.nam}}" style="color: red;" target="_blank" data-net="{{sn.net}}" rel="noopener">
+                            <i class="fa fa-youtube-play" aria-hidden="true"></i>
+                            <div style="color: #555;">Youtube</div>
+                          </a>
+                        {% elseif sn.net == 'TWITTER' %}
+                          <a href="{{sn.lnk}}" title="{{comercio.nam}}" style="color: #55acee;" target="_blank" data-net="{{sn.net}}" rel="noopener">
+                            <i class="fa fa-twitter" aria-hidden="true"></i>
+                            <div style="color: #555;">Twitter</div>
+                          </a>
+                        {% elseif sn.net == 'INSTAGRAM' %}
+                          <a href="{{sn.lnk}}" title="{{comercio.nam}}" style="color: #e95950;" target="_blank" data-net="{{sn.net}}" rel="noopener">
+                            <i class="fa fa-instagram" aria-hidden="true"></i>
+                            <div style="color: #555;">Instagram</div>
+                          </a>
+                        {% elseif sn.net == 'MERCADOLIBRE' %}
+                          <a href="{{sn.lnk}}" title="{{comercio.nam}}" style="color: #e95950;" target="_blank" data-net="{{sn.net}}" rel="noopener">
+                            <img src="/img/ml.png">
+                            <div style="color: #555;">Mercado libre</div>
+                          </a>
+                        {% elseif sn.net == 'TIKTOK' %}
+                          <a href="{{sn.lnk}}" title="{{comercio.nam}}" style="color: #e95950;" target="_blank" data-net="{{sn.net}}" rel="noopener">
+                            <img src="/img/tiktok.png">
+                            <div style="color: #555;">TikTok</div>
+                          </a>
+                        {% endif %}
+                      </div>
+                      {% endfor %}
+                  </div>
+                </div>
+            {% endif %}
+
+            {# FORMAS DE PAGO (mobile) #}
+            {% if isMobile and comercio.spo != 0 %}
+                {% if comercio.pm is defined and comercio.pm | length > 0 %}
+                <div class="u-box-cntr">
+                    <div class="titulo-big">Formas de pago </div>
+                    <div class="boxbody">
+                    <div class="fp-list" style="align-items: flex-start;">
+                        {% for pm in comercio.pm %}
+                            <div style="color: #555;">
+                                {# <img class="lazyload" data-src="/img/fp/{{pm[0]}}.png" alt="{{pm[1]}}"> #}
+                                <picture >
+                                    <source type="image/webp" data-srcset="/img/fp/{{pm[0]}}.webp">
+                                    <source type="image/png" data-srcset="/img/fp/{{pm[0]}}.png">
+                                    <img class="lazyload" data-src="/img/fp/{{pm[0]}}.png" alt="{{pm[1]}}"
+                                        style="background-color:transparent"
+                                        src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                </picture>
+                                {{ pm[1] | htmlentities | raw }}
+                                {% if pm[2] > 0 %}
+                                <span> {{pm[2]}} pagos</span>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endif %}
+
+            {# PROMOCIOENS DEL NEGOCIO #}
+            {% if comercio.iPrm is defined and comercio.iPrm | length > 0 %}
+              <div class="contenedor-promo u-box-cntr">
+                <div class="titulo-big">Beneficios </div>
+                <div class="subtitulo">Descubrí nuestros beneficios</div>
+                <div class="boxbody">
+                  {% for keyPromo, promo in comercio.iPrm %}
+                    <div class="promo">
+                      {% if promo.bon is defined %}
+                          {% if promo.bon != '' %}
+                              <div class="promo-bonus">
+                                  {{ promo.bon }}
+                              </div>
+                          {% endif %}
+                      {% endif %}
+                      <div class="promo-titulo">
+                          {{ promo.nmp }}
+                      </div>
+                      {% if promo.imp is defined and promo.imp | length > 0 %}
+                        <picture class="promo-imagen">
+                          <source data-srcset="{{promo.imphq | asWebp }}" type="image/webp"/>
+                          <source data-srcset="{{promo.imphq}}" type="image/png"/>
+                          <img class="lazyload" data-src="{{promo.imphq}}" alt="{{promo.nmp}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                        </picture>
+                      {% endif %}
+                      <div class="promo-descripcion">{{ promo.dsc | raw }}</div>
+                      <a href="{{ path('promocionesFicha', {'promoNombre': urlize(promo.nmp), 'promoId': promo.idp}) }}" style="text-align: right;display: block;font-size: 14px;">
+                        Conocé más sobre este beneficio...
+                      </a>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+
+            {# GALERIAS #}
+            {% if comercio.spo != 0 %}
+                {% if comercio.gals is defined and comercio.gals | length > 0 %}
+                    <div class="u-box-cntr">
+                        <div class="titulo-big">Fotos </div>
+                        <div class="boxbody">
+                            {% for gal in comercio.gals %}
+                                {% include 'components/galleryPreview.html.twig' with {'gal': gal}  %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if comercio.pics is defined and comercio.pics | length > 0 %}
+                    <div class="u-box-cntr">
+                        <div class="titulo-big">Fotos</div>
+                        <div class="boxbody">
+                          {% include 'components/photosPreview.html.twig' with {'mode': 'ADAPTIVE_GRID'} %}
+                          {# SQUARE_GRID | ADAPTIVE_GRID #}
+                          <div style="text-align:center;margin-top:20px">
+                            <a class="button  small-expanded" style="min-width: 140px;"
+                                href="{{ path('fotos', {'comercioNombre': urlize(comercio.nam), 'loc': comercio.idrids}) }}" 
+                                title="Ver más fotos de {{comercio.nam}}">
+                                Ver más fotos
+                            </a>
+                          </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+            {% endif %}
+
+            {# VIDEOS #}
+            {% if comercio.spo != 0 %}
+                {% if comercio.vids is defined %}
+                    {% if comercio.vids | length > 0 %}
+                        <div class="u-box-cntr">
+                        <div class="titulo-big">Videos </div>
+                        <div class="boxbody" style="display:flex;flex-wrap: wrap;">
+                            {% if not isMobile %}
+                                {% for vid in comercio.vids %}
+                                    <a class="itemVideo"
+                                        href="{{path('video', {'id': comercio.idrids, 'idv': vid.idv, 'comercioNombre': urlize(comercio.nam)})  }}"
+                                        data-id="{{vid.idv}}" style="max-width:{{comercio.vidsMaxWidth}};width:{{comercio.vidsMaxWidth}}">
+                                        <div style="text-align:center">
+                                          <picture>
+                                              <source data-srcset="{{ 'https://img.youtube.com/vi_webp/'~vid.idv~'/sddefault.webp' }}" type="image/webp"/>
+                                              <source data-srcset="{{vid.cover}}" type="image/png"/>
+                                              <img class="lazyload" data-src="{{vid.cover}}" alt="{{vid.title}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                                                  style="max-height: 150px;">
+                                          </picture>
+                                        </div>
+                                        {# <img src="/img/imgph.png" data-src="{{vid.cover}}" alt="{{vid.title}}" class="lazyload" style="width:100%"> #}
+                                        <h4>{{vid.title}}</h4>
+                                        <h5>{{vid.desc | truncate(120) }}</h5>
+                                    </a>
+                                {% endfor %}
+                            {% else %}
+                                {% for vid in comercio.vids %}
+                                    <a class="itemVideo"
+                                        href="{{path('video', {'id': comercio.idrids, 'idv': vid.idv, 'comercioNombre': urlize(comercio.nam)})  }}"
+                                        data-id="{{vid.idv}}" style="width:100%;max-width:100%">
+                                        {# <img src="/img/imgph.png" data-src="{{vid.cover}}" alt="{{vid.title}}" class="lazyload" style="width:100%"> #}
+                                        <picture>
+                                            <source data-srcset="{{ 'https://img.youtube.com/vi_webp/'~vid.idv~'/sddefault.webp' }}" type="image/webp"/>
+                                            <source data-srcset="{{vid.cover}}" type="image/png"/>
+                                            <img class="lazyload" data-src="{{vid.cover}}" alt="{{vid.title}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                                                style="width:100%">
+                                        </picture>
+                                        <h4>{{vid.title}}</h4>
+                                        <h5>{{vid.desc}}</h5>
+                                        
+                                    </a>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+
+            {# SUCURSALES #}
+            {% if comercio.subs is defined %}
+                {% if comercio.subs | length > 0 %}
+                    <div class="u-box-cntr">
+                        <div class="titulo-big">Sucursales</div>
+                        <div class="smStore-cntr" >
+                          {% for sto in comercio.subs %}
+                            {% set cloc = (sto.idr * 10000) + sto.ids %}
+                            <a href="{{path('comercio', {'id': 'LOC' ~ cloc, 'comercioNombre': urlize(sto.nam)}) }}" class="smStore">
+                              <div>
+                                {% if sto.ics | length > 0 %}
+                                    <picture >
+                                        <source type="image/webp" data-srcset="{{sto.ics | asWebp}}">
+                                        <source type="image/png" data-srcset="{{sto.ics}}">
+                                        <img class="lazyload" data-src="{{sto.ics}}" alt="{{sto.nam}}">
+                                    </picture>
+                                {% endif %}
+                                <div style="padding:0px 5px">
+                                  <h4>{{sto.nam}}</h4>
+                                  <p>{{sto.adr}}</p>
+                                  <p>{{sto.znam}}</p>
+                                </div>
+                              </div>
+                            </a>
+                          {% endfor %}
+                        </div>
+                        {# <div id="sw-subs" class="swiper-container" style="padding: 5px;">
+                            <div class="swiper-wrapper">
+                                {% for sub in comercio.subs %}
+                                    {% set idLOC = (sub.idr*10000) + sub.ids %}
+                                    <div class="swiper-slide text-center">
+                                        
+                                      <a href="{{ path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(sub.nam)}) }}" 
+                                        class="store-card">
+                                        {% if sub.ics | length > 0 %}
+                                          <picture>
+                                            <source data-srcset="{{sub.ics | asWebp}}" type="image/webp"/>
+                                            <source data-srcset="{{sub.ics}}" type="image/png"/>
+                                            <img class="lazyload ancho-total" data-src="{{sub.ics}}" alt="{{sub.nam}}" >
+                                          </picture>
+                                        {% else %}
+                                          <picture>
+                                            <source data-srcset="{{ app.request.basepath }}/img/noims2.webp" type="image/webp"/>
+                                            <source data-srcset="{{ app.request.basepath }}/img/noims2.png" type="image/png"/>
+                                            <img class="lazyload ancho-total" data-src="{{ app.request.basepath }}/img/noims2.png" alt="{{sub.nam}}" >
+                                          </picture>
+                                        {% endif %}
+
+                                        <div style="padding:5px;">
+                                          <h4>{{sub.nam}}</h4>
+                                          <h5>{{sub.adr}}</h5>
+                                          <p>{{sub.znam}}</p>
+                                          {% if sub.dst is defined %}
+                                            <p>{{sub.dst | distance}}</p>
+                                          {% endif %}
+                                        </div>
+                                      </a>
+                                        
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div id="sw-subs-next" class="swiper-button-next"></div>
+                            <div id="sw-subs-prev" class="swiper-button-prev"></div>
+                        </div> #}
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            {# CATEGORIAS DEL COMERCIO #}
+            {% if comercio.ctgs is defined and comercio.ctgs | length > 0 %}
+              <div class="u-box-cntr">
+                  <div class="titulo-big">Categor&iacute;as</div>
+                  <div class="categoriasComercio boxbody">
+                    {% for categoria in comercio.ctgs %}
+                        {% if comercio.znam != "" %}
+                        <a aria-label="{{categoria[1]}}" href="{{ path('rubroZona', {'rubroId': categoria[0], 'rubroNombre': urlize(categoria[1]), 'zonaId': "Z" ~ comercio.zon, 'zonaNombre': urlize(comercio.znam) }) }}">{{ categoria[1] }}</a>
+                        {% else %}
+                        <a aria-label="{{categoria[1]}}" href="{{ path('rubroZona', {'rubroId': categoria[0], 'rubroNombre': urlize(categoria[1]), 'zonaId': "Z" ~ comercio.zon, 'zonaNombre': 'todo-el-pais' }) }}">{{ categoria[1] }}</a>
+                        {% endif %}
+                    {% endfor %}
+                  </div>
+              </div>
+            {% endif %}
+
+            {# BANNER MOBILE BOTTOM #}
+            {% if isMobile and comercio.spo != 2 and not isAdultContent %}
+                <div class="banner300x50">
+                  <div id="sas_27528" class="gmad-mobile-big"></div>
+                </div>
+            {% endif %}
+
+            {# FAQs #}
+            {% if comercio.faqs is defined and comercio.faqs | length > 0 %}
+              <div class="u-box-cntr">
+                <div class="titulo-big">Preguntas frecuentes</div>
+                <div class="boxbody">
+                  {% for faq in comercio.faqs %}
+                    <div class="faq">
+                      <div>P: {{faq.q}}</div>
+                      <span>R: {{faq.a}}</span>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+
+            {# LOCALES RELACIONADOS #}
+            {% if isMobile and comerciosSimilaresArray | length > 0  %}
+                <div class="u-box-cntr widget-relacionados">
+                    <div class="titulo">
+                        M&aacute;s {{ rubro | capitalize | htmlentities | raw }} en {{ zona | capitalize }}
+                    </div>
+                    <div class="boxbody">
+                        <ul>
+                            {% for key, comercioSimilar in comerciosSimilaresArray %}
+                                <li>
+                                    {% if not comercioSimilar.ics is empty %}
+                                        <div class="imagen" style="float:left;">
+                                            {# <img class="lazyload" src="/img/imgph.png" data-src="{{ comercioSimilar.ics }}" 
+                                                width="45" height="45" alt="{{ comercioSimilar.nam }}" style="margin-right: 5px;"> #}
+                                            <picture>
+                                                <source data-srcset="{{comercioSimilar.ics | asWebp }}" type="image/webp"/>
+                                                <source data-srcset="{{comercioSimilar.ics}}" type="image/png"/>
+                                                <img class="lazyload" data-src="{{comercioSimilar.ics}}" 
+                                                     alt="{{ comercioSimilar.nam }}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                                                     width="45" height="45" style="margin-right: 5px;">
+                                            </picture>
+                                        </div>
+                                    {% endif %}
+                                    <div>
+                                        {% set idLOC = (comercioSimilar.idr*10000) + comercioSimilar.ids%}
+                                        {% if comercioSimilar.nam != '' %}
+                                        <a href="{{ path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(comercioSimilar.nam)}) }}">
+                                            <h2>{{ comercioSimilar.nam | upper }}</h2>
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="direccion">
+                                        {{ comercioSimilar.adr }}
+                                        {% if comercioSimilar.dst < 100000 and comercioSimilar.dst > 0 %}
+                                        <div>{{ comercioSimilar.dst | distance }} de este lugar</div>
+                                        {% endif %}
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+
+            {# BANNER MOBILE BOTTOM #}
+            {% if isMobile and comercio.spo != 2 and not isAdultContent %}
+                <div class="banner-recuadro">
+                    <div id="sas_28427" class="gmad-top"></div>
+                </div>
+            {% endif %}
+
+            {# PROMOCIONES CERCA #}
+            {% if comercio.nprm is defined %}
+                {% if comercio.nprm | length > 0 %}
+                <div class="u-box-cntr">
+                    <div class="titulo-big">Promociones Relacionadas</div>
+                    <div class="subtitulo">Conoce algunos beneficios relacionados cerca de {{comercio.nam}}</div>
+                    <div class="boxbody promocionesRelacionadas">
+                      {% for promocion in comercio.nprm %}
+                        <div class="tarjeta-promo">
+                          {% set idr = promocion.idr * 10000 %}
+                          {% set ids = promocion.ids %}
+                          {% set loc = idr + ids %}
+                          {% if promocion.stonam != '' %}
+                              <a href="{{ path('comercio', {'id': 'LOC' ~ loc, 'comercioNombre': urlize(promocion.stonam)}) }}">
+                                <picture >
+                                  <source type="image/webp" data-srcset="{{promocion.imp | asWebp}}">
+                                  <source type="image/png" data-srcset="{{promocion.imp}}">
+                                  <img class="lazyload" data-src="{{promocion.imp}}" alt="{{promocion.name}}" style="background-color:transparent">
+                                </picture>
+                                <div class="tarjeta-promo-body" >
+                                  <h3>{{ promocion.name | upper }}</h3>
+                                  <h4>{{ promocion.dsc | truncate(50) | raw }}</h4>
+                                  <p>{{ promocion.stoadr }}</p>
+                                </div>
+                                {# <div class="img-sponsor-promo">
+                                    <picture >
+                                      <source type="image/webp" data-srcset="{{promocion.ics | asWebp}}">
+                                      <source type="image/png" data-srcset="{{promocion.ics}}">
+                                      <img class="lazyload" data-src="/img/imgph.png" alt="{{promocion.name}}" style="background-color:transparent">
+                                    </picture>
+                                </div> #}
+                              </a>
+                          {% endif %}
+                        </div>
+                      {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            {% endif %}
+
+            {# COMENTARIOS #}
+            {% if comercio.apc == 1 %}
+              <div class="u-box-cntr" id="secComnts">
+                  <div class="titulo-big" >Comentarios</div>
+                  <div class="boxbody">
+                    {% if comercio.revs is defined and comercio.revs | length > 0 %}
+                        <div id="cmntsCntr" class="comentarios">
+                          {% for rev in comercio.revs %}
+                            <div class="mensaje">
+                                <strong>
+                                  {% if rev.usr != null %}
+                                    {{rev.usr}}
+                                  {% else %}
+                                    Anónimo
+                                  {% endif  %}
+                                  <span style="font-size: 11px;font-weight: normal;color: #666;">{{rev.niceDate}}</span>
+                                </strong>
+                                <div>
+                                  {% if rev.net != NULL %}
+                                    En Google | 
+                                  {% endif %}
+                                  {{rev.rnk}} estrellas
+                                </div>
+                                <span style="margin: 6px 0px;display: block;">{{rev.txt}}</span>
+                                {% if rev.rept != NULL %}
+                                <div style="margin-left: 10px;border-left: 1px solid #DDD;padding-left: 7px;">
+                                  <div style="color: #444;font-weight: bold;">Respuesta del dueño<span style="margin-left: 5px;font-weight: normal;color: #666;">{{rev.niceRepd}}</span></div>
+                                  <div style="font-size:13px">{{rev.rept}}</div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        {% if comercio.revs | length >= 5 %}
+                          <a href="{{ path('comentarios', {'comercioNombre': urlize(comercio.nam), 'loc': 'LOC'~comercio.idrids}) }}" style="text-align: center;display: block;font-size: 14px;">
+                              Ver m&aacute;s comentarios
+                          </a>
+                        {% endif %}
+                      </div>
+                    {% else %}
+                        {% if comercio.iCmt is defined %}
+                            {% if comercio.iCmt | length == 0 %}
+                                <div >
+                                    <div id="cmntsCntr" class="comentarios">
+                                    </div>
+                                    <div id="cmntsEmpty" style="text-align: center;">
+                                        <p>
+                                            Aún no hay comentarios para {{comercio.nam}}. Ayuda a tu comunidad a conocer los mejores lugares y se el primero en comentar y recomendar.<br>
+                                        </p>
+                                    </div> 
+                                </div>
+                            {% else %}
+                                <div id="cmntsCntr" class="comentarios">
+                                    {% for com in comercio.iCmt %}
+                                        <div class="mensaje">
+                                            <strong>{{com.who}}</strong> <span>{{com.txt}}</span>
+                                            {% if comercio.ubo is defined and com.fromReq is defined and com.fromReq == 1 %}
+                                                <div>{{com.niceTs}} | {{ (comercio.ubo.typ == 1) ? 'basado en un pedido' : 'basado en un trabajo' }}</div>
+                                            {% else %}
+                                                <div>{{com.niceTs}}</div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                    <div>
+                        <div id="cmntCntr" style="margin-top: 15px;padding: 10px;position: relative;">
+                            <label>
+                                {% if (comercio.ulRnk == '' or comercio.ulRnk == '-1') %}
+                                    <div style="text-align: center;color: #444;margin-bottom: 10px;">
+                                      Tienes algo para decir sobre {{comercio.nam}}? <br> Ayuda a tu amigos y tu comunidad a conocer los mejores lugares!
+                                    </div>
+                                {% elseif (comercio.ulRnk == '1') %}
+                                    <div style="display:table">
+                                        <div style="display:table-cell;font-size: 30px;color: #555;padding: 10px;">
+                                            <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                                        </div>
+                                        <div style="display:table-cell;padding: 15px 10px 10px 10px;vertical-align: top;line-height: 16px;font-size: 14px;color: #444;">
+                                            <strong>Haz recomendado este lugar</strong><br>
+                                            Puedes agregar otro comentario y tambien cambiar tu recomendación
+                                        </div>
+                                    </div>
+                                {% elseif (comercio.ulRnk == '0') %}
+                                    <div style="display:table">
+                                        <div style="display:table-cell;font-size: 30px;color: #555;padding: 10px;">
+                                            <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
+                                        </div>
+                                        <div style="display:table-cell;padding: 15px 10px 10px 10px;vertical-align: top;line-height: 16px;font-size: 14px;color: #444;">
+                                            <strong>No haz recomendado este lugar</strong><br>
+                                            Puedes agregar otro comentario y tambien cambiar tu recomendación
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <textarea id="commentMsg" name="commentMsg" placeholder="Comparte tu experiencia aquí" required="required"></textarea>
+                            </label>
+                            <div style="text-align:center">
+                                <div style="display:inline-table;text-align: center;margin-bottom: 15px;">
+                                    <div style="display:table-cell">
+                                        <div id="btnLike" class="btnLike">
+                                            <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                                            Lo recomiendo
+                                        </div>
+                                    </div>
+                                    <div style="display:table-cell">
+                                        <div id="btnDisLike" class="btnDislike">
+                                            <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
+                                            No lo recomiendo
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="commentErrMsg" style="color: #F44336;"></div>
+                                <div>
+                                    <a id="commentBtn" class="button small-expanded">
+                                        Enviar comentario
+                                        <div id="btnFastLoginNext2Spin" class="spinner spinnerInline" style="display:none"><div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div><div class="rect5"></div></div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+              </div>
+            {% endif %}
+
+            {# RECLAME SU NEGOCIO #}
+            {% if not comercio.cla is defined or comercio.cla == 0 %}
+              {% if COUNTRY == 'uy' %}
+                <div style="text-align: center;padding: 12px;font-size:13px;color: #555;line-height: 17px;margin: 0 auto;max-width: 260px;">
+                    <div style="font-weight:bold">¿Este es su negocio?</div>
+                    Conozca como mejorar su presencia en <br>Internet para atraer más clientes<br>
+                    <a href="{% if COUNTRY == 'uy' %}https://empresas.1122.com.uy{% else %}https://empresas.buscoinfo.com.py{% endif %}"
+                      style="padding: 7px;display: block;border: 1px solid #0072b9;border-radius: 4px;margin-top: 5px;font-size: 15px;">
+                      Mejorar mi presencia
+                    </a>
+                </div>
+              {% else %}
+                <div style="text-align: center;padding: 12px;font-size:13px;color: #555;line-height: 17px;margin: 0 auto;max-width: 260px;">
+                    <div style="font-weight:bold">¿Este es su negocio?</div>
+                    Conozca como mejorar su presencia en <br>Internet para atraer más clientes<br>
+                    <a href="{% if COUNTRY == 'uy' %}https://empresas.1122.com.uy{% else %}https://empresas.buscoinfo.com.py{% endif %}"
+                      style="padding: 7px;display: block;border: 1px solid #0072b9;border-radius: 4px;margin-top: 5px;">
+                      GANÁ MÁS CLIENTES
+                    </a>
+                </div>
+              {% endif %}
+            {% endif %}
+
+            {# TAMBIEN PUEDE INTERESARTE (mobile only) #}
+            {% if isMobile %}
+              <div>
+                {% if comercio.ctgs is defined and comercio.ctgs | length > 0 %}
+                  <div class="sugerenciaCategorias">
+                      <div style="padding: 6px 10px;margin-top: 20px;">Tambien puede interesarte:</div>
+                      {% for categoria in comercio.ctgs %}
+                          {% if loop.index < 4 %}
+                              {% if comercio.znam != "" %}
+                                <div class="sugeridasInline"><a href="{{ path('rubroZona', {'rubroId': categoria[0], 'rubroNombre': urlize(categoria[1]), 'zonaId': "Z" ~ comercio.zon, 'zonaNombre': urlize(comercio.znam) }) }}">{{ categoria[1] }}</a></div>
+                              {% else %}
+                                <div class="sugeridasInline"><a href="{{ path('rubroZona', {'rubroId': categoria[0], 'rubroNombre': urlize(categoria[1]), 'zonaId': "Z" ~ comercio.zon, 'zonaNombre': 'todo-el-pais' }) }}">{{ categoria[1]  }}</a></div>
+                              {% endif %}
+                          {% endif %}
+                      {% endfor %}
+                      </div>
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            {# BANNER MOBILE BOTTOM #}
+            {% if isMobile and comercio.spo != 2 and not isAdultContent %}
+                <div style="text-align: center;width: 100%; margin-bottom: 20px;">
+                    <div class="banner300x50">
+                        <div id="sas_28425" class="gmad-top"></div>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+
+        <aside class="large-4 medium-4 small-12 columns ficha-aside">
+            <div class="large-12 medium-12 small-12 columns sin-bordes right banner300x250 zonarubro">
+
+                {# BANNER DESKTOP TOP #}
+                {% if not isMobile and comercio.spo != 2 and not isAdultContent %}
+                    <div class="banner-recuadro">
+                      <div id="sas_27528" class="gmad-desktop"></div>
+                    </div>
+                    <div class="separador"></div>
+                {% endif %}
+
+                {# MAPA (desktop) #}
+                {% if not isMobile and hasMap %}
+                  <div class="u-box-cntr boxedlines">
+                    <div class="mapa" id="mapa" data-lat="{{ comercio.lat }}" data-lng="{{ comercio.lon }}" data-im="{{ isMobile ? 'true' : 'false'}}"
+                        style="width:100%; height:315px">
+                      {% if hasSMI %}
+                        <picture>
+                          <source srcset="{{mapStaticImage ~ comercio.smi | asWebp }}" type="image/webp"/>
+                          <source srcset="{{mapStaticImage ~ comercio.smi}}" type="image/jpg"/>
+                          <img id="smiImg" decoding="async" src="{{mapStaticImage ~ comercio.smi}}" alt="{{ comercio.nam }}" style="cursor:pointer;width:100%">
+                        </picture>
+                      {% else %}
+                        &nbsp;
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {# UBERTO #}
+                {% if not isMobile %}
+                  {% include 'components/comercioUbertoCard.html.twig' with {'comercio':comercio} %}
+                {% endif %}
+
+                {# TABLA DE HORARIOS #}
+                {% if not isMobile %}
+                  {% include 'components/comercioInfoHorarios.html.twig' with {'comercio':comercio} %}
+                {% endif %}
+
+                {# INFORMACION ADICIONAL (desktop) #}
+                {% if not isMobile %}
+                  {% include 'components/comercioInfoAdicional.html.twig' with {'comercio':comercio, 'isMobile':isMobile} %}
+                {% endif %}
+                
+                {# FORMAS DE PAGO (desktop) #}
+                {% if not isMobile and comercio.spo != 0 %}
+                    {% if comercio.pm is defined and comercio.pm | length > 0 %}
+                    <div class="u-box-cntr boxedlines">
+                        <div class="titulo-big">Formas de pago </div>
+                        <div class="boxbody">
+                        <div class="fp-list" style="align-items: flex-start;">
+                            {% for pm in comercio.pm %}
+                                <div style="color: #555;">
+                                    {# <img class="lazyload" data-src="/img/fp/{{pm[0]}}.png" alt="{{pm[1]}}"> #}
+                                    <picture >
+                                        <source type="image/webp" data-srcset="/img/fp/{{pm[0]}}.webp">
+                                        <source type="image/png" data-srcset="/img/fp/{{pm[0]}}.png">
+                                        <img class="lazyload" data-src="/img/fp/{{pm[0]}}.png" alt="{{pm[1]}}"
+                                            style="background-color:transparent"
+                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                    </picture>
+                                    {{ pm[1] | htmlentities | raw }}
+                                    {% if pm[2] > 0 %}
+                                    <span> {{pm[2]}} pagos</span>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                {# LOCALES RELACIONADOS #}
+                {% if not isMobile and comerciosSimilaresArray | length > 0  %}
+                    <div class="u-box-cntr boxedlines widget-relacionados">
+                        <div class="titulo-big">
+                            M&aacute;s {{ rubro | capitalize | htmlentities | raw }} en {{ zona | capitalize }}
+                        </div>
+                        <div class="boxbody">
+                            <ul>
+                                {% for key, comercioSimilar in comerciosSimilaresArray %}
+                                    <li>
+                                        {% if not comercioSimilar.ics is empty %}
+                                            <div class="imagen" style="float:left;">
+                                                {# <img class="lazyload" src="/img/imgph.png" data-src="{{ comercioSimilar.ics }}" 
+                                                width="45" height="45" alt="{{ comercioSimilar.nam }}" style="margin-right: 5px;"> #}
+                                                <picture>
+                                                    <source data-srcset="{{comercioSimilar.ics | asWebp }}" type="image/webp"/>
+                                                    <source data-srcset="{{comercioSimilar.ics}}" type="image/png"/>
+                                                    <img class="lazyload" data-src="{{comercioSimilar.ics}}" 
+                                                        alt="{{ comercioSimilar.nam }}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                                                        width="45" height="45" style="margin-right: 5px;">
+                                                </picture>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            {% set idLOC = (comercioSimilar.idr*10000) + comercioSimilar.ids%}
+                                            {% if comercioSimilar.nam != '' %}
+                                            <a href="{{ path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(comercioSimilar.nam)}) }}">
+                                                <h2>{{ comercioSimilar.nam | upper }}</h2>
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                        <div class="direccion">
+                                            {{ comercioSimilar.adr }}
+                                            {% if comercioSimilar.dst < 100000 and comercioSimilar.dst > 0 %}
+                                            <div>{{ comercioSimilar.dst | distance }} de este lugar</div>
+                                            {% endif %}
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {# CATEGORIAS RELACIONADAS #}
+                {% if rubrosRelacionadosArray is defined and rubrosRelacionadosArray | length > 0 %}
+                    <div class="u-box-cntr boxedlines widget-relacionados">
+                        <div class="titulo-big">Categor&iacute;as relacionadas</div>
+                        <div class="boxbody">
+                            <ul>
+                                {% for key, rubroRelacionado in rubrosRelacionadosArray %}
+                                    <li {% if loop.index > 10 %}style="display: none;" class="to-show"{% endif %}>
+                                        {% if rubroRelacionado.nam != '' %}
+                                        <a href="{{ path('rubro', {'rubroNombre': urlize(rubroRelacionado.nam), 'rubroId': rubroRelacionado.idp}) }}" title="{{ rubroRelacionado.nam | title | htmlentities | raw }}">
+                                            <h2>{{ rubroRelacionado.nam  }}</h2>
+                                        </a>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {# BANNER DESKTOP BOTTOM #}
+                {% if not isMobile and comercio.spo != 2 and not isAdultContent %}
+                    <div class="banner-recuadro">
+                      <div id="sas_27747" class="gmad-desktop"></div>
+                    </div>
+                    <div class="separador"></div>
+                {% endif %}
+
+            </div>
+        </aside>
+    </div>
+
+    {# SHARE MODAL #}
+    <div class="tiny reveal sharerpanel shrink" id="shareModal" data-reveal>
+        <h4>Compartir en</h4>
+        <a href="https://facebook.com/sharer/sharer.php?u={{thisURL}}" target="_blank" rel="noopener" aria-label="Facebook">
+            <i class="fa fa-facebook-official" aria-hidden="true"></i>
+            <div>Facebook</div>
+        </a>
+        <a href="https://twitter.com/intent/tweet/?text={{shareText}}&amp;url={{thisURL}}" target="_blank" rel="noopener" aria-label="Twitter">
+            <i class="fa fa-twitter" aria-hidden="true"></i>
+            <div>Twitter</div>
+        </a>
+        <a href="mailto:?subject={{shareText}}&amp;body={{thisURL}}" target="_self" rel="noopener" aria-label="E-Mail">
+            <i class="fa fa-envelope" aria-hidden="true"></i>
+            <div>E-mail</div>
+        </a>
+        {% if isMobile %}
+            <a href="whatsapp://send?text={{shareText}}%20{{thisURL}}" target="_blank" rel="noopener" aria-label="WhatsApp">
+                <i class="fa fa-whatsapp" aria-hidden="true"></i>
+                <div>Whatsapp</div>
+            </a>
+
+            <a href="https://telegram.me/share/url?text={{shareText}}&amp;url={{thisURL}}" target="_blank" rel="noopener" aria-label="Telegram">
+                <i class="fa fa-telegram" aria-hidden="true"></i>
+                <div>Telegram</div>
+            </a>
+        {% endif %}
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    {# BADGE POPUP #}
+    {% if comercio.vfd is defined and comercio.vfd != '' %}
+        <div class="tiny reveal shrink" id="verifiedModal" data-reveal style="display:none">
+            <div>
+                <svg height="40" viewBox="0 -11 512.02797 512" width="40"><path d="m441.644531 247.59375-11.457031-32.554688-123.582031 123.585938c-12.074219 12.097656-28.160157 18.75-45.25 18.75-17.085938 0-33.171875-6.652344-45.246094-18.75l-90.667969-90.667969c-12.097656-12.074219-18.753906-28.160156-18.753906-45.246093 0-17.089844 6.65625-33.175782 18.753906-45.25 12.074219-12.09375 28.160156-18.75 45.246094-18.75 17.089844 0 33.175781 6.65625 45.25 18.75l45.417969 45.398437 121.6875-121.683594-8.195313-23.253906-3.773437-22.570313c-2.367188-14.464843-11.90625-26.453124-25.453125-32.066406-13.609375-5.652344-28.796875-3.902344-40.722656 4.652344l-59.285157 42.921875-59.949219-43.03125c-12.03125-8.488281-27.261718-10.175781-40.789062-4.5-13.4375 5.632813-22.890625 17.601563-25.257812 31.980469l-11.605469 72.253906-72.683594 12.074219c-14.441406 2.371093-26.429687 11.90625-32.0625 25.453125-5.632813 13.589844-3.882813 28.820312 4.671875 40.746094l42.902344 59.285156-43.03125 59.945312c-8.46875 12.03125-10.175782 27.285156-4.5 40.789063 5.652344 13.441406 17.597656 22.890625 31.976562 25.261719l72.257813 11.625 12.074219 72.660156c2.347656 14.421875 11.820312 26.390625 25.257812 32.023437 13.546875 5.671875 28.800781 3.988281 40.941406-4.609375l59.285156-42.921875 59.796876 42.921875c7.316406 5.226563 15.828124 7.914063 24.46875 7.914063 5.480468 0 10.984374-1.066407 16.253906-3.261719 13.570312-5.632812 23.085937-17.621094 25.453125-32.023438l11.625-72.253906 72.660156-12.074218c14.421875-2.371094 26.371094-11.820313 32.023437-25.261719 5.675782-13.503907 3.988282-28.757813-4.609374-40.9375zm0 0" fill="#ffc107"/><path d="m261.355469 314.710938c-5.460938 0-10.921875-2.089844-15.082031-6.25l-90.667969-90.667969c-8.339844-8.339844-8.339844-21.824219 0-30.164063 8.34375-8.34375 21.824219-8.34375 30.167969 0l75.582031 75.582032 214.25-214.25c8.34375-8.339844 21.824219-8.339844 30.167969 0 8.339843 8.339843 8.339843 21.824218 0 30.164062l-229.335938 229.335938c-4.160156 4.160156-9.621094 6.25-15.082031 6.25zm0 0" fill="#607d8b"/></svg>
+                <div style="position: absolute;padding-left: 67px;left: 0px;top:13px;">
+                    <div style="font-weight: 500;">Negocio verificado</div>
+                    <div style="font-size: 90%;color: #555;">{{comercio.nice_vfd}}</div>
+                </div>
+            </div>
+            <p style="margin-top: 20px;">
+                Los datos de este negocio fueron verificados por nuestros agentes con el due&ntilde;o del 
+                mismo, el {{comercio.nice_vfd}}.
+            </p>
+            <div style="text-align: right;margin-top: 40px;">
+                <i class="fa fa-info-circle" aria-hidden="true" style="color: #777;"></i>&nbsp;
+                <a style="font-size: 13px;color: #777;" href="{{ path('verification') }}">Como se verifican</a>
+            </div>
+            
+            
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+
+    {# LOGIN MODAL #}
+    <div class="tiny reveal shrink" id="fastLoginModal" data-reveal>
+      <div style="padding: 30px;text-align: center;">
+        <img src="{{ app.request.basepath }}/img/account.png" style="background-color: transparent;" alt="Iniciar sesión">
+      </div>
+      <form>
+        <p id="flDesc" style="font-size: 16px;text-align: center;margin-bottom: 30px;">Para poder enviar tu comentario es necesario inciar sesión</p>
+        <p id="flErr" style="display:none;color: #f44336;"></p>
+        <div id="lblflEmail">
+          <label for="flEmail">Ingresa tu correo electrónico</label>
+          <input type="text" id="flEmail" name="email" placeholder="juan@mail.com">
+        </div>
+        <div id="lblflName" style="display:none">
+          <label  for="flName">Ingresa tu nombre</label>
+          <input type="text" id="flName" name="name">
+        </div>
+        <div id="lblflPass" style="display:none">
+          <label for="flPass">Ingresa tu contraseña</label>
+          <input type="password" id="flPass" name="password" autocomplete="on">
+        </div>
+        <div style="display: flex;justify-content: flex-end;">
+          <button id="btnFastLoginNext1" class="button">Siguiente</button>
+          <button id="btnFastLoginNext2" class="button" style="display:none">
+            Enviar comentario
+          </button>
+        </div>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </form>
+    </div>
+
+    {# STRUCTURED DATA: LOCAL BUSINESS #}
+    <script type="application/ld+json">
+        {"@context":"http:\/\/schema.org","@type":"LocalBusiness","address":{"@type":"PostalAddress","addressLocality":"{{zona}}","addressRegion":"{{comercio.sta}}","streetAddress":"{{comercio.adr}}","addressCountry":"{{COUNTRY|upper}}"}
+        ,"name":"{{comercio.nam}}"
+        {% if hasMap %}
+            ,"geo":{"@type":"GeoCoordinates","latitude":"{{comercio.lat}}","longitude":"{{comercio.lon}}"}
+        {% endif %}
+        {% if comercio.url_for_sd | length > 0 %}
+            ,"url": "{{comercio.url_for_sd}}"
+        {% else %}
+            , "url" : "{{ thisURL }}"
+        {% endif %}
+        {% if comercio.phl | length > 0 %}
+            ,"telephone":"{{comercio.phl}} "
+        {% else %}
+            {% if comercio.phm | length > 0 %}
+                ,"telephone":"{{comercio.phm}} "
+            {% endif %}
+        {% endif %}
+        {% if comercio.ics | length > 0 %}
+            ,"logo":"{{comercio.icshq}}"
+        {% endif %}
+        {% if comercio.ims | length > 0 %}
+            ,"image":"{{comercio.imshq}}"
+        {% else %}
+          {% if COUNTRY == 'uy' %}
+            ,"image":"https://1122.com.uy/img/{{BRANDNOIMS}}.png"
+          {% else %}
+            ,"image":"https://www.buscoinfo.com.py/img/{{BRANDNOIMS}}.png"
+          {% endif %}
+        {% endif %}
+        {% if comercio.hrsp is defined and comercio.hrsp != 0 %}
+            ,"openingHoursSpecification":[
+            {% set isFirst = true %}
+            {% for htDay in comercio.hrsp %}
+                {% if htDay.isOpen %}
+                    {% for hours in htDay.hours %}
+                        {% if not isFirst %}
+                            ,
+                        {% else %}
+                            {% set isFirst = false %}
+                        {% endif %}
+                        {"@type":"OpeningHoursSpecification","dayOfWeek":"http:\/\/schema.org\/{{htDay['intsDay']}}","opens":"{{hours.sstart}}","closes":"{{hours.send}}"}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+            ]
+        {% endif %}
+        {% if comercio.lRnk > 0 %}
+            ,"aggregateRating":{"ratingCount":"{{comercio.cRnk}}","ratingValue":"{{comercio.lRnk}}"}
+        {% endif %}
+        
+        }
+    </script>
+
+    {# STRUCTURED DATA: FAQ #}
+    {% if comercio.faqs is defined and comercio.faqs | length > 0 %}
+      <script type="application/ld+json">
+        {"@context": "https://schema.org","@type": "FAQPage","mainEntity": [
+            {% for faq in comercio.faqs %}
+              {% if loop.index0 > 0 %},{% endif %}
+              {
+                "@type": "Question",
+                "name": "{{faq.q}}",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "{{faq.a}}"
+                }
+              }
+            {% endfor %}
+          ]
+        }
+      </script>
+    {% endif %}
+
+    <script>
+        window.hrsps  = {{ comercio.hrsps | raw}};
+    </script>
+    {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'c'} %}
+{% endblock deferredCss %}

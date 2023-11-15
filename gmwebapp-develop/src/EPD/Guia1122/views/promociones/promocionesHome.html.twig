@@ -1,0 +1,148 @@
+{% extends ('layout.html.twig') %}
+
+{% set isMobile = isMobile() %}
+
+{% block admConfigHead %} 
+    googletag.cmd.push(function() {
+        {% if isMobile %}
+        googletag.defineSlot('{{ADS_SLOT_TOP}}', [[320, 100],[300, 100],[320, 50]], 'sas_27839').addService(googletag.pubads());
+        googletag.defineSlot('{{ADS_SLOT_BOTTOM}}', [[320, 100],[300, 100],[320, 50]], 'sas_28427').addService(googletag.pubads());
+        {% else %}
+        googletag.defineSlot('{{ADS_SLOT_TOP}}', [[728,90],[970, 90]], 'sas_27839').addService(googletag.pubads());
+        googletag.defineSlot('{{ADS_SLOT_BOTTOM}}', [[728,90],[970, 90]], 'sas_28427').addService(googletag.pubads());
+        {% endif %}
+        googletag.pubads().setTargeting('zona', '{{ lastzone }}');
+        googletag.pubads().setTargeting('Channel', 'web');
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+    });
+{% endblock admConfigHead %}
+{% block admConfigBody %} 
+    <script>
+        {% if isMobile %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27839'); 
+                googletag.display('sas_28427'); 
+            });
+        {% else %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27839'); 
+                googletag.display('sas_28427'); 
+            });
+        {% endif %}
+    </script>
+{% endblock admConfigBody %} 
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-ph'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %}Promociones, beneficios y ofertas de tus comercios favoritos{% endblock pageTitle %}
+
+{% block metas %}
+    <link rel="canonical" href="https:{{ url('promocionesTodas', {}, true) }}"/>
+    <meta name="description" content="Encontra los mejores beneficios, promociones y ofertas de los comercios de tu zona | {{BRAND}}" />
+    <meta name="keywords" content="promociones, beneficios, descuentos, promos, guia, comercios, uruguay, servicios, zonas, departamentos, local, telefono, direccion" />
+    <meta name="robots" content="index, all" />
+    <meta name="DC.title" content="{{BRAND}}" />
+    <meta name="publisher" content="{{BRAND}}" />
+    <meta name="language" content="es" />
+    <meta name="distribution" content="global"/>
+{% endblock metas %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="large-12 medium-12 small-12 text-center">
+            <h1 class="section-header">Promociones, beneficios, descuentos y oportunidades</h1>
+            <h3 class="section-subheader">Encontr&aacute; los mejores beneficios en tu zona y en tus lugares favoritos</h3>
+        </div>
+    </div>
+
+    <div class="row">
+                    
+        <!-- CATEGS CARRUSEL -->
+        {% for categ in categs %}
+            <div class="large-12 medium-12 small-12 " style="margin-top: 20px;">
+                <div class="u-box-cntr" >
+                    <h2 class="titulo-big">{{categ.name}}</h2>
+                    <div class="view-more">
+                        <a href="{{ path('promocionesTodas', {'categoriaNombre': urlize(categ.name), 'categoriaId': categ.id}) }}">Ver todas</a>
+                    </div>
+                    
+                    <div class="promogrid">
+                      {% for prm in categ.prms %}
+                        <a href="{{ path('promocionesFicha', {'promoNombre': urlize(prm.name), 'promoId': prm.idp}) }}"
+                          class="promobox">
+                            {# <div class="img-sponsor-promo">
+                                <picture >
+                                    <source type="image/webp" data-srcset="{{prm.sponsor.ics | asWebp}}">
+                                    <source type="image/png" data-srcset="{{prm.sponsor.ics}}">
+                                    <img class="lazyload"  data-src="{{prm.sponsor.ics}}" alt="{{prm.sponsor.name}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                </picture>
+                                <span>{{prm.sponsor.name}}</span>
+                            </div> #}
+                            <picture >
+                                <source type="image/webp" data-srcset="{{prm.imp | asWebp}}">
+                                <source type="image/png" data-srcset="{{prm.imp}}">
+                                <img class="lazyload"  data-src="{{prm.imp}}" alt="{{prm.name}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                            </picture>
+                            <div style="padding:5px;width: 100%;">
+                                <h4><strong>{{prm.name}}</strong></h4>
+                                {% if prm.bon is defined and prm.bon | length > 0 %}
+                                <div class="promoboxbonus">{{prm.bon }}</div>
+                                {% endif %}
+                                <h5>{{prm.dsc}}</h5>
+                                {# {% if prm.dst is defined and prm.dst | length > 0 %}
+                                {% endif %} #}
+                            </div>
+                        </a>
+                      {% endfor %}
+                    </div>
+                    
+                </div>
+            </div>
+
+            {% if loop.index == 2 %}
+                <div class="large-12 medium-12 small-12 text-center">
+                    <div class="large-12 medium-12 small-12 small-collapse text-center banner970x90" >
+                        {# {{ sasTag(sasSpage, 'top') | raw }} #}
+                        <div id="sas_27839" class="gmad-top"></div>
+                    </div>
+                </div>
+            {% elseif loop.last %}
+                <div class="large-12 medium-12 small-12 text-center">
+                    <div class="large-12 medium-12 small-12 small-collapse text-center banner970x90" >
+                        {# {{ sasTag(sasSpage, 'bottom') | raw }} #}
+                        <div id="sas_28427" class="gmad-top"></div>
+                    </div>
+                </div>
+            {% endif %}
+
+        {% endfor %}
+    </div>
+
+    {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'ph'} %}
+{% endblock deferredCss %}

@@ -1,0 +1,168 @@
+{% set isMobile = isMobile() %}
+
+
+<header>
+
+  {% if isMobile %}
+    <div class="header">
+        <a href="{{ path('home') }}" title="Inicio">
+          <picture>
+            <source type="image/webp" srcset="{{ app.request.basepath }}/img/logo_headm5.webp">
+            <source type="image/jpeg" srcset="{{ app.request.basepath }}/img/logo_headm5.png">
+            <img src="{{ app.request.basepath }}/img/logo_headm5.png" alt="1122" style="width:87px;height:28px;">
+          </picture>
+        </a>
+        <div class="headerRightBtns" >
+          <p id="headerLupa"><i class="fa fa-search"></i></p>
+          {% if (header.userData.currentOrders is defined and header.userData.currentOrders | length > 0) %}
+              {# <ul class="dropdown menu" data-dropdown-menu data-alignment="right" 
+                  style="display: inline-block;vertical-align: middle;padding-top: 2px;width: 40px;z-index: 100;">
+                  <li>
+                      <a href="" title="Compras" style="padding: 0px;">
+                          <i class="fa fa-shopping-cart" style="font-size: 20px;padding: 0px;"></i>
+                          <div style="width: 17px;
+                              height: 17px;
+                              background-color: #FFFFFF;
+                              position: absolute;
+                              top: 10px;
+                              border-radius: 50%;
+                              right: 7px;
+                              font-size: 11px;
+                              font-family: arial;
+                              padding: 3px 0px 0px 0px;
+                              border: 1px solid #159de1;
+                              color: #159de1;
+                              font-weight: 700;
+                              text-align: center;">{{ header.userData.currentOrders | length }}</div></a>
+                      <ul class="menu is-dropdown-submenu">
+                          <li style="position: relative;padding: 4px;text-align: center;color: #777;font-size: 12px;">
+                              Tienes {{header.userData.currentOrders | length}} carritos en curso
+                          </li>
+                          {% for cart in header.userData.currentOrders %}
+                              <li style="position: relative; min-height: 52px;">
+                                  <a style="padding: 3px;width: auto;" title="Carrito"
+                                      href="{{  path('orderMenuToken', {'nam':'-','idr': cart.retailerNumber, 'ids': cart.storeNumber, 'orderToken':cart.token}) }}">
+                                      {% if (cart.storeIconUrl | length > 0) %}
+                                          <img src="{{cart.storeIconUrl}}" style="width:50px;height:50px;position: absolute;left: 0px;top: 0px;">
+                                      {% else %}
+                                          <div style="width:50px;height:50px;position: absolute;left: 3px;top: 3px;"></div>
+                                      {% endif %}
+                                      <div style="padding-left: 50px;text-align: left;">
+                                          <div style="font-size: 11px;color: #555;line-height: 14px;font-weight: 700;">{{cart.storeName}}</div>
+                                          <div style="color: #888;font-size: 10px;">{{cart.storeAddress}}</div>
+                                          <div style="color: #159de1;font-size: 11px;">Tiene {{cart.items}} item/s</div>
+                                      </div>
+                                  </a>
+                              </li>
+                          {% endfor %}
+                          <li style="position: relative;padding: 4px;text-align: center;color: #777;font-size: 12px;">
+                              <a href="{{path('uberto/requestList')}}" title="Todos mis pedidos">Ver todos mis pedidos</a>
+                          </li>
+                      </ul>
+                  </li>
+              </ul> #}
+              <ul class="dropdown menu" data-dropdown-menu data-alignment="right" style="display: inline-block;vertical-align: middle;width: 40px;z-index: 100;">
+                {% if header.cart == null %}
+                  <li>
+                      <a href="#" style="color: #222;padding: 4px 0px;"><i class="fa fa-shopping-cart" style="font-size: 20px;"></i>
+                          <div style="width: 15px; height: 15px; background-color: #FFF; position: absolute; bottom: 1px; border-radius: 50%; right: 5px; font-size: 9px; font-family: arial; padding: 3px 0px 0px 0px; border: 1px solid #159de1; color: #159de1; font-weight: 700; text-align: center;">{{ header.userData.currentOrders | length }}</div></a>
+                      <ul class="menu is-dropdown-submenu" style="z-index: 100;">
+                          <li style="position: relative;padding: 4px;text-align: center;color: #777;font-size: 12px;">
+                              Tienes {{header.userData.currentOrders | length}} carritos en curso
+                          </li>
+                          {% for cart in header.userData.currentOrders %}
+                              <li style="position: relative; min-height: 52px;">
+                                {% if cart.storeName is defined and cart.storeName | length > 0 %}
+                                  <a style="padding: 3px;width: auto;" href="{{path('storeStart', {'nam': cart.storeName,'idr': cart.retailerNumber, 'ids': cart.storeNumber, '?t': cart.token}) }}">
+                                      {% if (cart.storeIconUrl | length > 0) %}
+                                          <img src="{{cart.storeIconUrl}}" style="width:50px;height:50px;position: absolute;left: 0px;top: 0px;">
+                                      {% else %}
+                                          <div style="width:50px;height:50px;position: absolute;left: 3px;top: 3px;"></div>
+                                      {% endif %}
+                                      <div style="padding-left: 50px;">
+                                          <div style="font-size: 11px;color: #555;line-height: 14px;font-weight: 700;">{{cart.storeName}}</div>
+                                          <div style="color: #888;font-size: 10px;">{{cart.storeAddress}}</div>
+                                          <div style="color: #159de1;font-size: 11px;">Tiene {{cart.items}} item/s</div>
+                                      </div>
+                                  </a>
+                                {% endif %}
+                              </li>
+                          {% endfor %}
+                          <li style="position: relative;padding: 4px;text-align: center;color: #777;font-size: 12px;">
+                              <a href="{{path('uberto/requestList')}}">Ver todos mis pedidos</a>
+                          </li>
+                      </ul>
+                  </li>
+                {% else %}
+                  <li>
+                      <a href="#" style="color: #EEE;padding: 4px 0px;"><i class="fa fa-shopping-cart" style="font-size: 20px;"></i>
+                          <div style="width: 15px; height: 15px; background-color: #FFF; position: absolute; bottom: 1px; border-radius: 50%; right: 5px; font-size: 9px; font-family: arial; padding: 3px 0px 0px 0px; border: 1px solid #159de1; color: #159de1; font-weight: 700; text-align: center;">{{ header.cart.plist | length }}</div>
+                      </a>  
+                      <ul class="menu" style="max-height: 80vh;overflow-y: scroll;padding: 0px 5px 0px 5px;">
+                          <li style="position: relative;padding: 4px;text-align: center;color: #777;font-size: 12px;">
+                              Tienes {{ header.cart.plist | length}} productos en el carrito
+                          </li>
+                          {% for item in header.cart.plist %}
+                              <li style="position: relative; min-height: 52px;">
+                                      <a style="padding: 3px;width: auto;" href="{{path('productOrderMenu', {'name': item.name, 'id': item.id, 'idr': header.idr, 'ids': header.ids}) }} {{'?l=' ~item.lineId ~ '&t=' ~header.token}}">
+                                      {% if (item.image | length > 0) %}
+                                          <img src="{{item.image}}" style="width:50px;height:50px;position: absolute;left: 0px;top: 0px;">
+                                      {% else %}
+                                          <div style="width:50px;height:50px;position: absolute;left: 3px;top: 3px;"></div>
+                                      {% endif %}
+                                      <div style="padding-left: 50px;">
+                                          <div style="font-size: 11px;color: #555;line-height: 14px;font-weight: 700;">{{item.name}}</div>
+                                          <div style="color: #888;font-size: 10px;">x{{item.quantity}}</div>
+                                          <div style="color: #159de1;font-size: 11px;">${{item.itemPrice}}</div>
+                                          <a style="font-size: 13px;" href="{{path('productDelete', {'lineId': item.lineId, 'token': header.token, 'idr': header.idr, 'ids': header.ids}) }}">Quitar</a>
+                                      </div>
+                                  </a>
+                              </li>
+                          {% endfor %}
+                          <li style="position: relative;padding: 4px;text-align: center;color: #777;font-size: 12px;">
+                              Total: ${{header.cart.price}}
+                          </li>
+                          <li style="position: relative;padding: 4px;text-align: center;color: #777;font-size: 12px;">
+                              <a href="{{path('orderMenuCheckout', {'idr': header.idr, 'ids': header.ids, 'token': header.token}) }}">Finalizar compra</a>
+                          </li>
+                      </ul>
+                  </li>
+                {% endif %}
+              </ul>
+          {% endif %}
+          <p>
+            <a id="btnMenu" href="#" title="Menu principal"><i class="fa fa-bars"></i></a>
+          </p>
+        </div>
+    </div>
+    <div id="headerBuscador" class="headerBuscador">
+      <div>
+        {% include 'components/search.html.twig' with {'showAboveButtons': true} %}
+      </div>
+    </div>
+  {% else %}
+      <div class="header">
+          <div class="logo">
+              <a href="{{ path('home') }}" title="Inicio">
+                <picture class="logo_head">
+                  <source type="image/webp" srcset="{{ app.request.basepath }}/img/logo_head5.webp">
+                  <source type="image/jpeg" srcset="{{ app.request.basepath }}/img/logo_head5.png">
+                  <img src="{{ app.request.basepath }}/img/logo_head5.png" alt="1122">
+                </picture>
+              </a>
+          </div>
+          <div id="headerBuscador" class="buscador">
+            {% include 'components/search.html.twig' with {'showAboveButtons': false} %}
+          </div>
+      </div>
+  {% endif %}
+
+  {% if not isMobile %}
+    {% include 'components/header/headertoolbar_uy.html.twig' %}
+  {% endif %}
+
+</header>
+
+{% if isMobile %}
+  {% include 'components/header/headertoolbar_uy.html.twig' %}
+{% endif %}

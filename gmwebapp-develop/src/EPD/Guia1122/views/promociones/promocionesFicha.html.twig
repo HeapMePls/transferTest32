@@ -1,0 +1,236 @@
+{% extends ('layout.html.twig') %}
+
+{% set isMobile = isMobile() %}
+{% set hasImage = (promo.imp is defined and promo.imp | length > 0) %}
+
+{% block admConfigHead %} 
+    googletag.cmd.push(function() {
+        {% if isMobile %}
+        googletag.defineSlot('{{ADS_SLOT_TOP}}', [[320, 100],[300, 100],[320, 50]], 'sas_27839').addService(googletag.pubads());
+        googletag.defineSlot('{{ADS_SLOT_RIGHT}}', [[300,250],[300, 100],[320, 50]], 'sas_27528').addService(googletag.pubads());
+        {% else %}
+        googletag.defineSlot('{{ADS_SLOT_RIGHT}}', [[300,250]], 'sas_27528').addService(googletag.pubads());
+        googletag.defineSlot('{{ADS_SLOT_RIGHT1}}', [[300,250]], 'sas_27838').addService(googletag.pubads());
+        {% endif %}
+        googletag.pubads().setTargeting('Channel', 'web');
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+    });
+{% endblock admConfigHead %}
+{% block admConfigBody %} 
+    <script>
+        {% if isMobile %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27839'); 
+                googletag.display('sas_27528'); 
+            });
+        {% else %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27528'); 
+                googletag.display('sas_27838'); 
+            });
+        {% endif %}
+    </script>
+{% endblock admConfigBody %} 
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-pv'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %}{{promo.name}} con {{promo.sponsor.name}} | Beneficios en {{categs[0].name}} en {{BRAND}} {% endblock pageTitle %}
+
+{% block metas %}
+    <link rel="canonical" href="https:{{ url('promocionesFicha', {'promoNombre': urlize(promo.name), 'promoId': promo.idp}, true) }}"/>
+    <meta name="description" content="Promocion {{promo.name}} con {{promo.sponsor.name}} | Beneficios en {{categs[0].name}} con {{BRAND}}" />
+    <meta name="keywords" content="{{promo.name}}, {{promo.sponsor.name}}, {{categs[0].name}}, promociones, beneficios, descuentos, promos, comercios, uruguay, servicios" />
+    <meta name="robots" content="index, all" />
+    <meta name="DC.title" content="{{BRAND}}" />
+    <meta name="publisher" content="{{BRAND}}" />
+    <meta name="language" content="es" />
+    <meta name="distribution" content="global"/>
+
+    {% if hasImage %}
+      <link rel="preload" as="image" href="{{promo.imp | asWebp }}" />
+      <link rel="preload" as="image" href="{{promo.imp}}" />
+    {% endif %}
+{% endblock metas %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="large-8 medium-8 small-12 columns " >
+            {# FICHA #}
+            <div class="row u-box-cntr boxedlines letra-gris">
+                <div class="large-12 medium-12 small-12 columns " >
+                    {% if promo.bon is defined and promo.bon | length > 0 %}
+                        <span style="color: #159de1;padding: 1px 10px;background-color: #e3f2fd;display: inline-flex;border-radius: 8px;font-size: 16px;font-weight: 500;margin: 2px 0px 4px 0px;" >{{promo.bon}}</span>
+                    {% endif %}
+                    <h1 class="section-header section-header-left">{{promo.name}}</h1>
+                    <div >
+                        {% for ctg in categs %}
+                            <h3 style="padding: 2px 6px;border-radius: 4px;background-color: #EEEEEE;color: #777;margin-right: 5px;font-size: 14px;display: inline-block;">{{ctg.name}}</h3>
+                        {% endfor %}
+                    </div>
+                    {% if hasImage %}
+                      <div style="text-align:center;margin-bottom:20px;">
+                          <picture>
+                              <source srcset="{{promo.imp | asWebp }}" type="image/webp"/>
+                              <source srcset="{{promo.imp}}" type="image/png"/>
+                              <img src="{{promo.imp}}" 
+                                  decoding="async"
+                                  alt="{{promo.name}} con {{promo.sponsor.name}}" 
+                                  src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                                  style="width: 100%;aspect-ratio: 1.666;">
+                          </picture>
+                      </div>
+                    {% endif %}
+
+                </div>
+
+                {# DETALLES #}
+                <div class="large-12 medium-12 small-12 u-box-cntr">
+                    <div class="titulo-big">Detalles</div>
+                    <h2 class="section-subheader" style="padding: 10px">{{promo.dsc}}</h2>
+                </div>
+
+                {# DESCRIPCION #}
+                <div class="large-12 medium-12 small-12 u-box-cntr" >
+                    <div class="titulo-big">Descripción</div>
+                    <div style="padding: 10px;">
+                        {{promo.ldsc | raw}}
+                    </div>
+                </div>
+
+                {# GALERIA #}
+                {% if promo.gal is defined and promo.gal | length > 0 %}
+                    <div class="large-12 medium-12 small-12 columns u-box-cntr" >
+                        <div style="margin-bottom:15px;font-size:20px;height:32px;border-bottom: 1px solid #dadada;">Galer&iacute;a de fotos</div>
+                        <div class="row align-stretch">
+                            <div id="prm-gal" class="swiper-container" style="padding: 5px;">
+                                <div class="swiper-wrapper">
+                                    {% for gImg in promo.gal %}
+                                        <div class="swiper-slide">
+                                            {# <img src="{{gImg}}" alt="{{promo.name}}"> #}
+                                            <picture>
+                                                <source data-srcset="{{gImg | asWebp }}" type="image/webp"/>
+                                                <source data-srcset="{{gImg}}" type="image/png"/>
+                                                <img class="lazyload" data-src="{{gImg}}"  
+                                                    alt="{{promo.name}}" 
+                                                    src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                            </picture>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div id="next-prm-gal" class="swiper-button-next"></div>
+                                <div id="prev-prm-gal" class="swiper-button-prev"></div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {# VER MAS PREMIUM #}
+                {% if (promo.sponsor.prmm) %}
+                    <div class="large-12 medium-12 small-12 u-box-cntr" style="text-align:center">
+                        <a href="{{path('promosSponsor', {'sponsorNombre':urlize(promo.sponsor.name), 'sponsorId': promo.sponsor.idr})}}">Ver mas beneficios de {{promo.sponsor.name}}</a>
+                    </div>
+                {% endif %}
+
+                {# LOCALES #}
+                <div class="large-12 medium-12 small-12 u-box-cntr" >
+                    <div class="titulo-big">Locales</div>
+                    <div class="row" style="padding: 10px;margin: 10px 0px;">
+                        {% for sto in promo.stores %}
+                            <div class="large-3 medium-3 small-6 columns ">
+                                {% set stoloc = (sto.idr * 10000) + sto.ids %}
+                                <a href="{{path('comercio', {'id': 'LOC' ~ stoloc, 'comercioNombre': urlize(sto.name)}) }}" class="u-box-cntr-wh store-card">
+                                    {% if sto.icp | length > 0 %}
+                                        <picture>
+                                            <source data-srcset="{{sto.icp | asWebp }}" type="image/webp"/>
+                                            <source data-srcset="{{sto.icp}}" type="image/png"/>
+                                            <img class="lazyload ancho-total" data-src="{{sto.icp}}" 
+                                                alt="{{promo.name}} en {{sto.name}} | {{sto.adr}}, {{sto.cty}}" 
+                                                src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                        </picture>
+                                        {# <img class="lazy ancho-total" data-src="{{sto.icp}}" alt="{{promo.name}} en {{sto.name}} | {{sto.adr}}, {{sto.cty}}"> #}
+                                    {% else %}
+                                        {# <img class="lazy ancho-total" data-src="{{ app.request.basepath }}/img/noims.webp" alt="{{promo.name}} en {{sto.name}} | {{sto.adr}}, {{sto.cty}}"> #}
+                                        <picture>
+                                            <source data-srcset="{{ app.request.basepath }}/img/{{BRANDNOIMS}}.webp" type="image/webp"/>
+                                            <source data-srcset="{{ app.request.basepath }}/img/{{BRANDNOIMS}}.png" type="image/png"/>
+                                            <img class="lazyload ancho-total" data-src="{{ app.request.basepath }}/img/{{BRANDNOIMS}}.png" 
+                                                alt="{{promo.name}} en {{sto.name}} | {{sto.adr}}, {{sto.cty}}" 
+                                                src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                        </picture>
+                                    {% endif %}
+                                    <div style="padding:5px;">
+                                        <h4><strong>{{sto.name}}</strong></h4>
+                                        <h5>{{sto.adr}}</h5>
+                                        <h6>{{sto.cty}}</h6>
+                                    </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                
+                {% if isMobile %}
+                    <div class="large-12 medium-12 small-12 text-center banner970x90">
+                        <div id="sas_27839" class="gmad-top"></div>
+                    </div>
+                {% endif %}
+
+                {# CONDICIONES #}
+                {% if promo.cond is defined and promo.cond | length > 0 %}
+                    <div class="large-12 medium-12 small-12 u-box-cntr columns" >
+                        <div class="titulo-big">Condiciones</div>
+                        <small>{{promo.cond}}</small>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <div class="large-4 medium-4 small-12 columns " >
+
+            <div class="banner-recuadro">
+                <div id="sas_27528" class="gmad-desktop"></div>
+            </div>
+
+            {% if not isMobile %}
+                <div class="separador"></div>
+                <div class="banner-recuadro">
+                    <div id="sas_27838" class="gmad-desktop"></div>
+                </div>
+                <div class="separador"></div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'pv'} %}
+{% endblock deferredCss %}

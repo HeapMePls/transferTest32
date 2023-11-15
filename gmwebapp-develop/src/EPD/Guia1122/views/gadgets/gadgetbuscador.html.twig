@@ -1,0 +1,62 @@
+{% extends ('gadgets/layoutgadgets.html.twig') %}
+
+{% set isMobile = isMobile() %}
+
+{% block content %}
+    <div class="row">
+        {% if isMobile %}
+            <div class="large-12 medium-12 small-12 columns" style="padding: 10px;text-align: center;">
+                <a href="{{ path('home') }}" title="Inicio">
+                    <img src="{{ app.request.basepath }}/img/logo_headm.png?{{ assetVersion }}" alt="1122" class="logo_head"/>
+                </a>
+            </div>
+        {% else %}
+            <div class="large-12 medium-12 small-12 columns" style="padding: 10px;text-align: center;">
+                <a href="{{ path('home') }}" title="Inicio">
+                    <img src="{{ app.request.basepath }}/img/logo_head.png?{{ assetVersion }}" alt="1122"/>
+                </a>
+            </div>
+        {% endif %}
+        <div class="large-12 medium-12 small-12 columns" style="font-size: 14px;color: #444;text-align: center;margin-bottom: 10px;line-height: 17px;">
+            Encuentra los mejores comercios y profesionales 
+        </div>
+        <div class="large-12 medium-12 small-12 columns">
+            <form target="_blank" id="searcher-form" action="/gadgetbuscador" method="post">
+                <div class="row">
+                    <div class="{{ class | default('large-5 medium-5 small-12 columns rubro') }}">
+                        <label>
+                            <input type="text" placeholder="Productos & Servicios" id="search-rubroNombre" 
+                                name="search-rubroNombre"  maxlength="50" style="border-radius: 4px;">
+                        </label>
+                    </div>
+                    <div class="large-4 medium-4 small-7 columns zona">
+                        <label>
+                            <input type="text" placeholder="Zona" id="search-zonaNombre" maxlength="50" 
+                                name="search-zonaNombre"  style="border-radius: 4px;">
+                        </label>
+                    </div>
+                    <div class="large-3 medium-3 small-5 columns">
+                        <button type="submit" class="searcher-btn">
+                            <div class="lupa" style="color: #FFF;box-shadow: none;border-radius: 4px;padding: 7px;padding: 10px 7px 0px 7px;">
+                                <i class="fa fa-search"></i>
+                                <p>BUSCAR</p>
+                            </div>
+                        </button>
+                        <input type="submit" style="display: none" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row" style="border-top: 1px solid #DDD;">
+        <div class="large-12 medium-12 small-12 columns" style="text-align:center">
+            <a href="https://1122.com.uy/" target="_blank" alt="Entrar a 1122" style="font-size: 13px;border: 1px solid #8ac6e4;padding: 5px 10px;margin: 10px 5px;display: block;border-radius: 4px;">GuiaMovil 1122</a>
+        </div>
+        <div class="large-12 medium-12 small-12 columns" style="text-align:center">
+            <a href="https://empresas.1122.com.uy/" target="_blank" alt="Agregue su comercio" style="font-size: 13px;">Agregue su comercio</a>
+        </div>
+        <div class="large-12 medium-12 small-12 columns" style="text-align:center">
+            <a href="https://blog.1122.com.uy/"  target="_blank" alt="Visita nuestro blog"  style="font-size: 13px;">Visita nuestro blog</a>
+        </div>
+    </div>
+{% endblock %}

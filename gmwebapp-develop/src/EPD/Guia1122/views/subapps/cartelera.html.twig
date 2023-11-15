@@ -1,0 +1,132 @@
+{% extends ('layout.html.twig') %}
+
+{% set isMobile = isMobile() %}
+
+{% block admConfigHead %} 
+    googletag.cmd.push(function() {
+        {% if isMobile %}
+        googletag.defineSlot('{{ADS_SLOT_TOP}}', [[320, 100],[300, 100],[320, 50]], 'sas_27839').addService(googletag.pubads());
+        googletag.defineSlot('{{ADS_SLOT_BOTTOM}}', [[320, 100],[300, 100],[320, 50]], 'sas_28427').addService(googletag.pubads());
+        {% else %}
+        googletag.defineSlot('{{ADS_SLOT_TOP}}', [[728,90],[970, 90]], 'sas_27839').addService(googletag.pubads());
+        googletag.defineSlot('{{ADS_SLOT_BOTTOM}}', [[728,90],[970, 90]], 'sas_28427').addService(googletag.pubads());
+        {% endif %}
+        googletag.pubads().setTargeting('Channel', 'web');
+        googletag.pubads().setTargeting('zona', '{{ lastzone }}');
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+    });
+{% endblock admConfigHead %}
+{% block admConfigBody %} 
+    <script>
+        {% if isMobile %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27839'); 
+                googletag.display('sas_28427'); 
+            });
+        {% else %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27839'); 
+                googletag.display('sas_28427'); 
+            });
+        {% endif %}
+    </script>
+{% endblock admConfigBody %} 
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-ca'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %}Cartelera | {{ parent() }}{% endblock pageTitle %}
+
+{% block metas %}
+    <link rel="canonical" href="https:{{ url('cartelera',  {'place': '-', 'placeidr': 0, 'placeids': 0}, true) }}"/>
+    <meta name="description" content="Cartelera de peliculas y estrenos en uruguay | {{BRAND}}" />
+    <meta name="keywords" content="cartelera, tiempo libre, cine, peliculas, salas, comercios, uruguay, servicios" />
+    <meta name="robots" content="index, all" />
+    <meta name="DC.title" content="{{BRAND}}" />
+    <meta name="publisher" content="{{BRAND}}" />
+    <meta name="language" content="es" />
+    <meta name="distribution" content="global"/>
+{% endblock metas %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block content %}
+    <div class="row">
+        <div class="large-12 medium-12 small-12 columns u-box-cntr text-center">
+            <h1 class="section-header">Cartelera de estrenos</h1>
+            <h2 class="section-subheader">Descubr&iacute; lo nuevo en pel&iacute;culas, sus horarios y donde verlas</h2>
+        </div>
+
+        <div class="large-12 medium-12 small-12 columns" >
+            <div id="sas_27839" class="gmad-top"></div>
+        </div>
+
+        <div class="large-12 medium-12 small-12 columns ">
+            <div class="row align-spaced">
+                {% for event in data.events %}
+                    <div class="large-3 medium-4 small-12 columns " style="padding: 0px;">
+                        <div class="movie-card">
+                            <a href="{{path('carteleraview',  {'eventname': urlize(event.nam), 'eventid': event.idp})}}" >
+                                {% if event.inf.media.ps is defined and event.inf.media.ps | length > 0 %}
+                                    <picture>
+                                        <source data-srcset="{{event.inf.media.ps | asWebp }}" type="image/webp"/>
+                                        <source data-srcset="{{event.inf.media.ps}}" type="image/png"/>
+                                        <img class="lazyload item-icon" data-src="{{event.inf.media.ps}}"  
+                                            alt="{{event.nam}}"
+                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                    </picture>
+                                {% elseif event.inf.media.pm is defined and event.inf.media.pm | length > 0 %}
+                                    <picture>
+                                        <source data-srcset="{{event.inf.media.pm | asWebp }}" type="image/webp"/>
+                                        <source data-srcset="{{event.inf.media.pm}}" type="image/png"/>
+                                        <img class="lazyload item-icon" data-src="{{event.inf.media.pm}}" 
+                                            alt="{{event.nam}}"
+                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                    </picture>
+                                {% else %}
+                                    <div class="noimg"></div>
+                                {% endif %}
+                                <div style="padding:5px;">
+                                    <h4><strong>{{event.nam}}</strong></h4>
+                                    <h5>{{event.inf.genero}}</h5>
+                                    <h6>{{event.hrs | truncate(50) | htmlentities | raw }}</h6>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="large-12 medium-12 small-12 columns" >
+            <div class="banner970x90">
+                <div id="sas_28427" class="gmad-top"></div>
+            </div>
+        </div>
+
+    </div>
+    
+    {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'ca'} %}
+{% endblock deferredCss %}

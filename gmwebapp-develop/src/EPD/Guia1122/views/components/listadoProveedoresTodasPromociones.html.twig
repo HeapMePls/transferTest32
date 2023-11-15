@@ -1,0 +1,28 @@
+{% extends ('components/listadoProveedoresDefault.html.twig') %}
+
+{% block body %}
+    <div class="widget-promociones">
+        <div class="titulo">Filtro por proveedor</div>
+        {% block elements %}
+            <ul>
+                {% for proveedor in proveedores %}
+                    <li>
+                       {% if sponsorId==proveedor.idr %}
+                            <a class="{{ sponsorId == proveedor.idr ? 'destacada' : '' }}" href="{{ path('promocionesTodas') }}">
+                                <img alt="ICONO SPONSOR {{ proveedor.name }}" src="{{ proveedor.ics | default(app.request.basepath ~ '/img/local_default.png') }}" width="85" height="85"/>
+                            </a>
+                        {% else %}
+                            {% if proveedor.name != '' %}
+                            <a class="{{ sponsorId == proveedor.idr ? 'destacada' : '' }}" href="{{ path('promocionesTodas', {'sponsorId': proveedor.idr,'sponsorNombre': urlize(proveedor.name), 'categoriaNombre': '0','categoriaId': '0' }) }}">
+                                <img  alt="ICONO SPONSOR {{ proveedor.name }}" src="{{ proveedor.ics | default(app.request.basepath ~ '/img/local_default.png') }}"  width="85" height="85"/>
+                            </a>
+                            {% endif %}                           
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+            {% block botonVerPromociones %}
+            {% endblock botonVerPromociones %}
+        {% endblock elements %}
+    </div>
+{% endblock body %}

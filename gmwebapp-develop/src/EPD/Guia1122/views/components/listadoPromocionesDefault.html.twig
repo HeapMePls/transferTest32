@@ -1,0 +1,109 @@
+{% block body %}
+    {% block elements %}
+      {% for promoClave, promoInfo in promociones %}
+        {% set pid = '' %}
+        {% set comercio = '' %}
+        {% set idLOC = '' %}
+
+        {% for localClave,localInfo in promoInfo.stores %}
+            {% set pid = localInfo.pid %}
+            {% set comercio = localInfo.name %}
+            {% set idLOC = (localInfo.idr*10000) + localInfo.ids%}
+        {% endfor %}
+        {% if promoInfo.stores | length > 1 and promoInfo.name != '' or promoInfo.stores | length <= 1 and comercio != '' %}
+          <a href="{{ path('promocionesFicha', {'promoNombre': urlize(promoInfo.name), 'promoId': promoInfo.idp}) }}" class="promobox"
+            style="width: 256px;max-width: 256px;">
+              {# <div class="img-sponsor-promo">
+                  <picture >
+                      <source type="image/webp" data-srcset="{{promoInfo.sponsor.ics | asWebp}}">
+                      <source type="image/png" data-srcset="{{promoInfo.sponsor.ics}}">
+                      <img class="lazyload"  data-src="{{promoInfo.sponsor.ics}}" alt="{{promoInfo.sponsor.name}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                  </picture>
+                  <span>{{promoInfo.sponsor.name}}</span>
+              </div> #}
+              <picture >
+                  <source type="image/webp" data-srcset="{{promoInfo.imp | asWebp}}">
+                  <source type="image/png" data-srcset="{{promoInfo.imp}}">
+                  <img class="lazyload"  data-src="{{promoInfo.imp}}" alt="{{promoInfo.name}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+              </picture>
+              <div style="padding:5px;width: 100%;">
+                  <h4><strong>{{promoInfo.name}}</strong></h4>
+                  {% if promoInfo.bon is defined and promoInfo.bon | length > 0 %}
+                  <div class="promoboxbonus">{{promoInfo.bon }}</div>
+                  {% endif %}
+                  <h5>{{promoInfo.dsc}}</h5>
+              </div>
+          </a>
+
+
+        {% endif %}
+      {% endfor %}
+    {% endblock %}
+
+
+
+        {# <div class="large-12 medium-12 columns widget-promocion">
+            {% block elements %}
+                <ul>
+                    {% for promoClave, promoInfo in promociones %}
+                        {% set pid = '' %}
+                        {% set comercio = '' %}
+                        {% set idLOC = '' %}
+
+                        {% for localClave,localInfo in promoInfo.stores %}
+                            {% set pid = localInfo.pid %}
+                            {% set comercio = localInfo.name %}
+                            {% set idLOC = (localInfo.idr*10000) + localInfo.ids%}
+                        {% endfor %}
+                        {% if promoInfo.stores | length > 1 and promoInfo.name != '' or promoInfo.stores | length <= 1 and comercio != '' %}
+                        <li class="u-box-cntr">
+                            <div class="imagen">
+                                <a href="{{ (promoInfo.stores | length > 1)  ?  path('multilocal', {'promocionNombre': urlize(promoInfo.name), 'promocionId': promoInfo.idp}) : path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(comercio)}) }}">
+                                    <picture>
+                                        <source data-srcset="{{promoInfo.imp | asWebp }}" type="image/webp"/>
+                                        <source data-srcset="{{promoInfo.imp}}" type="image/png"/>
+                                        <img class="lazyload" data-src="{{promoInfo.imp}}" 
+                                            alt="Promocion {{promoInfo.name|upper}}" width="185" height="110" 
+                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="titulo">
+                                <a href="{{ (promoInfo.stores | length > 1)  ?  path('multilocal', {'promocionNombre': urlize(promoInfo.name), 'promocionId': promoInfo.idp}) : path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(comercio)}) }}">
+                                    {{ promoInfo.name | upper }}
+                                </a>
+                            </div>
+                            <div class="informacion">
+                                <a href="{{ (promoInfo.stores | length > 1)  ?  path('multilocal', {'promocionNombre': urlize(promoInfo.name), 'promocionId': promoInfo.idp}) : path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(comercio)}) }}">
+                                    {{ promoInfo.ldsc | truncate(100) | raw }}
+                                </a>
+                            </div>
+                            {% if promoInfo.sponsor.name != '' %}
+                            <div class="ico-tarjeta">
+                                <a href="{{ url("sponsor",{'sponsorNombre': urlize(promoInfo.sponsor.name), 'sponsorId': promoInfo.sponsor.idr}) }}">
+                                    <picture>
+                                        <source data-srcset="{{promoInfo.sponsor.ics | asWebp }}" type="image/webp"/>
+                                        <source data-srcset="{{promoInfo.sponsor.ics}}" type="image/png"/>
+                                        <img class="lazyload" data-src="{{promoInfo.sponsor.ics}}" 
+                                            alt="ICONO SPONSOR {{promoInfo.sponsor.name}}" width="30"
+                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                    </picture>
+                                </a>
+                            </div>
+                            {% endif %}
+                            <div class="descripcion">{{ promoInfo.dsc }}</div>
+                            <div class="descripcion">{{ promoInfo.cond }}</div>
+                            <div class="ver-oferta">
+                                <a href="{{ (promoInfo.stores | length > 1)  ?  path('multilocal', {'promocionNombre': urlize(promoInfo.name), 'promocionId': promoInfo.idp}) : path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(comercio)}) }}">
+                                    Ver Oferta
+                                </a>
+                            </div>
+                        </li>
+                        {% endif %}
+
+                    {% endfor %}
+                </ul>
+            {% endblock elements %}
+        </div> #}
+    
+{% endblock body %}

@@ -1,0 +1,20 @@
+{% block body %}
+
+  {% if err != NULL %}
+    <div>
+      <div style="padding: 20px 0px;">{{err}}</div>
+    </div>
+  {% else %}
+    <div class="u-box-cntr-wh">
+      <div style="background-color: #8BC34A;display: inline-block;width: 100%;text-align: center;padding: 0px 10px 15px 10px;">
+        <div style="text-align: center;width: 80px;height: 80px;background-color: #FFF;margin: 20px auto;border-radius: 50%;font-size: 50px;padding-top: 5px;color: #4CAF50;"><i class="fa fa-handshake-o" aria-hidden="true"></i></div>
+        <div>Hemos enviado la aceptacion a {{data.retailerName}} quien se contactará con usted a la brevedad.</div>
+      </div>
+      <div style="padding: 10px;font-size: 14px;line-height: 17px;">
+        Recuerde calificar a {{data.retailerName}} una vez finalizado el servicio.<br>
+        Ayude a su comunidad, amigos y familiares a encontrar los mejores profesionales dando una calificacion.
+      </div>
+    </div>
+  {% endif %}
+
+{% endblock body %}

@@ -1,0 +1,95 @@
+{% extends ('layout.html.twig') %}
+
+{% block pageTitle %} {{multilocalArray.r.prms.0.name}} con {{multilocalArray.r.prms.0.sponsor.name}} | {{ parent() }}{% endblock pageTitle %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/c-gm-h'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block metas %}
+    <meta name="description" content="Beneficio Promocion {{multilocalArray.r.prms.0.name}} con {{multilocalArray.r.prms.0.sponsor.name}} | {{multilocalArray.r.prms.0.dsc | truncate(100)}} | {{BRAND}}" />
+{% endblock metas %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block content %}
+    <div class="row">
+        <div class="large-12 medium-12 columns multilocal sin-bordes">
+            {% if multilocalArray.r.prms.0.imp is defined %}
+                {% if multilocalArray.r.prms.0.imp != '' %}
+                    <div class="image">
+                        <img alt="{{multilocalArray.r.prms.0.name | upper}}" src="{{multilocalArray.r.prms.0.imp}}" style="display: block;margin-left: auto;margin-right: auto">
+                    </div>
+                {% endif %}
+            {% endif %}
+            <div style="padding-right: 15px;padding-left: 15px;">
+                <div style="height: 50px">
+                    <img src="{{multilocalArray.r.prms.0.sponsor.ics}}" style="position:absolute;width: 45px;">
+                    <div style="margin-left: 50px;line-height: 1.1em;font-size: 0.9em;">Beneficio con <br><strong style="font-size: 1.1em;">{{multilocalArray.r.prms.0.sponsor.name}}</strong></div>
+                </div>
+                <h3 style="margin-left: 0em;">{{ multilocalArray.r.prms.0.name | title | upper}}</h3>  
+                <h4>{{multilocalArray.r.prms.0.dsc}}</h4>
+                <div>{{ multilocalArray.r.prms.0.ldsc | raw }}</div>
+                {% if multilocalArray.r.prms.0.cond is not empty %}
+                    <div style="color: #999;padding: 15px 0px;font-size: 12px;line-height: 14px;">{{ multilocalArray.r.prms.0.cond | raw }}</div>  
+                {% endif %}                
+            </div>
+            {% if multilocalArray.r.prms.0.gal is defined %}
+            {% if multilocalArray.r.prms.0.gal |length > 0 %}
+                <div class="swiper-container" style="padding-right: 5px; padding-left: 5px; padding-top: 5px; padding-bottom: 15px;">
+                    <div class="swiper-wrapper">
+                        {% for imagen in multilocalArray.r.prms.0.gal %}
+                            <div class="swiper-slide" style="width: 250px !important;">
+                                <div class="imagen">
+                                    <img alt="{{ multilocalArray.r.prms.0.name }}" src="{{ imagen | default(app.request.basepath ~ '/img/local_default.png') }}">
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <!-- Add Pagination -->
+                    <div class="swiper-pagination"></div>
+                    <!-- Add Arrows -->
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+                
+            {% endif %}
+            {% endif %}
+            <h4 style="padding-top: 10px; padding-left: 15px;">LOCALES</h4>
+            <ul>
+                {% for localPos, local in multilocalArray.r.prms.0.stores %}
+                    <li>
+                        {% set idLOC = (local.idr*10000) + local.ids%}
+                        {% if local.name != '' %}
+                        <a href="{{ path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(local.name)}) }}" title="{{ local.name | title }}">
+                            <div class="titulopromo"><strong>{{ local.name }}</strong></div>
+                            <div class="direccion"><strong>{{ local.cty }}</strong></div>
+                            <div class="direccion"><strong>{{ local.adr }}</strong></div>
+                        </a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+    
+    {% include 'components/footer.html.twig' %}
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'pml'} %}
+{% endblock deferredCss %}

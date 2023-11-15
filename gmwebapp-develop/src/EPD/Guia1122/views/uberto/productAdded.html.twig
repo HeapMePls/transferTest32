@@ -1,0 +1,134 @@
+{% extends ('layout.html.twig') %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-pda'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %}Producto agregado | {{BRAND}}{% endblock pageTitle %}
+
+{% block header %}
+    {% if data.plist is defined %}
+        {{ render(path('headerComponent', {'cart': data, 'idr': data.store.idr, 'ids': data.store.ids, 'token': data.token})) }}
+    {% else %}
+        {{ render(path('headerComponent'))}}
+    {% endif %}
+{% endblock header %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block content %}
+    <div class="row u-box-cntr" style="padding: 10px;">
+        {% if productData != null %}
+        <div class="large-2 large-offset-2 medium-12 small-12">
+            <h4 style="color: green;">
+                <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                Agregado
+            </h4>
+        </div>
+        <div id="added" class="large-6 medium-12 small-12" style="position:relative;min-height: 90px;">
+            <img class="additional-image" src="{{productData.image}}" data-image="{{productData.image}}"
+                style="position:absolute;left:0px;top:4px;width:80px;border: 1px solid #4CAF50;" >
+            <div style="padding-left:90px">
+                <div>{{productData.name}}</div>
+                <div>x{{productData.quantity}}</div>
+                <div>{{productData.itemPrice | price | raw}}</div>
+            </div>
+        </div>
+        {% else %}
+        <div class="large-2 large-offset-2 medium-12 small-12" >
+            <h4 style="color: green;">
+                <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                Quitado
+            </h4>
+        </div>
+        {% endif %}
+    </div>
+    <div class="row u-box-cntr" style="padding: 10px;">
+        <div class="large-8 large-offset-2 medium-12 small-12" style="margin-bottom: 30px;">
+            <div style="text-align:left;margin-top:10px">
+                <h5><i class="fa fa-shopping-basket" aria-hidden="true"></i> Detalle del pedido</h5>
+            </div>
+            <table id="cart-table-added">
+                {% for item in data.plist %}
+                    <tr>
+                        <td style="text-align: left;"><strong>{{item.name}}</strong><span style="color:#777;margin-left: 10px"> x{{item.quantity}}</span>
+                            {% if item.notes is defined and item.notes | length > 0 %}
+                                <p style="margin:0px;"> {{item.notes}}</p>
+                            {% endif %}
+                            {% if item.customFields is defined and item.customFields | length > 0 %}
+                                <p style="margin:0px;">
+                                    {% for cf in item.customFields %}
+                                        {% if cf.type == 1 %}
+                                            {{cf.name}}
+                                            {% if cf.price > 0 %}
+                                                <span style="font-size:90%"> ({{cf.price | price | raw}})</span>
+                                            {% endif %}
+                                        {% elseif cf.type == 2 %}
+                                            {% if cf.name is defined %}
+                                                {{cf.name}}: {{cf.optName}}
+                                                {% if cf.price > 0 %}
+                                                    <span style="font-size:90%"> ({{cf.price | price | raw}})</span>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+                        </td>
+                        <td class="u-menu-order" style="text-align: right;font-size: 16px;">
+                            <div class="price">
+                                {{item.itemPrice | price | raw}}
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td class="summary-start">Sub-total</td><td class="summary-start u-menu-order">
+                        <div class="price">
+                        {{data.price | price | raw}}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="summary">Costos de envio</td>
+                    <td class="summary u-menu-order">
+                        <div class="price" id="cartDeliveryCost">
+                        <span class="currency">$U</span> 0<span class="decimals">,00</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="summary-end">Total</td>
+                    <td class="summary-end">
+                        <span id="cartTotalAmount" class="price" data-amount="{{data.price}}">{{data.price | price | raw}}</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <div class="large-12 medium-12 small-12" style="text-align: center">
+            <a href="{{path('storeStart', {'nam':urlize(data.store.name),'idr': data.store.idr, 'ids': data.store.ids}) }}?t={{data.token}}" type="button" class="button clear small-expanded" style="min-width: 140px;">Continuar comprando</a>
+            <a href="{{path('orderMenuCheckout', {'idr': data.store.idr, 'ids': data.store.ids, 'token': data.token}) }}" type="button" class="button gmbutton small-expanded" style="min-width: 140px;">Finalizar compra</a>
+        </div>
+    </div>
+
+
+    {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'pda'} %}
+{% endblock deferredCss %}

@@ -1,0 +1,162 @@
+{% extends ('layout.html.twig') %}
+
+{% set isMobile = isMobile() %}
+
+{% block admConfigHead %} 
+    googletag.cmd.push(function() {
+        {% if isMobile %}
+        googletag.defineSlot('{{ADS_SLOT_TOP}}', [[320, 100],[300, 100],[320, 50]], 'sas_27839').addService(googletag.pubads());
+        {% else %}
+        googletag.defineSlot('{{ADS_SLOT_TOP}}', [[728,90],[970, 90]], 'sas_27839').addService(googletag.pubads());
+        {% endif %}
+        googletag.pubads().setTargeting('Channel', 'web');
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+    });
+{% endblock admConfigHead %}
+{% block admConfigBody %} 
+    <script>
+        {% if isMobile %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27839'); 
+            });
+        {% else %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27839'); 
+            });
+        {% endif %}
+    </script>
+{% endblock admConfigBody %} 
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-ph'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %}Promociones y Ofertas de {{sponsor.name}} | {{ parent() }}{% endblock pageTitle %}
+
+{% block metas %}
+    <link rel="canonical" href="https:{{ url('promosSponsor', {'sponsorNombre':urlize(sponsor.name), 'sponsorId': sponsor.idr}, true) }}"/>
+    <meta name="description" content="Promociones y Ofertas de {{sponsor.name}} | {{BRAND}}" />
+    <meta name="keywords" content="{{sponsor.name}}, promociones, beneficios, descuentos, promos, comercios, uruguay, servicios" />
+    <meta name="robots" content="index, all" />
+    <meta name="DC.title" content="{{BRAND}}" />
+    <meta name="publisher" content="{{BRAND}}" />
+    <meta name="language" content="es" />
+    <meta name="distribution" content="global"/>
+{% endblock metas %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block content %}
+    <div class="row">
+        {# <div class="large-12 medium-12 small-12 columns sin-bordes">
+            <nav class="breadcrumbs sc" role="navigation" aria-label="breadcrumbs">
+                <ul>
+                    <li><a href="{{ url("promocionesTodas") }}">Promociones y Ofertas</a></li>
+                    <li class="current">{{sponsor.name}}<li>
+                </ul>
+            </nav>
+        </div> #}
+
+        <div class="large-12 medium-12 small-12 columns u-box-cntr text-center">
+            <picture>
+                <source data-srcset="{{sponsor.ics | asWebp }}" type="image/webp"/>
+                <source data-srcset="{{sponsor.ics}}" type="image/png"/>
+                <img class="lazyload" data-src="{{sponsor.ics}}"
+                    alt="Promociones y Ofertas de {{sponsor.name}}"
+                    src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+            </picture>
+            <h1 class="section-header">Promociones y Ofertas de {{sponsor.name}}</h1>
+            <h2 class="section-subheader">Conoce todos los beneficios que ofrece {{sponsor.name}} y donde encontrarlos</h2>
+        </div>
+        
+        <div class="large-12 medium-12 small-12"> 
+            <div class="promogrid">
+                {% for prm in promociones %}
+                    {# <div class="large-4 medium-6 small-12 columns">
+                        <a href="{{ path('promocionesFicha', {'promoNombre': urlize(prm.name), 'promoId': prm.idp}) }}" style="width:100%;">
+                            <div class="card card-adjust">
+                                <picture>
+                                    <source data-srcset="{{prm.imp | asWebp }}" type="image/webp"/>
+                                    <source data-srcset="{{prm.imp}}" type="image/png"/>
+                                    <img class="lazyload" data-src="{{prm.imp}}" style="width:100%;"
+                                        alt="{{prm.name}} con {{sponsor.name}}"
+                                        src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                                </picture>
+                                <div class="card-section" style="padding:6px;">
+                                    <h3><strong>{{prm.name}}</strong></h3>
+                                    {% if prm.bon is defined %}
+                                        <p>
+                                            {{prm.bon}}
+                                        </p>
+                                    {% endif %}
+                                    <h4>{{prm.dsc}}</h4>
+                                    <p><strong>{{prm.dst | distance}}</strong></p>
+                                </div>
+                            </div>
+                        </a>
+                    </div> #}
+                    <a href="{{ path('promocionesFicha', {'promoNombre': urlize(prm.name), 'promoId': prm.idp}) }}"
+                      class="promobox">
+                        {# <div class="img-sponsor-promo">
+                            <picture >
+                                <source type="image/webp" data-srcset="{{prm.sponsor.ics | asWebp}}">
+                                <source type="image/png" data-srcset="{{prm.sponsor.ics}}">
+                                <img class="lazyload"  data-src="{{prm.sponsor.ics}}" alt="{{prm.sponsor.name}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                            </picture>
+                            <span>{{prm.sponsor.name}}</span>
+                        </div> #}
+                        <picture >
+                            <source type="image/webp" data-srcset="{{prm.imp | asWebp}}">
+                            <source type="image/png" data-srcset="{{prm.imp}}">
+                            <img class="lazyload"  data-src="{{prm.imp}}" alt="{{prm.name}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                        </picture>
+                        <div style="padding:5px;width: 100%;">
+                            <h4><strong>{{prm.name}}</strong></h4>
+                            {% if prm.bon is defined and prm.bon | length > 0 %}
+                            <div class="promoboxbonus">{{prm.bon }}</div>
+                            {% endif %}
+                            <h5>{{prm.dsc}}</h5>
+                            {# {% if prm.dst is defined and prm.dst | length > 0 %}
+                            {% endif %} #}
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>  
+
+        
+        <div class="large-12 medium-12 small-12 text-center banner970x90">
+            {# {{ sasTag(sasSpage, 'top') | raw }} #}
+            <div id="sas_27839" class="gmad-top"></div>
+        </div>
+    
+
+        <div class="paginadorpromociones">
+            {{ macroPaginator.show(path('promosSponsor', {'sponsorNombre': urlize(sponsor.name), 'sponsorId': sponsor.idr,'categoriaNombre':urlize(categoriaNombre),'categoriaId':categoriaId}), pagina, cantidadPaginas,verTodasPaginas,maxPaginasPrimeras) }}
+        </div>
+
+    </div>
+    
+    {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'ps'} %}
+{% endblock deferredCss %}

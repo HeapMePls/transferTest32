@@ -1,0 +1,224 @@
+{% block body %}
+
+<ul style="margin-left:0px">
+  <li style="list-style: none;">
+    {# ============
+       PRESUPUESTOS 
+       ============  #}
+    {% if request.type == 'PRESUPUESTO' %}
+      <div class="u-req-list-item budget" >
+        {% if request.responses | length == 1 %}
+            {% if request.responses[0].status == 'PENDIENTE' %}
+              {% set badgeColor = '#E0E0E0' %}
+            {% elseif request.responses[0].status == 'VISTO' %}
+              {% set badgeColor = '#81D4FA' %}
+            {% elseif request.responses[0].status == 'CONTESTADO' %}
+              {% set badgeColor = '#C5E1A5' %}
+            {% elseif request.responses[0].status == 'ACEPTADO' or request.responses[0].status == 'ENTREGADO' or request.responses[0].status == 'PAGADO' %}
+              {% set badgeColor = '#C5E1A5' %}
+            {% elseif request.responses[0].status == 'RECHAZADO' or request.responses[0].status == 'CANCELADO' %}
+              {% set badgeColor = '#FFCDD2' %}
+            {% else %}
+              {% set badgeColor = '#E0E0E0' %}
+            {% endif %}
+        {% else %}
+          <div style="position: absolute;left: 0px;top: 0px;">
+            {% if (request.responsesStatus.accepted > 0) %}
+              <i class="fa fa-check-square-o" aria-hidden="true"></i>
+            {% elseif (request.responsesStatus.answered > 0) %}
+              <i class="fa fa-info-circle" aria-hidden="true"></i>
+            {% elseif (request.responsesStatus.viewed > 0) %}
+              <i class="fa fa-eye" aria-hidden="true"></i>
+            {% else %}
+              <i class="fa fa-clock-o" aria-hidden="true"></i>
+            {% endif %}
+          </div>
+        {% endif %}
+        <div style="display: block;border-bottom: 1px solid #EEE;margin-bottom: 10px;position: relative;">
+          {% if request.responses | length == 1 %}
+            <div style="position: absolute;right: 0px;font-size: 10px;background-color: {{badgeColor}};padding: 0px 7px;">{{request.responses[0].status}}</div>
+          {% else %}
+            <div style="position: absolute;right: 0px;font-size: 10px;padding: 0px 7px;">
+              {# Entregados: {{request.responsesStatus.delivered}}  #}
+              {{ (request.responsesStatus.viewed == 1) ? request.responsesStatus.viewed ~ ' visto |' : request.responsesStatus.viewed ~ ' vistos |' }}
+              {{ (request.responsesStatus.answered == 1) ? request.responsesStatus.answered ~ ' contestado' : request.responsesStatus.answered ~ ' contestados' }}
+            </div>
+          {% endif %}
+          {% if request.responses | length == 1 and request.responses[0].ics | length > 0 %}
+            <img src="{{request.responses[0].ics}}" style="position:absolute;left:0px;top:0px;width:45px;height:45px">
+          {% else %}
+            <div style="position:absolute;left:0px;top:0px;width:45px;height:45px;background-color:#9E9E9E"></div>
+          {% endif %}
+          <div style="padding-left: 50px;">
+            <div style="font-size: 11px;line-height: 11px;color: #999;">{{request.type}} (#{{request.id}})</div>
+            <div data-datefrom="{{request.dateFrom}}" class="u-req-date">{{request.dateFromNice}}</div>
+            {% if request.responses | length == 1 %}
+              <div>{{request.responses[0].name}}</div>
+            {% else %}
+              <div style="font-size: 15px;line-height: 16px;color: #555;">
+                {% for response in request.responses %}
+                    {{response.name}},
+                {% endfor %}
+              </div>
+            {% endif %}
+            <div style="font-size: 12px;color: #999;line-height: 14px;padding-bottom: 6px;">{{request.description|truncate(130)}}</div>
+            {% if request.generalStatus == 'ENTREGADO' and request.generalReviewed == 0 %}              
+                <div style="font-size: 13px;color: #FF9800;">Aun no has evaluado este trabajo</div>
+            {% endif %}
+          </div>
+          <div class="u-req-bottom-btns">
+
+                {% if request.responses | length == 1 %}
+
+                    {% set idLOC = (request.responses[0].idr*10000) + request.responses[0].ids%}
+
+                      {% if request.responses[0].name is defined and request.responses[0].name | length > 0 %}
+                        <a href="{{ path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(request.responses[0].name) }) }}"><i class="fa fa-home" aria-hidden="true"></i> Ver perfil</a>
+                      {% endif %}
+
+                      {% if request.responses[0].name is defined and request.responses[0].name | length > 0 %}
+                        <a href="{{ path('uberto/quoteRequest', {'nam': urlize(request.responses[0].name), 'idr': request.responses[0].idr, 'ids': request.responses[0].ids}) }}"><i class="fa fa-asterisk" aria-hidden="true"></i> Solicitar nuevo</a>
+                      {% endif %}
+
+                      <a class="u-req-bottom-btns-link" href="{{ path('quoteViewPage', {'token':request.token})}}" data-token="{{request.token}}">
+                        {% if request.generalReviewed == 0 and request.generalStatus == 'ENTREGADO' %}
+                          <i class="fa fa-calculator" aria-hidden="true"></i> Evaluar trabajo
+                        {% elseif request.generalStatus == 'CONTESTADO' %}
+                          <i class="fa fa-calculator" aria-hidden="true"></i> Ver respuesta
+                        {% else %}
+                          <i class="fa fa-calculator" aria-hidden="true"></i> Ver presupuesto
+                        {% endif %}
+                      </a>
+
+                {% else %}
+
+                      <a class="u-req-bottom-btns-link" href="{{ path('quoteViewPage', {'token':request.token})}}" data-token="{{request.token}}">
+                        {% if request.generalReviewed == 0 and request.generalStatus == 'ENTREGADO' %}
+                          <i class="fa fa-calculator" aria-hidden="true"></i> Evaluar trabajo
+                        {% elseif request.generalStatus == 'CONTESTADO' %}
+                          <i class="fa fa-calculator" aria-hidden="true"></i> Ver respuesta
+                        {% else %}
+                          <i class="fa fa-calculator" aria-hidden="true"></i> Ver presupuesto
+                        {% endif %}
+                      </a>
+
+                {% endif %}
+
+          </div>
+        </div>
+      </div>
+    {% else %}
+      {# ============
+       PEDIDOS
+       ============  #}
+      <div class="u-req-list-item order">
+      {# {% if request.responses | length == 0 %}
+        <div class="u-req-list-item order">
+      {% else %}
+        <div class="u-req-list-item order" >
+      {% endif %} #}
+        {% if request.responses | length == 0 %}
+          {% set badgeColor = '#E0E0E0' %}
+        {% else %}
+            {% if (request.responsesStatus.accepted > 0) %}
+              {% set badgeColor = '#C5E1A5' %}
+            {% elseif (request.responsesStatus.answered > 0) %}
+              {% set badgeColor = '#C5E1A5' %}
+            {% elseif (request.responsesStatus.viewed > 0) %}
+              {% set badgeColor = '#81D4FA' %}
+            {% elseif (request.responsesStatus.delivered > 0) %}
+              {% set badgeColor = '#C5E1A5' %}
+            {% else %}
+              {% set badgeColor = '#E0E0E0' %}
+            {% endif %}
+        {% endif %}
+
+        <div style="display: block;padding: 5px 0px 0px 0px;border-bottom: 1px solid #EEE;margin-bottom: 10px;position: relative;">
+        
+          {% if request.responses | length == 0 %}
+            <div style="position: absolute;right: 0px;font-size: 10px;background-color: {{badgeColor}};padding: 0px 7px;">En curso</div>
+            {% if request.store.ics | length > 0 %}
+              <img src="{{request.store.ics}}" style="position:absolute;left:0px;top:0px;width:45px;height:45px">
+            {% else %}
+              <div style="position:absolute;left:0px;top:0px;width:45px;height:45px;background-color:#9E9E9E"></div>
+            {% endif %}
+            <div style="padding-left: 50px;">
+              <div style="font-size: 11px;line-height: 11px;color: #999;">{{request.type}} (#{{request.id}})</div>
+              <div data-datefrom="{{request.dateFrom}}" class="u-req-date">{{request.dateFromNice}}</div>
+              <div><a href="{{  path('orderMenuToken', {'nam':'-','idr': request.store.idr, 'ids': request.store.ids, 'orderToken':request.token}) }}" class="u-req-list-item order" data-token="{{request.token}}">
+                {{request.store.name}}</a></div>
+              <div style="font-size: 12px;color: #999;line-height: 14px;padding-bottom: 6px;">
+                El carrito tiene {{request.productCount}} items.
+              </div>
+            </div>
+            <div class="u-req-bottom-btns">
+
+                  {% set idLOC = (request.store.idr*10000) + request.store.ids%}
+
+                    <a href="{{ path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(request.store.name) }) }}"><i class="fa fa-home" aria-hidden="true"></i> Ver perfil</a>
+
+                    <a  data-token="{{request.token}}"
+                      href="{{  path('orderMenuToken', {'nam':'-','idr': request.store.idr, 'ids': request.store.ids, 'orderToken':request.token}) }}" >
+                      <i class="fa fa-shopping-bag" aria-hidden="true"></i> Continuar pedido
+                    </a>
+
+            </div>
+          {% else %}
+            <div style="position: absolute;right: 0px;font-size: 10px;background-color: {{badgeColor}};padding: 0px 7px;">{{request.responses[0].status}}</div>
+            {% if request.responses[0].ics | length > 0 %}
+              <img src="{{request.responses[0].ics}}" style="position:absolute;left:0px;top:0px;width:45px;height:45px">
+            {% else %}
+              <div style="position:absolute;left:0px;top:0px;width:45px;height:45px;background-color:#9E9E9E"></div>
+            {% endif %}
+            <div style="padding-left: 50px;">
+              <div style="font-size: 11px;line-height: 11px;color: #999;">{{request.type}} (#{{request.id}})</div>
+              <div data-datefrom="{{request.dateFrom}}" class="u-req-date">{{request.dateFromNice}}</div>
+              <div>{{request.responses[0].name}}</div>
+              <div style="font-size: 12px;color: #999;line-height: 14px;padding-bottom: 6px;">
+                El carrito tiene {{request.productCount}} items. Total: ${{request.responses[0].price}}
+              </div>
+              {% if request.responses[0].reviewed == 0 and request.responses[0].status == 'ENTREGADO' %}
+                <div style="font-size: 13px;color: #FF9800;">Aun no has evaluado esta compra</div>
+              {% endif %}
+            </div>
+            <div class="u-req-bottom-btns">
+              {# <table>
+                <tbody>
+                  <tr> #}
+                    {% if request.responses | length == 1 %}
+                      {% set idLOC = (request.responses[0].idr*10000) + request.responses[0].ids%}
+                      
+                        <a href="{{ path('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(request.responses[0].name) }) }}"><i class="fa fa-home" aria-hidden="true"></i> Ver perfil</a>
+                      
+                        <a href="{{ path('storeStart', {'nam':urlize(request.responses[0].name),'idr': request.responses[0].idr, 'ids': request.responses[0].ids}) }}"><i class="fa fa-asterisk" aria-hidden="true"></i> Pedir de nuevo</a>
+                      
+                    {% endif %}
+                    
+                      {% if request.responses | length == 0 %}
+                        <a  data-token="{{request.token}}"
+                          href="{{  path('orderMenuToken', {'nam':'-','idr': request.idr, 'ids': request.ids, 'orderToken':request.token}) }}" >
+                          <i class="fa fa-shopping-bag" aria-hidden="true"></i> Ver pedido
+                        </a>
+                      {% elseif request.responses[0].reviewed == 0 and request.responses[0].status == 'ENTREGADO' %}
+                        <a  data-token="{{request.token}}"
+                          href="{{ path('orderView', {'idr': request.responses[0].idr, 'ids': request.responses[0].ids, 'token':request.token})}}" >
+                          <i class="fa fa-shopping-bag" aria-hidden="true"></i> Evaluar pedido
+                        </a>
+                      {% else %}
+                        <a  data-token="{{request.token}}"
+                          href="{{ path('orderView', {'idr': request.responses[0].idr, 'ids': request.responses[0].ids, 'token':request.token})}}" >
+                          <i class="fa fa-shopping-bag" aria-hidden="true"></i> Ver pedido
+                        </a>
+                      {% endif %}
+                      
+                    
+
+            </div>
+          {% endif %}  
+        </div>
+      </div>
+    {% endif %}
+  </li>
+</ul>
+
+{% endblock body %}

@@ -1,0 +1,79 @@
+{% spaceless %}
+<!doctype html>
+<html class="no-js" lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Guía 1122 - Guía del Uruguay, Comercios y servicios por zona</title>
+
+        
+        {% block metas %}
+            <meta name="description" content="Busque en esta guía, todos los comercios del Uruguay por zona o rubro. Guía Móvil 1122" />
+            <meta name="keywords" content="1122, guia, movil, busqueda, comercios, uruguay, comercios, servicios, zonas, departamentos, local, telefono, direccion" />
+            <meta name="robots" content="index, all" />
+            <meta name="DC.title" content="Guía Móvil 1122" />
+            <meta name="geo.region" content="UY-MO" />
+            <meta name="geo.placename" content="Montevideo" />
+            <meta name="geo.position" content="-34.906857;-56.194156" />
+            <meta name="ICBM" content="-34.902528, -56.185395" />
+            <meta name="publisher" content="Guía Movil 1122" />
+            <meta name="language" content="es" />
+            <meta name="distribution" content="global"/>
+        {% endblock metas %}
+
+        {% block stylesheets %}             
+            {% if constant('APPLICATION_ENV') == 'dev' %} 
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/foundation.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/style.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/style.mobile.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/style.tablet.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/jquery-ui.min.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/jquery-ui.structure.min.css" />
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/jquery-ui.theme.min.css" />
+            {% else %}
+                {# <link rel="stylesheet" href="{{ app.request.basepath }}/css/foundation.min.css?{{ assetVersion }}" /> #}
+                <link rel="stylesheet" href="{{ app.request.basepath }}/css/style-{{ assetVersion }}.min.css" />
+            {% endif %}
+            <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        {% endblock stylesheets %} 
+
+    </head>
+
+    <body>
+
+        <header>
+            {% block header %}
+
+            {% endblock header %}
+        </header>
+
+        <div id="guia-container">
+            {% block content %}
+
+            {% endblock content %}
+        </div>
+
+        {# <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-339914-20', 'auto');
+            ga('send', 'pageview');
+
+        </script> #}
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-339914-20"></script>
+            <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-339914-20');
+        </script>
+
+    </body>
+</html>
+
+{% endspaceless %}

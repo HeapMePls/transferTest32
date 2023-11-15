@@ -1,0 +1,63 @@
+{# {% spaceless %}
+ADS_ENABLED = true;
+sas_page_pos = new Array();
+{% for key, page in data.pages %}
+sas_page_pos['{{ key }}'] = new Array();
+sas_page_pos['{{ key }}'].stid = {{ data.stid }};
+sas_page_pos['{{ key }}'].pgid = {{ page.pgid }};
+sas_page_pos['{{ key }}'].fmt = new Array();
+sas_page_pos['{{ key }}'].fmt.formats = {{ page.formats | json_encode() | raw }};
+{% endfor %}
+{% endspaceless %} #}
+
+{#   
+--------------------------------------------------------
+OLD WAS GENERATING THIS:
+--------------------------------------------------------
+
+<script type="text/javascript">
+        ADS_ENABLED = true;
+sas_page_pos = new Array();
+sas_page_pos['Guia_Movil_1122/buscador'] = new Array();
+sas_page_pos['Guia_Movil_1122/buscador'].stid = 63603;
+sas_page_pos['Guia_Movil_1122/buscador'].pgid = 537965;
+sas_page_pos['Guia_Movil_1122/buscador'].fmt = new Array();
+sas_page_pos['Guia_Movil_1122/buscador'].fmt.formats = {"right":27528,"right1":27838,"top":27839,"middle":28425,"bottom":28427};
+sas_page_pos['Guia_Movil_1122/home'] = new Array();
+sas_page_pos['Guia_Movil_1122/home'].stid = 63603;
+sas_page_pos['Guia_Movil_1122/home'].pgid = 538980;
+sas_page_pos['Guia_Movil_1122/home'].fmt = new Array();
+sas_page_pos['Guia_Movil_1122/home'].fmt.formats = {"right":27528,"right1":27838,"top":27839,"middle":28425,"bottom":28427};
+sas_page_pos['Guia_Movil_1122/local'] = new Array();
+sas_page_pos['Guia_Movil_1122/local'].stid = 63603;
+sas_page_pos['Guia_Movil_1122/local'].pgid = 537966;
+sas_page_pos['Guia_Movil_1122/local'].fmt = new Array();
+sas_page_pos['Guia_Movil_1122/local'].fmt.formats = {"right":27528,"right1":27838,"top":27839,"bottom":28427};
+sas_page_pos['Guia_Movil_1122/promociones-y-ofertas'] = new Array();
+sas_page_pos['Guia_Movil_1122/promociones-y-ofertas'].stid = 63603;
+sas_page_pos['Guia_Movil_1122/promociones-y-ofertas'].pgid = 537967;
+sas_page_pos['Guia_Movil_1122/promociones-y-ofertas'].fmt = new Array();
+sas_page_pos['Guia_Movil_1122/promociones-y-ofertas'].fmt.formats = {"top":27839,"middle":28425,"bottom":28427};
+sas_page_pos['Guia_Movil_1122/rubro'] = new Array();
+sas_page_pos['Guia_Movil_1122/rubro'].stid = 63603;
+sas_page_pos['Guia_Movil_1122/rubro'].pgid = 537968;
+sas_page_pos['Guia_Movil_1122/rubro'].fmt = new Array();
+sas_page_pos['Guia_Movil_1122/rubro'].fmt.formats = {"right":27528,"right1":27838,"top":27839,"middle":28425,"bottom":28427};
+sas_page_pos['Guia_Movil_1122/rubro-zona'] = new Array();
+sas_page_pos['Guia_Movil_1122/rubro-zona'].stid = 63603;
+sas_page_pos['Guia_Movil_1122/rubro-zona'].pgid = 537969;
+sas_page_pos['Guia_Movil_1122/rubro-zona'].fmt = new Array();
+sas_page_pos['Guia_Movil_1122/rubro-zona'].fmt.formats = {"right":27528,"right1":27838,"top":27839,"middle":28425};
+sas_page_pos['Guia_Movil_1122/sponsor'] = new Array();
+sas_page_pos['Guia_Movil_1122/sponsor'].stid = 63603;
+sas_page_pos['Guia_Movil_1122/sponsor'].pgid = 537970;
+sas_page_pos['Guia_Movil_1122/sponsor'].fmt = new Array();
+sas_page_pos['Guia_Movil_1122/sponsor'].fmt.formats = {"middle":28425,"mobile_bottom":30132,"mobile_middle":30131,"mobile_top":30130};
+sas_page_pos['Guia_Movil_1122/zona'] = new Array();
+sas_page_pos['Guia_Movil_1122/zona'].stid = 63603;
+sas_page_pos['Guia_Movil_1122/zona'].pgid = 537971;
+sas_page_pos['Guia_Movil_1122/zona'].fmt = new Array();
+sas_page_pos['Guia_Movil_1122/zona'].fmt.formats = {"right":27528,"right1":27838,"top":27839,"middle":28425};
+        </script>
+
+ #}

@@ -1,0 +1,60 @@
+{% if comercio.hrsp is defined and comercio.hrsp != 0 %}
+  <div class="u-box-cntr boxedlines" >
+      <div class="titulo-big">Horario </div>
+      <div class="boxbody">
+        <table class="hours-table">
+          {% for htDay in comercio.hrsp %}
+            {% if htDay.isToday %}
+              <tr style="font-weight:600" id="hoursIsToday" >
+            {% else %}
+              <tr>
+            {% endif %}
+              <td>{{htDay.sday}}</td>
+              <td>
+              {% if comercio.o24 %}
+                {% if htDay.isSpecialConfirmed %}
+                  {% if htDay.isOpen %}
+                    {% for hours in htDay.hours %}
+                      <div data-start="{{hours.start}}" data-end="{{hours.end}}">
+                      {{hours.sstart}} - {{hours.send}}
+                      </div>
+                    {% endfor %}
+                  {% else %}
+                    <span style="color: #F44336">
+                      Cerrado
+                    </span>
+                  {% endif %}
+                {% else %}
+                  Abierto todo el dia
+                {% endif %}
+              {% else %}
+                {% if htDay.isOpen %}
+                  {% for hours in htDay.hours %}
+                    <div data-start="{{hours.start}}" data-end="{{hours.end}}">
+                    {{hours.sstart}} - {{hours.send}}
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  {% if htDay.isSpecialConfirmed %}
+                    <span style="color: #F44336">
+                      Cerrado
+                    </span>
+                  {% else %}
+                    Cerrado
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+              </td>
+            </tr>
+            {% if htDay.isSpecial %}
+            <tr>
+                <td style='color: {{htDay.color}}; font-size: 90%' colspan=2>
+                  {{htDay.desc}}
+                </td>
+            </tr>
+            {% endif %}
+          {% endfor %}
+        </table>
+      </div>
+  </div>
+{% endif %}

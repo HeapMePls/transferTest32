@@ -1,0 +1,11 @@
+{% extends ('components/listadoPromocionesDefault.html.twig') %}
+
+{% block body %}
+    
+  <div class="promogrid">
+    {% block elements %}
+      {{ parent() }}
+    {% endblock elements %}
+  </div>
+    
+{% endblock body %}

@@ -1,0 +1,81 @@
+{% if comercio.book is defined and comercio.book == 1 %}
+  <div class="u-box-cntr boxedlines" style="margin-bottom: 10px;">
+      <div class="titulo-big" style="padding-bottom:0px">Reservas</div>
+      <div style="padding: 0px 0px 5px 0px;">
+          <div class="large-12 medium-12 small-12 columns text-center" >
+              <br>
+              <a class="button expanded" style="min-width: 140px;"
+                  href="{{ path('reservar', {'comercioNombre': urlize(comercio.nam), 'loc': comercio.idrids}) }}" 
+                  title="Reservar una cita en {{comercio.nam}}">
+                  <i class="fa fa-calendar" aria-hidden="true" style="margin-right:5px"></i>
+                  Reservar una cita en línea
+              </a>
+          </div>
+      </div>
+  </div>
+{% endif %}
+{% if comercio.ubo is defined and comercio.ubo.typ is defined and comercio.ubo.typ > 0 %}
+  <div class="u-box-cntr boxedlines" style="margin-bottom: 10px;">
+      <div class="titulo-big">{% if comercio.ubo.typ == 1 %} Pedidos {% else %} Presupuestos {% endif %} </div>
+      <div style="padding: 0px 0px 5px 0px;">
+          {% if comercio.ubo.typ == 1 %}
+              <div class="large-12 medium-12 small-12 columns text-center" >
+                  <div style="color: #666;font-size: 15px;text-align: left;line-height: 130%;">
+                      {% if comercio.ubo.txt is defined and comercio.ubo.txt | length > 0 %}
+                          {{comercio.ubo.txt}}
+                      {% else %}
+                          Envíanos ahora tu pedido.
+                      {% endif %}
+                  </div>
+              </div>
+              <div class="large-12 medium-12 small-12 columns text-center" >
+                  <br>
+                  <a class="button expanded" style="min-width: 140px;"
+                      href="{{ path('storeStart', {'nam':urlize(comercio.nam),'idr': comercio.idr, 'ids': comercio.ids}) }}" 
+                      title="Pedir ahora en {{comercio.nam}}">
+                      {% if comercio.ubo.bt is defined and comercio.ubo.bt != '' %}
+                          {{comercio.ubo.bt}}
+                      {% else %}
+                          Pedir
+                      {% endif %}
+                  </a>
+              </div>
+              <div class="large-12 medium-12 small-12 columns" style="color: #666;font-size: 15px;text-align: left;line-height: 130%;text-align:center">
+                  {% if comercio.ubo.spd == 1 and comercio.ubo.spp %}
+                      Env&iacute;os a domicilio o para levantar en el local.
+                  {% elseif comercio.ubo.spd == 2 and comercio.ubo.spp %}
+                      Env&iacute;os a nivel nacional y para levantar en el local.
+                  {% elseif comercio.ubo.spd == 3 and comercio.ubo.spp %}
+                      Env&iacute;os a domicilio, a nivel nacional y para levantar en el local.
+                  {% elseif comercio.ubo.spd == 3 %}
+                      Env&iacute;os a domicilio y a nivel nacional.
+                  {% elseif comercio.ubo.spd == 2 %}
+                      Env&iacute;os a nivel nacional.
+                  {% elseif comercio.ubo.spd == 1 %}
+                      Env&iacute;os a domicilio.
+                  {% elseif comercio.ubo.spp %}
+                      Puedes pedir para levantar en el local.
+                  {% endif %}
+              </div>
+          {% elseif comercio.ubo.typ == 2 %}
+              <div class="large-12 medium-12 small-12 columns text-center" >
+                  <div style="color: #666;font-size: 15px;text-align: left;line-height: 130%;">
+                      {% if comercio.ubo.txt is defined and comercio.ubo.txt | length > 0 %}
+                          {{comercio.ubo.txt}}
+                      {% else %}
+                          Envianos tu consulta para recibir un presupuesto sin cargo ahora.
+                      {% endif %}
+                  </div>
+              </div>
+              <div class="large-12 medium-12 small-12 columns text-center" >
+                  <br>
+                  <a class="button expanded" 
+                      href="{{ path('uberto/quoteRequest', {'nam': urlize(comercio.nam), 'idr': comercio.idr, 'ids': comercio.ids}) }}" 
+                      title="Pedir persupuesto ahora en {{comercio.nam}}">
+                      Pedir presupuesto
+                  </a>
+              </div>
+          {% endif %}
+      </div>
+  </div>
+{% endif %}

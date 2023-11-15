@@ -1,0 +1,26 @@
+{% block body %}
+
+  {% if result is not defined or result.meta is not defined or result.meta.status is not defined or result.meta.status != 200 != NULL %}
+    <div>
+      <div> ICONO ERROR</div>
+      {% if result is defined and result.meta is defined and result.meta.message is defined %}
+        <div>{{result.meta.message}}</div>
+      {% else %}
+        <div>Mmmh, algo salio mal, por favor intentalo mas tarde mientras arreglamos esto</div>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="u-box-cntr-wh">
+      <div style="background-color: #8BC34A;display: inline-block;width: 100%;text-align: center;padding: 0px 10px 15px 10px;">
+        <div style="text-align: center;width: 80px;height: 80px;background-color: #FFF;margin: 20px auto;border-radius: 50%;font-size: 50px;padding-top: 5px;color: #4CAF50;"><i class="fa fa-thumbs-up" aria-hidden="true"></i></div>
+      </div>
+    </div>
+    <div>
+      <div>Gracias por colaborar!</div>
+      <div style="padding: 10px 0px">
+        <a href="{{path('uberto/requestList')}}">Ver mis pedidos</a>
+      </div>
+    </div>
+  {% endif %}
+
+{% endblock body %}

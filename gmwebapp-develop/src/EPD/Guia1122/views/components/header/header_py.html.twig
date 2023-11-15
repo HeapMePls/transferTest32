@@ -1,0 +1,109 @@
+{% set isMobile = isMobile() %}
+
+
+<header>
+
+  {% if isMobile %}
+    <div class="header">
+        <a href="{{ path('home') }}" title="Inicio">
+          <picture>
+            <source type="image/webp" srcset="{{ app.request.basepath }}/img/logobi_head.webp?{{ assetVersion }}">
+            <source type="image/jpeg" srcset="{{ app.request.basepath }}/img/logobi_head.png?{{ assetVersion }}">
+            <img src="{{ app.request.basepath }}/img/logobi_head.png?{{ assetVersion }}" alt="BuscoInfo" style="width:117px;height:25px;">
+          </picture>
+        </a>
+        <div class="headerRightBtns" >
+          <p id="headerLupa"><i class="fa fa-search"></i></p>
+          {% if (header.userData.currentOrders is defined and header.userData.currentOrders | length > 0) %}
+              <ul class="dropdown menu" data-dropdown-menu data-alignment="right" 
+                  style="display: inline-block;vertical-align: middle;width: 40px;z-index: 100;">
+                  <li>
+                      <a href="" title="Compras" style="padding: 0px;">
+                          <i class="fa fa-shopping-cart" style="font-size: 20px;padding: 0px;"></i>
+                          <div style="width: 17px;
+                              height: 17px;
+                              background-color: #FFFFFF;
+                              position: absolute;
+                              top: 10px;
+                              border-radius: 50%;
+                              right: 7px;
+                              font-size: 11px;
+                              font-family: arial;
+                              padding: 3px 0px 0px 0px;
+                              border: 1px solid #159de1;
+                              color: #159de1;
+                              font-weight: 700;
+                              text-align: center;">{{ header.userData.currentOrders | length }}</div></a>
+                      <ul class="menu is-dropdown-submenu">
+                          <li style="position: relative;padding: 4px;text-align: center;color: #777;font-size: 12px;">
+                              Tienes {{header.userData.currentOrders | length}} carritos en curso
+                          </li>
+                          {% for cart in header.userData.currentOrders %}
+                              <li style="position: relative; min-height: 52px;">
+                                  <a style="padding: 3px;width: auto;" title="Carrito"
+                                      href="{{  path('orderMenuToken', {'nam':'-','idr': cart.retailerNumber, 'ids': cart.storeNumber, 'orderToken':cart.token}) }}">
+                                      {% if (cart.storeIconUrl | length > 0) %}
+                                          <img src="{{cart.storeIconUrl}}" style="width:50px;height:50px;position: absolute;left: 0px;top: 0px;">
+                                      {% else %}
+                                          <div style="width:50px;height:50px;position: absolute;left: 3px;top: 3px;"></div>
+                                      {% endif %}
+                                      <div style="padding-left: 50px;text-align: left;">
+                                          <div style="font-size: 11px;color: #555;line-height: 14px;font-weight: 700;">{{cart.storeName}}</div>
+                                          <div style="color: #888;font-size: 10px;">{{cart.storeAddress}}</div>
+                                          <div style="color: #159de1;font-size: 11px;">Tiene {{cart.items}} item/s</div>
+                                      </div>
+                                  </a>
+                              </li>
+                          {% endfor %}
+                          <li style="position: relative;padding: 4px;text-align: center;color: #777;font-size: 12px;">
+                              <a href="{{path('uberto/requestList')}}" title="Todos mis pedidos">Ver todos mis pedidos</a>
+                          </li>
+                      </ul>
+                  </li>
+              </ul>
+          {% endif %}
+          <p>
+            <a id="btnMenu" href="#" title="Menu principal"><i class="fa fa-bars"></i></a>
+          </p>
+        </div>
+    </div>
+    <div id="headerBuscador" class="headerBuscador">
+      <div>
+        {% include 'components/search.html.twig' with {'showAboveButtons': true} %}
+      </div>
+    </div>
+  {% else %}
+    <div class="header">
+      {# LOGO #}
+      <div class="logo">
+          <a href="{{ path('home') }}" title="Inicio">
+            <picture class="logo_head">
+              <source type="image/webp" srcset="{{ app.request.basepath }}/img/logobi_head.webp?{{ assetVersion }}">
+              <source type="image/jpeg" srcset="{{ app.request.basepath }}/img/logobi_head.png?{{ assetVersion }}">
+              <img src="{{ app.request.basepath }}/img/logobi_head.png?{{ assetVersion }}" alt="1122">
+            </picture>
+          </a>
+      </div>
+      {# SEARCHBAR #}
+      <div id="headerBuscador" class="buscador">
+        {% include 'components/search.html.twig'  with {'showAboveButtons': false} %}
+      </div>
+      {# USER MENU #}
+      {# {% if header.userData is defined and header.userData != NULL and header.userData.email != NULL %}
+      {% else %}
+        <div class="usermenu">
+          <a id="btnLogin" href="/login?retUrl=/" style="color: #5f6368;"><i class="fa fa-user-circle"></i> Iniciar sesion</a>
+        </div>
+      {% endif %} #}
+    </div>
+  {% endif %}
+  
+  {% if not isMobile %}
+    {% include 'components/header/headertoolbar_py.html.twig' %}
+  {% endif %}
+
+</header>
+
+{% if isMobile %}
+  {% include 'components/header/headertoolbar_py.html.twig' %}
+{% endif %}

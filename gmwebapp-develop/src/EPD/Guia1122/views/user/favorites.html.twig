@@ -1,0 +1,189 @@
+{% extends ('layout.html.twig') %}
+
+{% set isMobile = isMobile() %}
+
+{% block admConfigHead %} 
+  googletag.cmd.push(function() {
+    {% if isMobile %}
+    googletag.defineSlot('{{ADS_SLOT_TOP}}', [[320, 100],[300, 100],[320, 50]], 'sas_27839').addService(googletag.pubads());
+    {% else %}
+    googletag.defineSlot('{{ADS_SLOT_RIGHT}}', [[300,250]], 'sas_27528').addService(googletag.pubads());
+    {% endif %}
+    googletag.pubads().setTargeting('Channel', 'web');
+    googletag.pubads().enableSingleRequest();
+    googletag.enableServices();
+  });
+{% endblock admConfigHead %}
+{% block admConfigBody %} 
+    <script>
+        {% if isMobile %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27839');
+            });
+        {% else %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27528');
+            });
+        {% endif %}
+    </script>
+{% endblock admConfigBody %} 
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+      <style>
+          {{ source( '_inlinecss/'~BRANDCODE~'/c-f'~filesSignature~'.css') }}
+      </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block pageTitle %} Guardados | {{BRAND}}{% endblock pageTitle %}
+
+{% block metas %}
+{% endblock metas %}
+
+{% block inlineJavascripts %}
+  {{ parent() }}
+{% endblock inlineJavascripts %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block content %}
+
+  <div class="row large-uncollapse medium-uncollapse small-collapse">
+    
+    <div class="large-8 medium-8 small-12 columns u-box-cntr boxedlines" style="padding:10px">
+      
+        <div class="titulo-big" style="border-top:0px">Guardados</div>
+        
+        {% if userLogged %}
+          
+          {% for fav in favs %}
+
+            <div id="fav-{{fav.idLoc}}" style="border-bottom: 1px solid #ddd;">
+              <a href="{{ path('comercio', {'id': 'LOC' ~ fav.idLoc, 'comercioNombre': urlize(fav.storeName)}) }}"
+                style="position: relative;display: block;margin-top: 10px;padding-top: 10px;min-height: 80px;">
+                {% if fav.storeIconUrl is defined and fav.storeIconUrl | length > 0 %}
+                  {# <img src="{{fav.storeIconUrl}}" style="position:absolute;left:0px;top:10px;width:80px;height:80px;border-radius:4px;"/> #}
+                  <picture>
+                    <source data-srcset="{{fav.storeIconUrl | asWebp }}" type="image/webp"/>
+                    <source data-srcset="{{fav.storeIconUrl}}" type="image/png"/>
+                    <img class="lazyload" data-src="{{fav.storeIconUrl}}" 
+                        alt="fav.storeName" 
+                        style="position:absolute;left:0px;top:10px;width:80px;height:80px;border-radius:4px;"
+                        src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                  </picture>
+                {% else %}
+                  <div style="position:absolute;left:0px;top:10px">
+                    {{ render(path('storeIconComponent', {'name':fav.storeName,'width':'80'} )) }}
+                  </div>
+                {% endif %}
+                <div style="padding-left: 90px;">
+                  <h2 style="margin: 0px;font-size: 17px;">{{fav.storeName}}</h2>
+                  <div style="font-size: 12px;color: #666;line-height: 14px;">
+                    {{fav.storeAddress}}
+                  </div>
+                  <div style="font-size: 12px;color: #999;">
+                    {{fav.NombreCompleto}}
+                  </div>
+                </div>
+              </a>
+              <div class="u-req-bottom-btns">
+                {% if fav.requestType == 1 %}
+                  <a href="{{ path('storeStart', {'nam':urlize(fav.storeName),'idr': fav.storeRetailerNumber, 'ids': fav.storeNumber}) }}" >
+                    <i class="fa fa-shopping-bag" aria-hidden="true"></i> Pedir
+                  </a>
+                {% elseif fav.requestType == 2 %}
+                  <a href="{{ path('uberto/quoteRequest', {'nam': urlize(fav.storeName), 'idr': fav.storeRetailerNumber, 'ids': fav.storeNumber}) }}">
+                    <i class="fa fa-calculator" aria-hidden="true"></i> Solicitar presupuesto
+                  </a>
+                {% endif %}
+                <a href="{{ path('comercio', {'id': 'LOC' ~ fav.idLoc, 'comercioNombre': urlize(fav.storeName)}) }}" >
+                  <i class="fa fa-home" aria-hidden="true"></i> Ver perfil
+                </a>
+                <a class="savedDelete" data-idr="{{fav.storeRetailerNumber}}" data-ids="{{fav.storeNumber}}" data-fav="{{fav.idLoc}}" href="#"  >
+                  <i class="fa fa-trash" aria-hidden="true"></i> Quitar
+                </a>
+              </div>
+            </div>
+
+          {% else %}
+
+            <div class="large-8 large-offset-2 medium-8 medium-offset-2 small-12 columns" style="text-align:center;padding: 20px 0px;border: 1px solid #ddd;background-color: #eee;border-radius: 4px;">
+              <div style="padding: 20px 0px;"><i class="fa fa-bookmark" style="color: #159de1;font-size: 50px;"></i></div>
+              <div>
+                <p>Guarda los comercios o profesionales aqu&iacute; para tenerlos siempre a mano para cuando los necesites.</p>
+                <p>Busca el bot&oacute;n 
+                  <span style="font-size: 11px;border: 1px solid #999;padding: 3px 5px;border-radius: 3px;">
+                    <i class="fa fa-bookmark" style="font-size: 14px;margin-right: 3px;color: #333;"></i>
+                    <span>Guardar</span>
+                  </span> 
+                  en los perfiles de comercio o profesionales para guardarlos aqu&iacute;.
+                </p>
+              </div>
+            </div>
+
+          {% endfor %}
+
+        {% else %}
+
+          <div class="large-8 large-offset-2 medium-8 medium-offset-2 small-12 columns" style="text-align:center;padding: 20px 0px;border: 1px solid #ddd;background-color: #eee;border-radius: 4px;">
+            <div style="padding: 20px 0px;"><i class="fa fa-bookmark" style="color: #159de1;font-size: 50px;"></i></div>
+            <div>
+              <p>Inicia sesi&oacute;n o reg&iacute;strate para guardar los comercios o profesionales aqu&iacute; y tenerlos siempre a mano para cuando los necesites.</p>
+              <p>Busca el bot&oacute;n 
+                <span style="font-size: 11px;border: 1px solid #999;padding: 3px 5px;border-radius: 3px;">
+                  <i class="fa fa-bookmark" style="font-size: 14px;margin-right: 3px;color: #333;"></i>
+                  <span>Guardar</span>
+                </span> 
+                en los perfiles de comercio o profesionales para guardarlos aqu&iacute;.
+              </p>
+            </div>
+          </div>
+
+        {% endif %}
+      
+      
+    </div>
+
+    <aside class="large-4 medium-4 small-12 columns" >
+      <div class="large-12 medium-12 small-12 columns banner300x250 ">
+
+        {% if not isMobile %}
+          <div class="banner-recuadro">
+            <div id="sas_27528" class="gmad-desktop"></div>
+          </div>
+          <div class="separador"></div>
+        {% endif %}
+
+        {% if isMobile %}
+          <div class="show-for-small-only banner300x50">
+            {# {{ sasTag(sasSpage, 'bottom') | raw }} #}
+            <div class="banner300x50">
+              <div id="sas_27839" class="gmad-top"></div>
+            </div>
+          </div>
+        {% endif %}
+
+      </div>
+    </aside>
+
+  </div>
+
+  {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+  {% include 'components/deferredCss.html.twig' with {'cssPageName':'f'} %}
+{% endblock deferredCss %}

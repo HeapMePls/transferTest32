@@ -1,0 +1,12 @@
+<div id="guiAlerts" class="row clearfix">
+    {% for type in ['success', 'warning', 'info', 'alert'] %}
+        {% for flashMessage in app.session.flashbag.get(type) %}
+            <div data-closable class="callout {{ type }} small" aria-live="assertive" style="width:100%;">
+                <p style="margin:0px">{{ flashMessage }}</p>
+                <button class="close-button small" aria-label="Dismiss alert" type="button" data-close>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>

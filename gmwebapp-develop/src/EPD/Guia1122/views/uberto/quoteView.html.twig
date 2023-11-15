@@ -1,0 +1,52 @@
+{% extends ('layout.html.twig') %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+      <style>
+          {{ source( '_inlinecss/'~BRANDCODE~'/c-qv'~filesSignature~'.css') }}
+      </style>
+    {% endif %}
+    <link rel="stylesheet" href="{{ app.request.basepath }}/js/vendors/foundation-datepicker/foundation-datepicker.min.css" />
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %} Presupuesto | {{BRAND}}{% endblock pageTitle %}
+
+{% block metas %}
+    <meta name="ROBOTS" content="NOINDEX" />
+{% endblock metas %}
+
+{% block custom_javascript %}
+  <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/foundation-datepicker/foundation-datepicker.min.js"></script>
+{% endblock %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block content %}
+
+  <div class="row u-box-cntr">
+    <div class="large-6 large-offset-3 medium-10 medium-offset-1 small-12" style="margin-top:20px">
+
+      {{ render(path('quoteViewComponent', {'token':token})) }}
+
+    </div>
+  </div>
+
+
+  {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'qv'} %}
+{% endblock deferredCss %}

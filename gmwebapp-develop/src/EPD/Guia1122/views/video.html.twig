@@ -1,0 +1,248 @@
+{% extends ('layout.html.twig') %}
+
+{% set isMobile = isMobile() %}
+
+{% block admConfigHead %} 
+    {{ parent() }}
+        googletag.cmd.push(function() {
+            {% if isMobile %}
+                googletag.defineSlot('{{ADS_SLOT_RIGHT}}', [[300, 250],[320, 250]], 'sas_27528').addService(googletag.pubads());
+            {% else %}
+                googletag.defineSlot('{{ADS_SLOT_RIGHT}}', [[300, 250],[320, 250]], 'sas_27528').addService(googletag.pubads());
+            {% endif %}
+            googletag.pubads().setTargeting('Channel', 'web');
+            googletag.pubads().setTargeting('zona', '{{ zona }}');
+            googletag.pubads().setTargeting('rubro', '{{ rubro }}');
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+{% endblock admConfigHead %}
+{% block admConfigBody %} 
+    <script>
+        {% if isMobile %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27528'); 
+            });
+        {% else %}
+            googletag.cmd.push(function() { 
+                googletag.display('sas_27528');
+            });
+        {% endif %}
+    </script>
+{% endblock admConfigBody %} 
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-g'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block pageTitle %}{{ comercio.nam | title }} | {{video.title}} | {{ comercio.adr | title }} | {{BRAND}}{% endblock pageTitle %}
+
+{% block metas %}
+    <meta name="description" content="{{ rubro | title }} {{ comercio.nam | title  }}, {{ comercio.adr | title }} | {{video.title}} | {{BRAND}}" />
+    <meta name="keywords" content="{{ rubro | lower}}, {{ comercio.nam | lower }}, {{video.title}}, busqueda, comercios, uruguay, comercios, servicios, zonas, departamentos, local, telefono, direccion" />
+    <meta name="robots" content="index,all" />
+    <meta name="DC.title" content="{{ comercio.nam | title }} | {{video.title}} | {{ comercio.adr | title }} | {{BRAND}}" />
+    <meta name="geo.region" content="UY-MO" />
+    <meta name="geo.placename" content="{{ zona | title }}" />
+
+    <meta property="twitter:card" content="summary"/>
+    <meta property="twitter:site" content="@{{BRAND}}"/>
+    <meta property="twitter:title" content="{{ rubro | title }} {{ comercio.nam | title }} en {{ zona | title }} {{ comercio.adr | title }} | {{BRAND}}"/>
+    <meta property="twitter:description" content="{{ rubro | title }} {{ comercio.nam | title  }}, {{ comercio.adr | title }} | {{BRAND}}"/>
+    <meta property="twitter:image" content="{{ comercio.ics | default('http://' ~ app.request.server.get('HTTP_HOST') ~ '/img/local_default.png') }}"/>
+
+    <meta property="og:title" content="{{ comercio.nam | title }} | {{video.title}} | {{ comercio.adr | title }} | {{BRAND}}"/>
+    <meta property="og:description" content="{{ rubro | title }} {{ comercio.nam | title  }}, {{video.title}}, {{ comercio.adr | title }} | {{BRAND}}"/>
+    <meta property="og:site_name" content="{{BRAND}}" />
+    <meta property="og:type" content="guia_1122:comercio" />
+    <meta property="og:locale" content="es_ES"/>
+    <meta property="og:url" content="{{ app.request.uri }}"/>
+    <meta property="og:image" content="{{ comercio.ics | default('http://' ~ app.request.server.get('HTTP_HOST') ~ '/img/local_default.png') }}"/>
+
+    {% if not comercio.lat is empty and not comercio.lon is empty %}
+        <meta name="geo.position" content="{{ comercio.lat }}; {{ comercio.lon }}" />
+        <meta name="ICBM" content="{{ comercio.lat }}, {{ comercio.lon }}" />
+    {% else %}
+        <meta name="geo.position" content="-34.906857;-56.194156" />
+        <meta name="ICBM" content="-34.902528, -56.185395" />
+    {% endif %}
+
+    <meta name="publisher" content="{{BRAND}}" />
+    <meta name="language" content="es" />
+    <meta name="distribution" content="global"/>
+    <link rel="canonical" href="https:{{ url('video', {'id': comercio.idrids, 'idv': video.idv, 'comercioNombre': urlize(comercio.nam) }, true) }}"/>
+{% endblock metas %}
+
+{% block inlineJavascripts %}
+    {{ parent() }}
+   
+{% endblock inlineJavascripts %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block content %}
+
+    <div class="row contenedor-ficha">
+      
+      <div class="large-8 medium-8 small-12 columns sin-bordes">
+        
+        {# FICHA #}
+        <div id="ficha" class="u-box-cntr ficha" data-name="{{ comercio.nam }}" data-idr="{{comercio.idr}}" data-ids="{{comercio.ids}}">
+          <div style="position:relative;padding: 5px 0px 15px 0px;">
+              <div class="imagen">
+                  {% if (comercio.ics is defined and comercio.ics | length > 0) or (comercio.icshq is defined and comercio.icshq | length > 0) %}
+                      {# <img src="{{ comercio.ics | default(app.request.basepath ~ '/img/local_default.png') }}" alt="{{ comercio.ics is empty ? 'N/A' : comercio.nam }}" height="85" width="85"> #}
+                    <picture>
+                        <source data-srcset="{{comercio.icshq | asWebp }}" type="image/webp"/>
+                        <source data-srcset="{{comercio.icshq}}" type="image/png"/>
+                        <img class="lazyload" data-src="{{comercio.icshq}}" alt="{{ comercio.nam }}"
+                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" 
+                            height="135" width="135">
+                    </picture>
+                  {% endif %}
+              </div>
+              <div class="infoFicha {{ comercio.ics | length > 0 ? '' : 'infoFichaSI' }}">
+                  <div class="title">
+                    <div>
+                      <h1>{{ comercio.nam }}</h1>
+                    </div>
+                  </div>
+                  <h2 class="icon d-adr"  style="{{ comercio.adr is empty ? 'display:none' : '' }}"> {{ comercio.adr }} {{ comercio.cty is empty ? '' : '- ' ~ comercio.cty }} {{ comercio.sta is empty ? '' : '- ' ~ comercio.sta }}  </h2>
+                  {% if not comercio.phl is empty %}
+                      <h3 class="icon d-phl">
+                          {% for telefono in telefonos %}
+                              <a href="tel:{{ telefono }}"> {{telefono}} </a>
+                              {% if loop.index != loop.length %}
+                                  &nbsp;-&nbsp;
+                              {% endif %}
+                          {% endfor %}
+                      </h3>
+                  {% endif %}
+                  <!-- CELULAR -->
+                  {% if not comercio.phm is empty %}
+                      <h3 class="icon d-phm">
+                          {% for celular in celulares %}
+                              <a href="tel:{{ celular }}"> {{celular}} </a>
+                              {% if loop.index != loop.length %}
+                                  &nbsp;-&nbsp;
+                              {% endif %}
+                          {% endfor %}
+                      </h3>
+                  {% endif %}
+
+                  {% if not comercio.url is empty %}
+                      <h3 class="icon d-url"><a href="{{ comercio.url }}" target="_blank" rel="noopener"> {{ comercio.urlNice | truncate(50) }}</a></h3>
+                  {% endif %}
+                  {% if not comercio.eml is empty %}
+                      <h3 class="icon d-eml"><a href="mailto:{{ comercio.eml }}"> {{ comercio.eml }}</a></h3>
+                  {% endif %}
+                  {% if not comercio.hrs is empty %}
+                      {% if comercio.hrsp is defined and comercio.hrsp != 0 %}
+                          <h3 class="icon d-clk"  >
+                          {% if not comercio.hoursState.isOpen %}
+                              {% if comercio.hoursState.openHourToday %}
+                                  {% if comercio.hoursState.minsToOpen > 0 %}
+                                      <span style='color:#FF9800;'>Ahora cerrado </span><span style='font-size: 80%;'> (abre en {{comercio.hoursState.minsToOpen}} mins)</span>
+                                  {% else %}
+                                      <span style='color:#F44336;'>Ahora cerrado </span><span style='font-size: 80%;'> (abre hoy a las {{comercio.hoursState.openHourTodayTime}})</span>
+                                  {% endif %}
+                              {% elseif comercio.hoursState.openHourTomorrow %}
+                                  <span style='color:#F44336'>Ahora cerrado</span><span style='font-size: 80%;'> (abre mañana{% if comercio.hoursState.openHourTomorrowTime %} a las {{comercio.hoursState.openHourTomorrowTime}}{% endif %})</span>
+                              {% else %}
+                                  <span style='color:#F44336'>Ahora cerrado</span><span style='font-size: 80%;'>
+                                  {% if comercio.hoursState.openHourDay and comercio.hoursState.openHourDayTime %}
+                                  (abre el {{comercio.hoursState.openHourDay}} a las {{comercio.hoursState.openHourDayTime}})
+                                  {% endif %}
+                                  </span>
+                              {% endif %}
+                          {% elseif comercio.hoursState.minsToClose > 0 %}
+                              <span style='color:#FF9800'>Ahora abierto </span><span style='font-size: 80%;'>(cierra en {{comercio.hoursState.minsToClose}} mins)</span>
+                          {% else %}
+                              <span style='color:#7CB342;'>Ahora abierto</span>
+                          {% endif %}
+                          </h3>
+                          <h3 style='margin: 0' id="horarioEspecial"></h3>
+                      {% else %}
+                          <h3 >Horario: {{ comercio.hrs }}</h3>
+                      {% endif %}
+                  {% endif %}
+              </div>
+          </div>
+        </div>
+
+        <div class="gal-cntr-goprofile">
+            {% set idLOC = (comercio.idr*10000) + comercio.ids%}
+            <a class="button"  href="{{ url('comercio', {'id': 'LOC' ~ idLOC, 'comercioNombre': urlize(comercio.nam) }) }}">Ver perfil completo de {{ comercio.nam }}</a>
+        </div>
+
+        <div >
+          
+          <div class="gal-cntr-full" itemprop="video" itemscope itemtype="http://schema.org/VideoObject" style="min-height: 400px; margin-bottom: 150px; padding: 50px 5px 140px 5px;">
+            <div class="vid-cntr">
+              <div id="player" style="min-height: 200px;"></div>
+            </div>
+            <h4><span itemprop="name">{{video.title}}</span></h4>
+            <h5><span itemprop="description">{{video.desc}}</span></h5>
+            <meta itemprop="duration" content="{{video.dur}}" />
+            <meta itemprop="thumbnailUrl" content="{{video.cover}}" />
+            <meta itemprop="embedURL" content="https://www.youtube.com/watch?v={{video.idv}}" />
+            <meta itemprop="uploadDate" content="{{video.uploadDate}}" />
+          </div>
+
+        </div>
+
+
+        <script>
+          var tag = document.createElement('script');
+          tag.src = "https://www.youtube.com/iframe_api";
+          var firstScriptTag = document.getElementsByTagName('script')[0];
+          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+          var player;
+          function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+              width: '100%',
+              videoId: '{{video.idv}}',
+              playerVars: {
+                autoplay: 1,
+                loop    : 0,
+                rel     : 0
+              }
+            });
+          }
+        </script>
+
+
+      </div>
+
+      <aside class="large-4 medium-4 small-12 columns banner300x250" style="border-left: 1px solid #DDD;">
+        <div class="separador show-for-medium-only"></div>
+
+        <div class="banner-recuadro">
+            <div id="sas_27528" class="gmad-desktop"></div>
+        </div>
+        <div class="separador"></div>
+
+      </aside>
+
+    </div>
+
+    {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'g'} %}
+{% endblock deferredCss %}

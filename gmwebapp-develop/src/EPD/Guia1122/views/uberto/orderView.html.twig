@@ -1,0 +1,423 @@
+{% extends ('layout.html.twig') %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-ov'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %}Pedido a {{data.store.name}} (#{{data.id}}) | {{BRAND}}{% endblock pageTitle %}
+
+{% block metas %}
+    <meta name="ROBOTS" content="NOINDEX" />
+{% endblock metas %}
+
+{% block header %}
+    {{ render(path('headerComponent', {'forceServer': '1'})) }}
+{% endblock header %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block content %}
+
+    <div id="dataStatus" data-status="{{data.status}}"></div>
+
+    <div class="row" style="margin-top: 10px;padding-bottom: 30px;">
+        <div class="large-6 large-offset-3 medium-6 medium-offset-3 small-12">
+
+
+            <div class="u-box-cntr-wh" >
+                <div style="position: relative;padding: 5px;border-bottom: 1px solid #DDD;">
+                    <div style="float: right;margin-right: 5px;color: #333;">Nº {{data.id}}</div>
+                    {% if data.store.ics | length > 0 %}
+                        <div style="width: 85px;height: 85px;position: absolute;left: 5px;top: 5px;"><img src="{{data.store.ics}}"></div>
+                        <div style="padding: 5px 5px 5px 97px;min-height: 75px;color: #F5F5F5;">
+                    {% else %}
+                        <div></div>
+                        <div style="min-height: 85px;">
+                    {% endif %}
+                        <div style="color:#333;font-size: 13px;">Pedido {{data.dateFromNice}}</div>
+                        <h3 style="color:#111;font-size: 20px;">{{data.store.name}}</h3>
+                    </div>
+                    
+                </div>
+                <div style="padding:5px;text-align:left;">
+                    {# DETALLES CABEZAL #}
+                    <div style="padding: 8px;">
+                        <table class="u-menu-order" style="max-width: none;margin: 0px;">
+                            <tr>
+                                <td style="color: #666;min-width: 103px;">
+                                    Tipo de pedido
+                                </td>
+                                <td>
+                                    {% if data.shipping == 1 %}
+                                        A entregar en {{data.user.address}}
+                                    {% elseif data.shipping == 2 %}
+                                        Para levantar en el local
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="color: #666;min-width: 103px;">
+                                    Agendado para
+                                </td>
+                                <td>
+                                    {% if data.scheduleType == 0 %}
+                                        Ahora
+                                    {% elseif data.scheduleType == 1 %}
+                                        {{data.scheduleValue.dateNice}} entre {{data.scheduleValue.hour}}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="color: #666;min-width: 103px;">
+                                    A nombre de
+                                </td>
+                                <td>
+                                    {{data.user.name}}
+                                    {% if data.user.phone | length > 0 %}
+                                        &nbsp;( {{data.user.phone}} )
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {# <tr>
+                                <td style="color: #666;min-width: 103px;">
+                                    Costo total
+                                </td>
+                                <td style="text-align:right">
+                                    ${{data.price}}
+                                </td>
+                            </tr> #}
+                        </table>
+                    </div>
+                    <!-- CARRITO -->
+                    <div class="u-cart-checkedout" style="cursor:pointer">
+                        <div id="cart-checkedout-title" class="cart-table-title">
+                            <h5 ><i class="fa fa-shopping-basket" aria-hidden="true"></i> Pedido</h5>
+                            <div id="headerCartTotal" class="u-menu-price">{{data.price | price | raw }}</div>
+                            <i class="fa fa-caret-down " aria-hidden="true" style="color: #777;"></i>
+                        </div>
+                        <table id="cart-checked-table">
+                            {% for item in data.plist %}
+                                <tr>
+                                    <td style="text-align: left;"><strong>{{item.name}}</strong><span style="color:#777;margin-left: 10px"> x{{item.quantity}}</span>
+                                    {% if item.notes is defined and item.notes | length > 0 %}
+                                        <p>{{item.notes}}</p>
+                                    {% endif %}
+                                    {% if item.customFields is defined and item.customFields | length > 0 %}
+                                        <p>
+                                        {% for cf in item.customFields %}
+                                            {% if cf.name is defined and cf.name | length > 0 %}
+                                                {% if cf.type == 1 %}
+                                                    {{cf.name}}
+                                                    {% if cf.price > 0 %}
+                                                        <span style="font-size:90%"> ({{cf.price | price | raw}})</span>
+                                                    {% endif %}
+                                                {% elseif cf.type == 2 %}
+                                                    {{cf.name}}: {{cf.optName}}
+                                                    {% if cf.price > 0 %}
+                                                        <span style="font-size:90%"> ({{cf.price | price | raw}})</span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        </p>
+                                    {% endif %}
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <div class="price">
+                                            {{item.price | price | raw}}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                            <tr>
+                                <td class="summary-start">Sub-total</td>
+                                <td class="summary-start u-menu-order">
+                                    <div class="price">
+                                        {{data.subtotal | price | raw}}
+                                    </div>
+                                </td>
+                            </tr>
+                            {# <tr>
+                                <td class="summary">Impuestos</td><td class="summary"><small>$ </small>0.00</td>
+                            </tr> #}
+                            <tr>
+                                <td class="summary">Costos de envio</td>
+                                <td class="summary u-menu-order">
+                                    <div class="price">
+                                        {{data.shippingPrice | price | raw}}
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="summary-end">Total</td>
+                                <td class="summary-end u-menu-order">
+                                    <div class="price">
+                                        {{data.price | price | raw}}
+                                    </div>    
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <!-- DETALLES -->
+                    {% if data.status == 'PENDIENTE' %}
+                        {# STATUS #}
+                        <div id="divStatusPendiente">
+                            <div style="padding: 20px 0px;">
+                                <ul class="u-steps">
+                                    <li class="u-steps-completed">
+                                        Pedido enviado
+                                        <p>Te confirmaremos tu pedido a la brevedad</p>
+                                    </li>
+                                    <li>Aceptado</li>
+                                    <li>Entregado</li>
+                                </ul>
+                            </div>
+                            {# LLAMAR #}
+                            <div style="border-top:1px solid #DDD;text-align:center;font-size: 12px;color: #777;padding: 20px 0px;">
+                                <p>Si estas teniendo problemas con el pedido, puedes llamarnos para consultar</p>
+                                <div style="text-align:center">
+                                    {% for tel in data.store.tels %}
+                                        <a class="clear button" href="tel:{{tel}}" style="display: inline-flex;"><i class="fa fa-phone" aria-hidden="true"></i>&nbsp;{{tel}}</a>
+                                    {% endfor %}
+                                    {% for cel in data.store.cels %}
+                                        <a class="clear button" href="tel:{{cel}}" style="display: inline-flex;"><i class="fa fa-mobile" aria-hidden="true"></i>&nbsp;{{cel}}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div style="text-align:center">
+                                <a href="{{path('uberto/requestList')}}">Volver a mis pedidos</a>
+                            </div>
+                        </div>
+
+                    {% elseif data.status == 'ACEPTADO' %}
+
+                        <div id="divStatusAceptado">
+                            {# STATUS #}
+                            <div style="padding: 20px 0px;">
+                                <ul class="u-steps">
+                                    <li class="u-steps-completed">Pedido enviado</li>
+                                    <li class="u-steps-completed">
+                                        Aceptado
+                                        <p>Estamos preparando tu pedido</p>
+                                    </li>
+                                    <li>Entregado</li>
+                                </ul>
+                            </div>
+                            {# COMENTARIO #}
+                            <div style="border-top:1px solid #DDD;text-align:center;font-size: 12px;color: #777;padding: 10px 0px;">
+                                <div style="font-weight:600">Comentario:</div>
+                                <div style="font-size: 17px;font-weight: 100;">{{data.response.description}}</div>
+                            </div>
+                            {# TIEMPO #}
+                            <div id="dataFecha" data-date="{{data.response.dateAccepted}}" 
+                                data-estimated="{{data.response.estimatedTime}}" data-scheduletype="{{data.scheduleType}}"
+                                data-schedulevaluedate="{{data.scheduleValue.date is defined ? data.scheduleValue.date : ''}}" 
+                                data-schedulevaluehour="{{data.scheduleValue.hour is defined ? data.scheduleValue.hour : ''}}"
+                                style="border-top:1px solid #DDD;text-align:center;font-size: 12px;color: #777;padding: 20px 0px;">
+                                <div style="font-weight:600">Tiempo estimado</div>
+                                <div id="minutes" style="font-size: 28px;font-weight: 100;"></div>
+                            </div>
+                            {# LLAMAR #}
+                            <div style="border-top:1px solid #DDD;text-align:center;font-size: 12px;color: #777;padding: 20px 0px;">
+                                <p>Si estas teniendo problemas con el pedido, puedes llamarnos para consultar</p>
+                                <div style="text-align:center">
+                                    {% for tel in data.store.tels %}
+                                        <a class="clear button" href="tel:{{tel}}" style="display: inline-flex;"><i class="fa fa-phone" aria-hidden="true"></i>&nbsp;{{tel}}</a>
+                                    {% endfor %}
+                                    {% for cel in data.store.cels %}
+                                        <a class="clear button" href="tel:{{cel}}" style="display: inline-flex;"><i class="fa fa-mobile" aria-hidden="true"></i>&nbsp;{{cel}}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div style="text-align:center">
+                                <a href="{{path('uberto/requestList')}}">Volver a mis pedidos</a>
+                            </div>
+                        </div>
+
+                    {% elseif data.status == 'RECHAZADO' %}
+
+                        <div id="divStatusRechazado">
+                            <div style="padding: 20px 0px;">
+                                <ul class="u-steps">
+                                    <li class="u-steps-completed">Pedido enviado</li>
+                                    <li class="u-steps-rejected">
+                                        Rechazado
+                                        <p>No hemos podido aceptar tu pedido</p>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div style="border-top:1px solid #DDD;text-align:center;font-size: 12px;color: #777;padding: 10px 0px;">
+                                <div style="font-weight:600">Comentario:</div>
+                                <div style="font-size: 17px;font-weight: 100;">{{data.response.description}}</div>
+                            </div>
+                            <div style="border-top:1px solid #DDD;text-align:center;font-size: 12px;color: #777;padding: 20px 0px;">
+                                <p>No dudes en llamarnos para ver los detalles del rechazo y acordar un posible nuevo pedido.</p>
+                                <div style="text-align:center">
+                                    {% for tel in data.store.tels %}
+                                        <a class="clear button" href="tel:{{tel}}" style="display: inline-flex;"><i class="fa fa-phone" aria-hidden="true"></i>&nbsp;{{tel}}</a>
+                                    {% endfor %}
+                                    {% for cel in data.store.cels %}
+                                        <a class="clear button" href="tel:{{cel}}" style="display: inline-flex;"><i class="fa fa-mobile" aria-hidden="true"></i>&nbsp;{{cel}}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div style="text-align:center">
+                                <a href="{{path('uberto/requestList')}}">Volver a mis pedidos</a>
+                            </div>
+                        </div>
+
+                    {% elseif data.status == 'ENTREGADO' %}
+                        
+                        <div id="divStatusEntregado">
+                            {# STATUS #}
+                            <div style="padding: 20px 0px;">
+                                <ul class="u-steps">
+                                    <li class="u-steps-completed">Pedido enviado</li>
+                                    <li class="u-steps-completed">Aceptado</li>
+                                    <li class="u-steps-completed">
+                                        Entregado
+                                        <p>Hemos marcado tu pedido como entregado
+                                        {% if data.review is not defined or data.review == NULL %}
+                                        , por favor, tomate unos minutos para <strong>calificarnos!</strong>
+                                        {% endif %}
+                                        </p>
+                                    </li>
+                                </ul>
+                            </div>
+                            {# COMENTARIO #}
+                            <div style="border-top:1px solid #DDD;text-align:center;font-size: 12px;color: #777;padding: 10px 0px;">
+                                <div style="font-weight:600">Comentario:</div>
+                                {{data.response.description}}
+                            </div>
+                            {# REVIEW #}
+                            {% if data.review is defined and data.review != NULL %}
+                                <div style="border-top:1px solid #DDD;text-align:center;font-size: 12px;color: #777;padding: 10px 0px;">
+                                    <div>Has enviado una reseña el {{data.review.dateNice}}</div>
+                                    <div>"{{data.review.text}}"</div>
+                                </div>
+                            {% else %}
+                                <div style="border-top:1px solid #DDD;text-align:center;font-size: 12px;color: #777;padding: 10px 0px;">
+                                    <div style="font-weight:600">Escribe una reseña:</div>
+                                    <div>Ayuda a {{data.store.name}} a conocer que cosas te gustaron y que otras puede mejorar. Y ayuda a tu comunidad a conocer los mejores luagres para pedir en tu zona.</div>
+
+
+                                    <form class="u-review-form" id="orevForm" name="orevForm" action="{{ path('doQuoteReview') }}" method="post" data-abide>
+                                        <input type="hidden" name="orevToken" id="orevToken" value="{{data.token}}">
+                                        <table>
+                                            <tr>
+                                                <td style="width: 70%;">
+                                                    Pedido en general
+                                                </td>
+                                                <td style="width: 30%;">
+                                                    <div class="switch small u-review-switch" >
+                                                    <input class="switch-input" id="orevprocessval" type="checkbox" name="orevprocessval" checked="true">
+                                                    <label class="switch-paddle" for="orevprocessval">
+                                                        <span class="switch-active" aria-hidden="true">BIEN</span>
+                                                        <span class="switch-inactive" aria-hidden="true">MAL</span>
+                                                    </label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr id="trwrongprocessval" style="display:none">
+                                                <td colspan="2" style="padding: 0px 0px 0px 30px;font-size: 90%">Que salio mal?</td>
+                                            </tr>
+                                            <tr id="trwrongprocesscomplex" style="display:none">
+                                                <td style="padding-left: 30px;font-size: 90%" colspan="2">
+                                                    <input style="display: inline;" id="orevwrongprocesscomplex" name="orevwrongprocesscomplex" type="checkbox">
+                                                    <label style="display: inline-flex;width: 80%;font-size: 13px;line-height: 14px;" for="orevwrongprocesscomplex">El proceso de pedido es muy complejo.</label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 70%;">
+                                                    Entrega a domicilio o pickup en el lugar
+                                                </td>
+                                                <td style="width: 30%;">
+                                                    <div class="switch small u-review-switch" >
+                                                    <input class="switch-input" id="orevshippingval" type="checkbox" name="orevshippingval" checked="true">
+                                                    <label class="switch-paddle" for="orevshippingval">
+                                                        <span class="switch-active" aria-hidden="true">BIEN</span>
+                                                        <span class="switch-inactive" aria-hidden="true">MAL</span>
+                                                    </label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr id="trwrongshippingsval" style="display:none">
+                                                <td colspan="2" style="padding: 0px 0px 0px 30px;font-size: 90%">Que salio mal?</td>
+                                            </tr>
+                                            <tr id="trwrongshippingslow" style="display:none">
+                                                <td style="padding-left: 30px;font-size: 90%" colspan="2">
+                                                    <input style="display: inline;" id="orevwrongshippingslow" name="orevwrongshippingslow" type="checkbox">
+                                                    <label style="display: inline-flex;width: 80%;font-size: 13px;line-height: 14px;" for="orevwrongshippingslow">El envio fue muy demorado.</label>
+                                                </td>
+                                            </tr>
+                                            <tr id="trwrongshippingbad" style="display:none">
+                                                <td style="padding-left: 30px;font-size: 90%" colspan="2">
+                                                    <input style="display: inline;" id="orevwrongshippingbad" name="orevwrongshippingbad" type="checkbox">
+                                                    <label style="display: inline-flex;width: 80%;font-size: 13px;line-height: 14px;" for="orevwrongshippingbad">El envio no llego en buen estado.</label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 70%;">
+                                                    Calidad del producto
+                                                </td>
+                                                <td style="width: 30%;">
+                                                    <div class="switch small u-review-switch" >
+                                                    <input class="switch-input" id="orevproductval" type="checkbox" name="orevproductval" checked="true">
+                                                    <label class="switch-paddle" for="orevproductval">
+                                                        <span class="switch-active" aria-hidden="true">BIEN</span>
+                                                        <span class="switch-inactive" aria-hidden="true">MAL</span>
+                                                    </label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr id="trwrongproductval" style="display:none">
+                                                <td colspan="2" style="padding: 0px 0px 0px 30px;font-size: 90%">Que salio mal?</td>
+                                            </tr>
+                                            <tr id="trwrongproductdiff" style="display:none">
+                                                <td style="padding-left: 30px;font-size: 90%" colspan="2">
+                                                    <input style="display: inline;" id="orevwrongproductdiff" name="orevwrongproductdiff" type="checkbox">
+                                                    <label style="display: inline-flex;width: 80%;font-size: 13px;line-height: 14px;" for="orevwrongproductdiff">El producto recibido no se veia como prometido o como las fotos.</label>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <label>Comentario adicional:</label>
+                                        <textarea id="orevDesc" name="orevDesc" rows="3" style="width: 100%;"></textarea>
+                                    </form>
+    
+                                </div>
+                                <div style="text-align: center;" >
+                                    <button id="doSendReview" type="submit" class="button small gmbutton small-expanded">Enviar reseña</button>
+                                </div>
+                            {% endif %}
+                            <div style="text-align:center">
+                                <a href="{{path('uberto/requestList')}}">Volver a mis pedidos</a>
+                            </div>
+                        </div>
+
+                    {% endif %}
+                
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {% include 'components/footer.html.twig' %}
+
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'ov'} %}
+{% endblock deferredCss %}

@@ -1,0 +1,48 @@
+{% extends ('layout.html.twig') %}
+
+{% set sasSpage = 'terminosCondiciones' %}
+{% block sasSpage %}{{ sasSpage }}{% endblock sasSpage %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-tc'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+{% block pageTitle %}{{ parent() }}{% endblock pageTitle %}
+
+{% block header %}
+    {{ render(path('headerComponent')) }}
+{% endblock header %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {{ parent() }}
+{% endblock javascripts %}
+
+{% block content %}
+    <div class="row">
+        <div class="u-box-cntr large-12 medium-12 columns letra-gris">
+            <h1 style="font-size: 25px;" class="letra-gris">TÉRMINOS Y CONDICIONES</h1><br><br>
+            <div class="legal">
+              {% if COUNTRY == 'uy' %}
+                {% include 'contacto/terminosCondiciones_uy.html.twig' %}
+              {% else %}
+                {% include 'contacto/terminosCondiciones_py.html.twig' %}
+              {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    
+    {% include 'components/footer.html.twig' %}
+    
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'tc'} %}
+{% endblock deferredCss %}
