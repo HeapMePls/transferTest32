@@ -394,13 +394,19 @@
                                                             {{comercio.znam}}
                                                         </h3>
                                                         <h3 class="telefon0">
-                                                            {% if comercio.phl | length > 10 %}
-                                                         {{ comercio.phl | slice(0, -12) ~ '****'}}<br>
-                                                         {% elseif comercio.phl | length < 9 %}
-                                                         {{ comercio.phl | slice(0, -4) ~ '****'}}<br>
+                                                            {% if comercio.phl != 0 %}
+                                                                {% if comercio.phl | length > 8 %}
+                                                                    {{ comercio.phl | slice(0, 4) ~ '****'}}<br>
+                                                                {% elseif comercio.phl | length <= 8 %}
+                                                                    {{ comercio.phl | slice(0, 4) ~ '****' }}<br>
+                                                                {% endif %}
                                                             {% endif %}
-                                                            {% if comercio.phm %}
-                                                          {{ comercio.phm | slice(0, -4) ~ '****' }}
+                                                            {% if comercio.phm != 0 %}
+                                                                {% if comercio.phm | length > 9 %}
+                                                                    {{ comercio.phm | slice(0, 4) ~ '****' }}
+                                                                {% elseif comercio.phm | length <= 9 %}
+                                                                    {{ comercio.phm | slice(0, 4) ~ '****'}}<br>
+                                                                {% endif %}
                                                             {% endif %}
                                                         </h3>
                                                         {% if comercio.dsc | length > 0 %}

@@ -1,3 +1,4 @@
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
@@ -18,3 +19,4 @@
     #RewriteRule ^(.*)$ app_bi.php [QSA,L]
 
 </IfModule>
+
