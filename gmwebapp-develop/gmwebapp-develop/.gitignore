@@ -1,0 +1,32 @@
+# Silex
+app/cache/*
+app/logs/*
+app/spool/*
+app/var/*
+
+# Composer
+vendor/*
+composer.phar
+composer.lock
+
+# Rocketeer logs
+.rocketeer/logs/*
+
+# Others
+build/*
+bin/*
+nbproject/*
+.idea/*
+.svn
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+_notes
+dwsync.xml
+node_modules
+.htaccess

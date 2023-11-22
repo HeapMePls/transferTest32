@@ -1,0 +1,87 @@
+{% extends ('layout.html.twig') %}
+
+{% block custom_stylesheets %}
+    {% if IS_PRODUCTION %} 
+        <style>
+            {{ source( '_inlinecss/'~BRANDCODE~'/c-pd'~filesSignature~'.css') }}
+        </style>
+    {% endif %}
+{% endblock custom_stylesheets %}
+
+
+{% block pageTitle %} {{data.name}} | {{data.store.name}} | {{BRAND}}{% endblock pageTitle %}
+
+{% block metas %}
+    <meta name="description" content="{{data.name | title}}, {{ data.groups[0].name | title}}, {{data.store.name | title}} | {{BRAND}}" />
+    <meta name="keywords" content="{{data.name | title}}, {{ data.groups[0].name | title}}, {{data.store.name | title}} busqueda, comercios, uruguay, comercios, servicios, zonas, departamentos, local, telefono, direccion" />
+    <meta name="robots" content="index,all" />
+    <meta name="DC.title" content="{{data.name}} | {{data.store.name}} | {{BRAND}}" />
+    <meta name="geo.region" content="UY-MO" />
+    <meta name="geo.placename" content="{{data.store.znam | title}} {{data.store.zpman | title}}" />
+
+    <meta property="twitter:card" content="summary"/>
+    <meta property="twitter:site" content="@guia1122"/>
+    <meta property="twitter:title" content=" {{data.name}} | {{data.store.name}} | {{BRAND}}"/>
+    <meta property="twitter:description" content="{{data.description | truncate(50) }} | {{BRAND}}"/>
+    <meta property="twitter:image" content="{{ data.mainImage }}"/>
+
+    <meta property="fb:app_id" content="766711133402070" /> 
+    <meta property="og:title" content="{{data.name}} | {{data.store.name}} | {{BRAND}}"/>
+    <meta property="og:description" content="{{data.description | truncate(50) }} | {{BRAND}}"/>
+    <meta property="og:site_name" content="{{BRAND}}" />
+    <meta property="og:type" content="product" />
+    <meta property="og:locale" content="es_ES"/>
+    <meta property="og:url" content="{{ app.request.uri }}"/>
+    <meta property="og:image" content="{{ data.mainImage }}"/>
+    <meta property="og:price:amount" content="{{ data.price }}"/>
+    <meta property="og:price:currency" content="UYU"/>
+    {% if data.regularPrice != '' %}
+        <meta property="og:original_price:amount" content="{{ data.regularPrice }}"/>
+        <meta property="og:original_price:currency" content="UYU"/>
+    {% endif %}
+    <meta property="og:product_link" content="{{ app.request.uri }}"/>
+    <meta property="og:retailer_title" content="{{data.store.name}}"/>
+
+    <link rel='stylesheet' href='{{ app.request.basepath }}/js/vendors/photoswipe/dist/photoswipe.css' />
+    <link rel='stylesheet' href='{{ app.request.basepath }}/js/vendors/photoswipe/dist/default-skin/default-skin.css' />
+    <link rel="stylesheet" href="{{ app.request.basepath }}/css/swiper.css" />
+{% endblock metas %}
+
+{% block javascripts %}
+  {# JAVASCRIPT - START #}
+  {% include 'layout/jsloader.html.twig' with {'v':1} %}
+  {# JAVASCRIPT - END #}
+  {# JAVASCRIPT 2 TEST - START #}
+  {# JAVASCRIPT 2 - END #}
+  {{ parent() }}
+
+  <script type="text/javascript" src="{{ app.request.basepath }}/js/vendors/Swiper/4.2.6/swiper.min.js"></script>
+{% endblock javascripts %}
+
+{% if isMobile() %}
+    {% set boxClass = 'u-box-cntr' %}
+{% else %}
+    {% set boxClass = '' %}
+{% endif %}
+
+{% block header %}
+    {% if data.cart is defined %}
+        {{ render(path('headerComponent', {'cart': data.cart, 'idr': idr, 'ids': ids, 'token': data.token})) }}
+    {% else %}
+        {{ render(path('headerComponent'))}}
+    {% endif %}
+{% endblock header %}
+
+{% block content %}
+  {% include 'components/uberto/productOrderMenu.html.twig' with {'data': data, 'lineId': -1, 'idr': idr, 'ids': ids, 'smi': smi, 'fm': fm} %}
+    {% if productStr is defined %}
+        <script>
+            window.loadCustomFields = {{productStr | raw}};
+        </script>
+    {% endif %}
+  {% include 'components/footer.html.twig' %}
+{% endblock content %}
+
+{% block deferredCss %}
+    {% include 'components/deferredCss.html.twig' with {'cssPageName':'pd'} %}
+{% endblock deferredCss %}
