@@ -1,0 +1,444 @@
+{% block body %}
+  
+  {% set isMobile = (isMobile() or fm) %}
+
+  {% if not isMobile %}
+    <div class="row"> 
+      <div class="large-12 medium-12 small-12 columns">
+        <nav class="breadcrumbs sc" role="navigation" aria-label="breadcrumbs">
+          <ul>
+              <li><a href="{{ path('home') }}"><i class="fa fa-home"></i></a></li>
+              {% if rubro is defined and rubro != '' %}
+                <li>
+                  <a href="{{ path('rubro', {'rubroId': rubroId,'rubroNombre': urlize(rubro)}) }}">{{ rubro | title }}</a>
+                </li>
+              {% endif %}
+              <li>
+                <a href="{{ url('comercio', {'id': data.store.loc, 'comercioNombre': urlize(data.store.name) }) }}">{{ data.store.name }}</a>
+              </li>
+              <li class="current">
+                <a href="{{ path('storeStart',{'nam':urlize(data.store.name),'idr': data.idr, 'ids': data.ids}) }}?t={{data.token}}&f={{urlize(data.groups[0].name)}}|{{data.groups[0].id}}">{{data.groups[0].name}}</a>
+              </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="row u-box-cntr boxedlines" itemscope itemtype="http://schema.org/Product" style="padding-bottom: 20px;">    
+    <div id="datos" data-idr="{{data.idr}}" data-ids="{{ids}}" data-id="{{data.id}}" data-price="{{data.price}}"></div>
+
+    {# IMAGES #}
+    {% if isMobile %}
+      {# SHOW CARROUSEL #}
+      <div id="adImgGal" class="swiper-container">
+        <div class="swiper-wrapper" itemscope itemtype="http://schema.org/ImageGallery" style="margin-left: 0px;">
+          <div class="swiper-slide" >
+            <figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+              <a rel="gallery" class="pd-zoom-anchor" itemprop="contentUrl">
+                <img id="pd-zoom" style="margin-right: auto; margin-left: auto; margin-bottom: 3%;width: 100%;" 
+                  class="img-responsive pd-zoom-small" src="{{data.imageBasePath}}thg-{{data.imageName}}" 
+                  itemprop="thumbnail" data-size="{{data.imageMetadata.size.width}}x{{data.imageMetadata.size.height}}" 
+                data-zoom-image="{{data.image}}" data-index="0">
+              </a>
+            </figure>
+          </div>
+          {% for adImg in data.additionalImages %} 
+            <div class="swiper-slide" >
+              <figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+                <a rel="gallery" class="pd-zoom-anchor" href="{{adImg.src}}" itemprop="contentUrl" >
+                  <img style="margin-right: auto; margin-left: auto; margin-bottom: 3%;width: 100%;" 
+                    class="pd-zoom-small img-responsive" 
+                    src="{{adImg.srcImage}}" itemprop="thumbnail"
+                    data-size="{{adImg.metadata.size.width}}x{{adImg.metadata.size.height}}" 
+                  data-zoom-image="{{adImg.src}}" data-index="{{adImg.index}}" >
+                </a>
+              </figure>
+            </div>
+          {% endfor %}
+        </div>
+        <div id="adImgGalPag" class="swiper-pagination" style="padding-bottom: 5px;"></div>
+        {% if data.additionalImages | length > 0 %}
+          <div style="position: absolute;bottom: 20px;left: 10px;z-index: 3;font-size: 14px;color: #FFF;background-color: rgba(0,0,0,0.5);padding: 1px 10px;border-radius: 4px;">
+            {{(data.additionalImages | length) +1 }} im&aacute;genes</div>
+        {% endif %}
+      </div>
+    {% else %}
+      {# SHOW LATERAL THUMBNAILS WITH BIG AT RIGHT #}
+      <div class="large-1 medium-1 columns">
+        <div style="width: 100%; margin-top: 10px;">
+          <img class="additional-image" src="{{data.mainImage}}" style="margin-top: 10px;" 
+            data-image="{{data.mainImage}}" data-zoom-image="{{data.image}}" 
+            data-size="{{data.imageMetadata.size.width}}x{{data.imageMetadata.size.height}}" 
+            data-index="0" itemprop="image">
+          {% for additional in data.additionalImages %}
+            {% if additional.src == data.image %}
+              <img class="additional-image" src="{{additional.src}}" style="margin-top: 10px; border-color: #159de1; border-style: double;" 
+                data-image="{{additional.srcImage}}" data-zoom-image="{{additional.src}}" 
+                data-size="{{additional.metadata.size.width}}x{{additional.metadata.size.height}}" 
+                data-index="{{additional.index}}"> 
+            {% else %}
+              <img class="additional-image" src="{{additional.src}}" style="margin-top: 10px;" 
+                data-image="{{additional.srcImage}}" data-zoom-image="{{additional.src}}" 
+                data-size="{{additional.metadata.size.width}}x{{additional.metadata.size.height}}" 
+                data-index="{{additional.index}}">
+            {% endif %} 
+          {% endfor %}
+        </div>
+      </div>
+      <div class="large-6 medium-6 small-12 columns">
+        <div style="width: 100%; margin-top: 20px;">
+          <img id="principal-image" src="{{data.mainImage}}" data-zoom-image="{{data.image}}" data-index="0">
+        </div>
+      </div>
+    {% endif %}
+
+    {# MAIN FICHA #}
+    <div class=" {{ fm ? '' : 'large-5 medium-5' }} small-12 columns">
+      <form id="pdForm" action="/pedido/producto/agregado" method="post">         
+        <input type="hidden" id="token" name="token" value="{{ (data.token is defined and data.token | length > 0 ) ? data.token : '' }}">
+        <input type="hidden" id="idr" name="idr" value="{{data.idr}}">
+        <input type="hidden" id="ids" name="ids" value="{{ids}}">
+        <input type="hidden" id="id" name="id" value="{{data.id}}">
+        <input type="hidden" id="price" name="price" value="{{data.price}}">
+        {% if product.data.lineId is defined %}
+          <input type="hidden" id="lineId" name="lineId" value="{{product.data.lineId}}">
+          <input type="hidden" id="quantityItem" name="quantityItem" value="{{product.data.quantity}}">
+        {% else %}
+          <input type="hidden" id="quantityItem" name="quantityItem" value="1">
+        {% endif %}
+        <div class="u-prod-details">
+          {% if data.customFieldsLabels | length > 0 %}
+            <div class="labels" style="{{ isMobile ? 'text-align:center;' : '' }}">
+              {% for cf in data.customFieldsLabels %}
+                  {% if cf.icon is defined and cf.icon | length > 0 %}
+                      {% if cf.color is defined %}
+                          <span class="icon bicon-{{cf.icon}}" style="color:{{cf.color}};margin-right: 5px;">bb</span>
+                      {% else %}
+                          <span class="icon bicon-{{cf.icon}}" style="margin-right: 5px;">aa</span>
+                      {% endif %}
+                  {% else %}
+                      <div class="u-menu-label" style="color:{{cf.color}};border: 1px solid {{cf.color}};">{{cf.label}}</div>
+                  {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+          <div style="{{ isMobile ? 'text-align: center' : '' }}">
+            <h3 itemprop="name">{{data.name}}</h3>
+            <p itemprop="description">{{data.description}}</p>
+            {% if data.weekMapToShow is defined %}
+              <p style="color: #FF9800">{{data.weekMapToShow}}</p>
+            {% endif %}
+          </div>
+          <div class="price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+            <meta itemprop="priceCurrency" content="UYU" />
+            <meta itemprop="price" content="{{data.price}}" />
+            {% if product.data.price is defined %}
+              <div id="priceCustom" style="font-size: 20px;margin: 15px 0px;" class="u-menu-price">{{product.data.price | price | raw}}</div>
+            {% else %}
+              <div id="priceCustom" style="font-size: 20px;margin: 15px 0px;" class="u-menu-price">{{data.price | price | raw}}</div>
+            {% endif %} 
+            {% if data.regularPrice != '' %}
+              <div class="regular">{{data.regularPrice | price | raw}}</div>
+            {% endif %}
+          </div>
+          <div style="text-align: center;width: 110px;border: 1px solid #DDD; margin: 0 auto;">
+            <div id="ompaQtyMinus" style="display:inline-block;cursor:pointer;color: #777;padding: 5px 10px;float: left;"><i class="fa fa-minus" aria-hidden="true"></i></div>
+            {% if data.quantity is defined %}
+              <div id="ompaQtyNumber" style="display:inline-block;padding: 5px">{{data.quantity}}</div>
+            {% else %}
+              {% if product.data.quantity is defined %}
+                <div id="ompaQtyNumber" style="display:inline-block;padding: 5px">{{product.data.quantity}}</div>
+              {% else %}
+                <div id="ompaQtyNumber" style="display:inline-block;padding: 5px">1</div>
+              {% endif %}
+            {% endif %}
+            <div id="ompaQtyPlus" style="display:inline-block;cursor:pointer;color: #777;padding: 5px 0px 5px 10px;float: right;"><i class="fa fa-plus" aria-hidden="true"></i></div>
+          </div>
+          {% if data.customFieldsInput | length > 0 %}
+            <div style="padding: 10px;">
+              {% for custom in data.customFieldsInput %}
+                {# <div class="customField"> #}
+                <div class="u-menu-option">
+                  <div class="u-menu-option-title">
+                    {{ (custom.type == 1) ? 'Adicionales' : custom.label}}
+                    {% if custom.required == 1 %}
+                      <span class="u-menu-option-required">OBLIGATORIO</span>
+                    {% endif %}
+                  </div>
+                  <div>
+                    {% if custom.type == 1 %}
+                      {# SIMPLE CHECKBOX #}
+                      <div class="u-menu-option-options">
+                        <div class="checkbox">
+                          {% if custom.checked is defined and custom.checked == true %}
+                            <input class="custom-check" type="checkbox" name="cf-{{custom.type}}-{{custom.id}}" id="cf-{{custom.type}}-{{custom.id}}" value="{{custom.id}}" data-extra="{{custom.price}}" data-id="{{custom.id}}" data-label="{{custom.label}}" data-variant="{{custom.variant}}" checked="true">
+                          {% else %}
+                            <input class="custom-check" type="checkbox" name="cf-{{custom.type}}-{{custom.id}}" id="cf-{{custom.type}}-{{custom.id}}" value="{{custom.id}}" data-extra="{{custom.price}}" data-id="{{custom.id}}" data-label="{{custom.label}}" data-variant="{{custom.variant}}">
+                          {% endif %}
+                          <label for="cf-{{custom.type}}-{{custom.id}}">
+                            {{custom.label}} {{ (custom.price > 0) ? ' +$'~custom.price : '' }}
+                          </label>
+                        </div>
+                      </div>
+                    {% elseif custom.type == 2 %}
+                      {# LIST #}
+                      {% if custom.listType == "COMBO" %}
+                        {# LIST (COMBO) #}
+                        <div class="u-menu-option-options">
+                          <select class="custom-list" id="cf-{{custom.type}}-{{custom.id}}" name="cf-{{custom.type}}-{{custom.id}}" data-variant="{{custom.variant}}"
+                              {{custom.required == 1 ? 'required' : ''}}>
+                            {% if custom.required == 0 %}
+                              <option value="null" data-id="{{custom.id}}" data-label="No" data-name="{{custom.label}}" data-val="null" 
+                                data-extra="0">
+                                No
+                              </option>
+                            {% endif %}
+                            {% for val in custom.val %}
+                              {% if val.checked is defined %}
+                                <option id="cf-{{custom.id}}-{{val.id}}" value="{{val.id}}" data-id="{{custom.id}}" data-type="{{custom.type}}" data-label="{{val.label}}" data-name="{{custom.label}}" 
+                                  data-val="{{val.id}}" data-extra="{{val.price > 0 ? val.price : '0'}}" selected>
+                                  {{val.val}} {{ (val.price > 0) ? ' +$'~val.price : ''}}
+                                </option>
+                              {% else %}
+                                <option id="cf-{{custom.id}}-{{val.id}}" value="{{val.id}}" data-id="{{custom.id}}" data-label="{{val.label}}" data-name="{{custom.label}}" 
+                                  data-val="{{val.id}}" data-extra="{{val.price > 0 ? val.price : '0'}}">
+                                  {{val.val}} {{ (val.price > 0) ? ' +$'~val.price : ''}}
+                                </option>
+                              {% endif %} 
+                            {% endfor %}
+                          </select>
+                        </div>
+                      {% else %}
+                        {# LIST (RADIO) #}
+                        <div class="u-menu-option-options">
+                          {% if custom.required == 0 %}
+                            <div class="radio">
+                              {% if val.checked is defined %}
+                                <input class="custom-radio" type="radio" id="cf-{{custom.id}}-0" name="cf-{{custom.type}}-{{custom.id}}" 
+                                  value="null" data-id="{{custom.id}}" data-name="{{custom.label}}" data-label="No" data-extra="0" data-variant="{{custom.variant}}" 
+                                  checked="true" >
+                              {% else %}
+                                <input class="custom-radio" type="radio" id="cf-{{custom.id}}-0" name="cf-{{custom.type}}-{{custom.id}}" 
+                                  value="null" data-id="{{custom.id}}" data-name="{{custom.label}}" data-label="No" data-extra="0" data-variant="{{custom.variant}}">
+                              {% endif %}
+                              <label for="cf-{{custom.id}}-0">
+                                No
+                              </label>
+                            </div>
+                          {% endif %}
+                          {% for val in custom.val %}
+                            <div class="radio">
+                              {% if val.checked is defined %}
+                                <input class="custom-radio" type="radio" id="cf-{{custom.id}}-{{val.id}}" 
+                                  name="cf-{{custom.type}}-{{custom.id}}" value="{{val.id}}" data-id="{{custom.id}}" 
+                                  data-val="{{val.id}}" data-name="{{custom.label}}" data-label="{{val.label}}" 
+                                  data-extra="{{val.price}}" data-variant="{{custom.variant}}" checked="true" {{custom.required == 1 ? 'required' : ''}}>
+                              {% else %}
+                                <input class="custom-radio" type="radio" id="cf-{{custom.id}}-{{val.id}}" 
+                                  name="cf-{{custom.type}}-{{custom.id}}" value="{{val.id}}" data-id="{{custom.id}}" 
+                                  data-val="{{val.id}}" data-name="{{custom.label}}" data-label="{{val.label}}" 
+                                  data-extra="{{val.price}}" data-variant="{{custom.variant}}" {{custom.required == 1 ? 'required' : ''}}>
+                              {% endif %}
+                              <label for="cf-{{custom.id}}-{{val.id}}">
+                                {{val.label}} {{val.price > 0 ? ' +$'~val.price : '' }}
+                              </label>
+                            </div>
+                          {% endfor %}
+                        </div>
+                      {% endif %}
+                    {% elseif custom.type == 3 %}
+                      {# LIST (COLOR) #}
+                      <div class="u-menu-option-options">
+                        {% for val in custom.val %}
+                          <div class="radiocolor">
+                            {% if val.checked is defined %}
+                              <input class="custom-radio" type="radio" id="cf-{{custom.id}}-{{val.id}}" 
+                                name="cf-{{custom.type}}-{{custom.id}}" value="{{val.id}}" data-id="{{custom.id}}" 
+                                data-val="{{val.id}}" data-name="{{custom.label}}" data-label="{{val.label}}" 
+                                data-extra="{{val.price}}" data-variant="{{custom.variant}}" checked="true" {{custom.required == 1 ? 'required' : ''}}>
+                            {% else %}
+                              <input class="custom-radio" type="radio" id="cf-{{custom.id}}-{{val.id}}" 
+                                name="cf-{{custom.type}}-{{custom.id}}" value="{{val.id}}" data-id="{{custom.id}}" 
+                                data-val="{{val.id}}" data-name="{{custom.label}}" data-label="{{val.label}}" 
+                                data-extra="{{val.price}}" data-variant="{{custom.variant}}" {{custom.required == 1 ? 'required' : ''}}>
+                            {% endif %}
+                            <label for="cf-{{custom.id}}-{{val.id}}">
+                              <span style="background-color:{{val.val}}"></span>
+                            </label>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          <div class="addNotes">
+            <div style="padding-bottom: 20px;">
+              {% if product.data.notes is defined %}
+                <textarea class="u-menu-add-text" placeholder="Ingrese notas adicionales" id="additionalNotes" value="" name="additionalNotes">{{product.data.notes}}</textarea>
+              {% else %}
+                <textarea class="u-menu-add-text" placeholder="Ingrese notas adicionales" id="additionalNotes" value="" name="additionalNotes"></textarea>
+              {% endif %}
+              <label id="lblError" style="color: red;"></label>
+            </div>
+            {% if product.data.lineId is defined %}
+              <input id="ompaAdd" type="submit" class="button gmbutton small-expanded" style="min-width: 140px;" value="Modificar producto">
+            {% else %}
+              <input id="ompaAdd" type="submit" class="button gmbutton small-expanded" style="min-width: 140px;" value="Agregar a carrito">
+            {% endif %}
+            {% if fm %}
+              <input id="ompaCancel" type="button" class="button clear small-expanded" style="min-width: 140px;min-width: 140px;background: transparent;color: #159de1;" 
+                value="Cerrar">
+            {% endif %}
+          </div>
+        </div> 
+      </form>
+    </div>
+  </div>
+
+  {% if fm %}
+    <div class="u-reveal-closebtncntr"></div>
+    <button class="close-button u-reveal-closebtn" data-close aria-label="Close modal" type="button" >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  {% endif %}
+
+  {# SHOW MORE INFO FLAG (TO BE USED ONLY IN DESKTOP VERSION) #}
+  {% if smi %}
+  
+    {% if data.related | length > 1 %}
+      {# RELATED PRODUCTS #}
+      <div class="row u-box-cntr">
+        <div class="large-12 medium-12 small-12 columns">
+          
+            <div class="titulo-big" style="border-top:0px">Productos relacionados</div>
+            {# {% if isMobile %}
+              <div id="relProds" class="related-container" style="position: relative; max-height: 440px;height: 440px;overflow: hidden;">
+                <div class="swiper-wrapper">
+                  {% for rel in data.related %}
+                    <div class="swiper-slide">
+                      <div style="border-right: 1px solid #DDD;padding: 0px 20px;">
+                        <a href="{{rel.link}}">
+                          <img class="img img-responsive" style="margin: auto" src="{{rel.image}}">
+                          <h4 style="margin: 10px 0px 0px 0px;">{{rel.name}}</h4>
+                        </a>
+                        <p class="line-clamp-3">{{rel.description}}</p>
+                        <p class="u-menu-price" style="margin: 0;">{{rel.price | price | raw}}</p>
+                        {% if rel.regularPrice > 0 %}
+                          <p style="text-decoration: line-through;margin: 0px;">{{rel.regularPrice | price | raw}}</p>
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+                <div id="relProdsPag" class="swiper-pagination"></div>
+              </div>
+            {% else %} #}
+              <div style="display: flex;padding-bottom:20px;justify-content:start;flex-wrap: wrap;">
+                {% for rel in data.related %}
+                  <div class="u-prod-rel">
+                    <a href="{{ path('productOrderMenu', {'name': urlize(rel.name),'id': rel.id, 'idr': data.idr, 'ids': data.ids}) }}{{ (data.token is defined and data.token | length > 0) ? '?t='~data.token : '' }}">
+                      <img class="img img-responsive" src="{{rel.image}}">
+                      <div style="padding: 5px;">
+                        <h4>{{rel.name}}</h4>
+                        {% if isMobile %}
+                          <p class="line-clamp-3">{{rel.description}}</p>
+                        {% else %}
+                          <p class="line-clamp-3">{{rel.description | truncate(70) }}</p>
+                        {% endif %}
+                        <div class="u-menu-price" style="margin: 0;">{{rel.price | price | raw}}</div>
+                        {% if rel.regularPrice > 0 %}
+                          <div style="text-decoration: line-through;margin: 0px;">{{rel.regularPrice | price | raw}}</div>
+                        {% endif %}
+                      </div>
+                    </a>
+                  </div>
+                {% endfor %}
+              </div>
+            {# {% endif %} #}
+          
+        </div>
+      </div>
+    {% endif %}
+
+    {# VENDOR INFO #}
+    <div class="row u-box-cntr boxedlines">
+      <div class="large-12 medium-12 small-12 columns">
+        <div class="gal-cntr">
+          <div class="titulo-big" >Conoce m&aacute;s</div>
+          <div style="margin-top: 10px" class="row">
+            <div class="large-6 medium-6 small-12 columns" style="position:relative">
+              <a href="{{ path('comercio', {'id': data.store.loc, 'comercioNombre': urlize(data.store.name) }) }}" style="color: #555;display: inline-block;margin-bottom: 20px;position: relative;" 
+                alt="{{data.store.name}}">
+                <img style="width: 80px; height: auto;position:absolute;left:0px;top:0px" src="{{data.store.image}}" alt="">
+                <div style="padding-left:90px">
+                  <h4 style="display: inline" >{{data.store.name}}</h4>
+                  <div>{{data.store.adr}}</div>
+                  <div>{{data.store.znam}} {{data.store.zpman}}</div>
+                  <div>{{data.store.state}}</div>
+                </div>
+              </a>
+            </div>
+            <div class="large-6 medium-6 small-12 columns">
+              Explora mas productos de {{data.store.name}} en:
+              <ul style="list-style: none;padding-left: 10px;font-size: 15px;">
+                {% for group in data.groups %}
+                  <li>
+                    <a href="{{ path('storeStart',{'nam':urlize(data.store.name),'idr': data.idr, 'ids': data.ids}) }}?t={{data.token}}&f={{urlize(group.name)}}|{{group.id}}" 
+                      alt="{{group.name}}">{{group.name}}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  {% endif %}
+
+
+  {# PHOTO SWIPER MODAL #}
+  <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="pswp__bg"></div>
+    <div class="pswp__scroll-wrap">
+
+      <div class="pswp__container">
+        <div class="pswp__item"></div>
+        <div class="pswp__item"></div>
+        <div class="pswp__item"></div>
+      </div>
+
+      <div class="pswp__ui pswp__ui--hidden">
+        <div class="pswp__top-bar">
+          <div class="pswp__counter"></div>
+          <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+          <button class="pswp__button pswp__button--share" title="Share"></button>
+          <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+          <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+          <div class="pswp__preloader">
+            <div class="pswp__preloader__icn">
+              <div class="pswp__preloader__cut">
+                <div class="pswp__preloader__donut"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+          <div class="pswp__share-tooltip"></div>
+        </div>
+        <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+        <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+        <div class="pswp__caption">
+          <div class="pswp__caption__center"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+{% endblock %}
