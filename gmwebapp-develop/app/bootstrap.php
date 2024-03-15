@@ -78,7 +78,7 @@ $app['twig'] = $app->share($app->extend('twig', function ($twig, $app) {
   $twig->addGlobal('URUGUAY_ID',      APICallerService::URUGUAY_ID);
   $twig->addGlobal('URUGUAY_TEXT',    APICallerService::URUGUAY_TEXT);
   $twig->addGlobal('assetVersion',    '5.3.1');
-  $twig->addGlobal('filesSignature', '-5.3.1-1241171142');
+  $twig->addGlobal('filesSignature', '-5.3.1-1243151526');
   $twig->addGlobal('mapFramework',    $app['config']['maps.framework']);
   $twig->addGlobal('mapJsSrc',        $app['config']['maps.jssrc']);
   $twig->addGlobal('ADS_SLOT_TOP',    $app['config']['ads.slotTop']);
