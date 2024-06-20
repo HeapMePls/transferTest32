@@ -5,6 +5,7 @@ app/spool/*
 app/var/*
 
 # Composer
+vendor/*
 composer.phar
 composer.lock
 

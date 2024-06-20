@@ -1,6 +1,6 @@
 // ************************** CONFIGURATION **********************************
-//const BRAND        = "BUSCOINFO";
-const BRAND = "GUIAMOVIL";
+const BRAND        = "BUSCOINFO";
+//const BRAND = "GUIAMOVIL";
 var appjsFiles = ["web/js/app/**/*.js"];
 
 // NOTE: jQuery is required as standalone at HTML so it does not need to be included here.
@@ -103,21 +103,21 @@ var postfix = "-" + appVersion + "-" + today.getYear() + (today.getMonth() + 1) 
 var vendorjsName = "vendors" + postfix + ".js";
 var appjsName = "app" + postfix + ".js";
 var appcssName = "style" + postfix + ".min.css";
-var accessToken = "";
-var deviceToken = "";
-var accessTokenCookie = "";
-var deviceTokenCookie = "";
-// if (BRAND == 'BUSCOINFO'){
-//   accessToken       = '5OEmaBFXJQtr666lboQfo8QsSHzafQT9GQOAF6S8SAQ9xpOPk3BmPGMwpEfa8ry0';
-//   deviceToken       = 'QR7KYV7S4VOAdYG4gED8sevAeCOOQdMyVdiu3CO0EXg';
-//   accessTokenCookie = '_biwa_ut';
-//   deviceTokenCookie = '_biwa_dt';
-// }else{
+var accessToken = "5OEmaBFXJQtr666lboQfo8QsSHzafQT9GQOAF6S8SAQ9xpOPk3BmPGMwpEfa8ry0";
+var deviceToken = "QR7KYV7S4VOAdYG4gED8sevAeCOOQdMyVdiu3CO0EXg";
+var accessTokenCookie = "_biwa_ut";
+var deviceTokenCookie = "_biwa_dt";
+ /*if (BRAND == 'BUSCOINFO'){
+   accessToken       = '5OEmaBFXJQtr666lboQfo8QsSHzafQT9GQOAF6S8SAQ9xpOPk3BmPGMwpEfa8ry0';
+   deviceToken       = 'QR7KYV7S4VOAdYG4gED8sevAeCOOQdMyVdiu3CO0EXg';
+   accessTokenCookie = '_biwa_ut';
+   deviceTokenCookie = '_biwa_dt';
+ }else{
 accessToken = "4uVoQ9h9oYkvPZnk9TWkDZDVBDZshmv1uBwIU7ZGKFBHFRqNkHXeysFeVZlGYGAJ";
 deviceToken = "vdN2rF0cCtAHQQ4kwNQy7HPIL-cnPRkSdpkj-Y5CL5w";
 accessTokenCookie = "_gmwa_ut";
 deviceTokenCookie = "_gmwa_dt";
-// }
+ }*/
 var brandPrefix = BRAND == "BUSCOINFO" ? "bi" : "gm";
 // clean dyn
 gulp.task("cleanDyn", function () {
